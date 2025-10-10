@@ -1,120 +1,211 @@
-# Kaptan Catering Mobil Uygulama - Geliştirme Checklist
+# 👤 MEKZCGL - Görev Checklist'i (Backend Integration & Data)
 
-## 📅 Proje Durumu
-- **Başlangıç Tarihi:** 10 Ekim 2025
-- **Durum:** Geliştirme Aşamasında
-- **Son Güncelleme:** 10 Ekim 2025
+## 📅 Başlangıç: 10 Ekim 2025
+**Rolün:** Backend Entegrasyonu & Veri Yönetimi
 
 ---
 
-## ✅ PHASE 0: Proje Kurulumu (TAMAMLANDI)
-- [x] Flutter SDK kurulumu
-- [x] Proje oluşturma
-- [x] Klasör yapısı oluşturma
-- [x] pubspec.yaml yapılandırması
-- [x] Git repository kurulumu
-- [x] GitHub'a ilk push
-- [x] Web geliştirme ortamı kurulumu
-- [x] İlk çalıştırma (Splash screen)
+## ✅ PHASE 0-2: Tamamlandı
+- [x] Proje kurulumu
+- [x] API altyapısı
+- [x] Authentication
+- [x] Login/Register test (Samsung S10 Lite)
 
 ---
 
-## 📋 PHASE 1: API ve Backend Entegrasyonu (DEVAM EDİYOR)
-- [ ] Backend API bilgilerini alma
-- [ ] Base API client oluşturma (Dio)
-- [ ] API endpoint constants tanımlama
-- [ ] Request/Response interceptors
-- [ ] Error handling middleware
-- [ ] Token yönetimi yapısı
+## 🔄 PHASE 4: Ürün Listeleme & API Entegrasyonu (ŞİMDİ)
+
+### 4.1 Product Model Güncelleme
+- [ ] `lib/data/models/product_model.dart` dosyasını aç
+- [ ] KDV alanlarını kontrol et (kdvDahil, kdvOrani)
+- [ ] Birim alanını kontrol et (kg, adet, litre)
+- [ ] Minimum sipariş miktarı ekle (minSiparisMiktari)
+- [ ] JSON serialization test et
+
+### 4.2 Product DataSource
+- [ ] `lib/data/datasources/product_datasource.dart` oluştur
+- [ ] `getProducts()` fonksiyonu yaz
+- [ ] `GET /api/products` endpoint'ini entegre et
+- [ ] Error handling ekle
+- [ ] Postman/curl ile API test et
+
+### 4.3 Product Repository
+- [ ] `lib/data/repositories/product_repository.dart` oluştur
+- [ ] DataSource'u inject et
+- [ ] `fetchProducts()` fonksiyonu
+- [ ] Cache mekanizması (opsiyonel - SharedPreferences)
+- [ ] Error handling
+
+### 4.4 Product Provider
+- [ ] `lib/presentation/providers/product_provider.dart` oluştur
+- [ ] `ChangeNotifier` extend et
+- [ ] States tanımla:
+  - [ ] `List<ProductModel> products`
+  - [ ] `bool isLoading`
+  - [ ] `String? errorMessage`
+- [ ] `loadProducts()` fonksiyonu
+- [ ] `notifyListeners()` ekle
+
+### 4.5 Dependency Injection
+- [ ] `lib/core/di/injection.dart` aç
+- [ ] ProductDataSource register et
+- [ ] ProductRepository register et
+- [ ] Test et
+
+### 4.6 API Test
+- [ ] Telefonda çalıştır
+- [ ] Console'da API response'u gör
+- [ ] Ürün sayısını kontrol et (~850)
+- [ ] Hata durumlarını test et (internet yok, server error)
 
 ---
 
-## 📋 PHASE 2: Kimlik Doğrulama (BEKLİYOR)
-- [ ] Login ekranı UI
-- [ ] Register ekranı UI (Firma Kaydı)
-- [ ] API ile login entegrasyonu
-- [ ] API ile register entegrasyonu
-- [ ] Token storage (Secure Storage)
-- [ ] Splash screen token kontrolü
-- [ ] Auto login
+## 🔄 PHASE 4.5: Kategori & Filtreleme
+
+### 4.7 Kategori Provider
+- [ ] `lib/presentation/providers/category_provider.dart` oluştur
+- [ ] Kategori listesi state (`List<String> categories`)
+- [ ] Seçili kategori state (`String? selectedCategory`)
+- [ ] `filterByCategory(String category)` fonksiyonu
+- [ ] Product Provider ile koordinasyon
+
+### 4.8 Arama Fonksiyonu
+- [ ] Product Provider'a `searchProducts(String query)` ekle
+- [ ] Stok kodu ile arama (case-insensitive)
+- [ ] Stok adı ile arama (case-insensitive)
+- [ ] Debounce mekanizması (500ms - Timer kullan)
+- [ ] Arama sonuçları state
+
+### 4.9 Pagination
+- [ ] `page` ve `limit` parametreleri ekle
+- [ ] Infinite scroll için `loadMore()` fonksiyonu
+- [ ] `hasMore` boolean flag
+- [ ] Loading more state (`isLoadingMore`)
+- [ ] Scroll controller ile tetikleme hazırlığı
 
 ---
 
-## 📋 PHASE 3: Ana Sayfa ve Bottom Navigation (BEKLİYOR)
-- [ ] Bottom Navigation Bar (4 tab)
-- [ ] Ana Sayfa layoutu
-- [ ] Ürünler sayfası layoutu
-- [ ] Profil sayfası layoutu
-- [ ] Menü bottom sheet
+## 🔄 PHASE 6.5: Sepet & Sipariş Entegrasyonu
+
+### 6.1 Cart Provider
+- [ ] `lib/presentation/providers/cart_provider.dart` oluştur
+- [ ] Cart items state (`List<CartItem>`)
+- [ ] `addToCart(ProductModel product, int quantity)` fonksiyonu
+- [ ] `removeFromCart(String productId)` fonksiyonu
+- [ ] `updateQuantity(String productId, int quantity)` fonksiyonu
+- [ ] `clearCart()` fonksiyonu
+- [ ] `getTotalAmount()` fonksiyonu (ara toplam)
+- [ ] `getKdvAmount()` fonksiyonu (KDV tutarı)
+- [ ] `getGrandTotal()` fonksiyonu (genel toplam)
+- [ ] SharedPreferences ile sepeti kaydet (persistence)
+- [ ] Uygulama açılınca sepeti yükle
+
+### 6.2 Order Model
+- [ ] `lib/data/models/order_model.dart` oluştur
+- [ ] Order fields:
+  - [ ] `String id`
+  - [ ] `String userId`
+  - [ ] `List<OrderItem> items`
+  - [ ] `double totalAmount`
+  - [ ] `String status` (Ödeme Bekliyor, Hazırlanıyor, vb.)
+  - [ ] `String paymentMethod` (iyzico, kapida_odeme)
+  - [ ] `String deliveryAddress`
+  - [ ] `DateTime createdAt`
+- [ ] OrderItem model (productId, productName, quantity, price, unit)
+- [ ] JSON serialization (fromJson, toJson)
+
+### 6.3 Order DataSource
+- [ ] `lib/data/datasources/order_datasource.dart` oluştur
+- [ ] `createOrder(Map<String, dynamic> orderData)` - POST /api/siparisler
+- [ ] `getOrders()` - GET /api/siparisler
+- [ ] `getOrderById(String orderId)` - GET /api/siparisler/:id
+- [ ] Error handling
+
+### 6.4 Order Repository
+- [ ] `lib/data/repositories/order_repository.dart` oluştur
+- [ ] `createOrder()` fonksiyonu
+- [ ] `fetchOrders()` fonksiyonu
+- [ ] `fetchOrderById()` fonksiyonu
+- [ ] Error handling
+
+### 6.5 Order Provider
+- [ ] `lib/presentation/providers/order_provider.dart` oluştur
+- [ ] Order list state (`List<OrderModel> orders`)
+- [ ] Loading states
+- [ ] `createOrder(OrderModel order)` fonksiyonu
+- [ ] `fetchOrders()` fonksiyonu
+- [ ] `fetchOrderById(String id)` fonksiyonu
+- [ ] Filter by status
+
+### 6.6 Dependency Injection
+- [ ] OrderDataSource register et
+- [ ] OrderRepository register et
+- [ ] CartProvider register et
+- [ ] OrderProvider register et
+- [ ] main.dart'ta Provider'ları ekle
 
 ---
 
-## 📋 PHASE 4: Ürün Listeleme (BEKLİYOR)
-- [ ] Ürün model oluşturma
-- [ ] Ürünleri API'den çekme
-- [ ] Ürün kartı widget
-- [ ] Grid view implementasyonu
-- [ ] Kategori filtreleme
-- [ ] Arama fonksiyonu
-- [ ] Pagination
+## 🔄 PHASE 8.5: Offline Mode & Caching
+
+### 8.1 Shared Preferences Setup
+- [ ] Product cache için key tanımla (`cached_products`)
+- [ ] Cache timestamp key (`products_cache_time`)
+- [ ] Cache süresi belirle (24 saat)
+- [ ] `saveProductsToCache(List<ProductModel>)` fonksiyonu
+- [ ] `loadProductsFromCache()` fonksiyonu
+- [ ] Cache validation (expired mı?)
+
+### 8.2 Network Check
+- [ ] `lib/core/utils/network_checker.dart` oluştur
+- [ ] Internet bağlantı kontrolü (connectivity_plus paketi)
+- [ ] Offline durumu provider'da yönet
+- [ ] Online olunca otomatik sync
+
+### 8.3 Offline Product Access
+- [ ] İnternet yoksa cache'den yükle
+- [ ] "Offline moddasınız" bildirimi göster
+- [ ] Sepet offline da çalışsın (local)
 
 ---
 
-## 📋 PHASE 5: Ürün Detay (BEKLİYOR)
-- [ ] Ürün detay sayfası UI
-- [ ] Stok bilgileri gösterimi
-- [ ] Fiyat gösterimi
-- [ ] Miktar seçici
-- [ ] Sepete ekle fonksiyonu
+## 🔄 PHASE 9: Testing & Bug Fixing
+
+### 9.1 Unit Tests
+- [ ] `test/models/product_model_test.dart` oluştur
+  - [ ] JSON parsing test
+  - [ ] KDV hesaplama test
+- [ ] `test/repositories/product_repository_test.dart`
+  - [ ] Mock data ile test
+- [ ] `test/providers/product_provider_test.dart`
+  - [ ] State değişimleri test
+- [ ] `test/providers/cart_provider_test.dart`
+  - [ ] Sepet işlemleri test
+  - [ ] Toplam hesaplama test
+
+### 9.2 Integration Tests
+- [ ] `integration_test/app_test.dart` oluştur
+- [ ] End-to-end flow test:
+  - [ ] Login → Ürün listesi → Detay → Sepete ekle
+- [ ] API entegrasyonu test
+
+### 9.3 Bug Fixing & Optimization
+- [ ] Memory leak kontrolü
+- [ ] Null safety kontrolleri
+- [ ] Performance profiling
+- [ ] Code cleanup (unused imports, vb.)
+- [ ] Arkadaşın bulduğu UI buglarını çöz
 
 ---
 
-## 📋 PHASE 6: Sepet ve Ödeme (BEKLİYOR)
-- [ ] Sepet sayfası
-- [ ] Sepet yönetimi (ekleme/çıkarma/güncelleme)
-- [ ] Toplam hesaplama
-- [ ] Teslimat adresi seçimi
-- [ ] Ödeme yöntemi seçimi (İyzico/Kapıda Ödeme)
-- [ ] İyzico entegrasyonu
-- [ ] Sipariş oluşturma
+## 📊 İlerleme
+
+- **Toplam Görev:** ~60
+- **Tamamlanan:** ~25 (Phase 0-2)
+- **Kalan:** ~35
+
 
 ---
 
-## 📋 PHASE 7: Profil ve Ayarlar (BEKLİYOR)
-- [ ] Profil sayfası (Firma bilgileri)
-- [ ] Siparişlerim
-- [ ] Sipariş detay
-- [ ] Adres yönetimi
-- [ ] Favoriler
-- [ ] Ayarlar
-
----
-
-## 📋 PHASE 8: Bildirimler (BEKLİYOR)
-- [ ] Firebase Cloud Messaging kurulumu
-- [ ] Push notification altyapısı
-- [ ] Bildirim yönetimi
-
----
-
-## 📋 PHASE 9: Test ve Optimizasyon (BEKLİYOR)
-- [ ] Unit testler
-- [ ] Widget testler
-- [ ] Performance optimizasyonu
-- [ ] Bug fixing
-
----
-
-## 📋 PHASE 10: Deployment (BEKLİYOR)
-- [ ] Android release build
-- [ ] iOS release build
-- [ ] Google Play Store yayınlama
-- [ ] App Store yayınlama
-
----
-
-## 📝 Notlar
-- Web development ile başladık (daha hızlı)
-- Firebase paketleri şimdilik devre dışı (gerektiğinde eklenecek)
-- Backend API bilgileri bekleniyor
-
+**Son Güncelleme:** 10 Ekim 2025
+**Sıradaki Görev:** Phase 4.1 - Product Model güncelleme
