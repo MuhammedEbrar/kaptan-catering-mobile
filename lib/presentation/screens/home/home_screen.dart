@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/product_provider.dart';
+import '../../providers/category_provider.dart';
 import '../auth/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,7 +19,13 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     // Ürünleri yükle
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ProductProvider>().loadProducts();
+      final productProvider = context.read<ProductProvider>();
+      final categoryProvider = context.read<CategoryProvider>();
+      
+      productProvider.loadProducts().then((_) {
+        // Ürünler yüklendikten sonra kategorileri çıkar
+        categoryProvider.extractCategories(productProvider.products);
+      });
     });
   }
 
@@ -26,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
     final productProvider = context.watch<ProductProvider>();
+    final categoryProvider = context.watch<CategoryProvider>();
     final user = authProvider.user;
 
     return Scaffold(
@@ -86,6 +94,70 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
+          // Kategori Filtreleme Chips
+          if (categoryProvider.categories.isNotEmpty)
+            Container(
+              height: 50,
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: categoryProvider.categories.length + 1,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    // "Tümü" chip
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: FilterChip(
+                        label: const Text('Tümü'),
+                        selected: !categoryProvider.hasSelectedCategory,
+                        onSelected: (_) {
+                          categoryProvider.clearFilter();
+                          productProvider.filterByCategory(null);
+                        },
+                        selectedColor: AppColors.primary,
+                        labelStyle: TextStyle(
+                          color: !categoryProvider.hasSelectedCategory
+                              ? Colors.white
+                              : AppColors.textPrimary,
+                        ),
+                      ),
+                    );
+                  }
+
+                  final category = categoryProvider.categories[index - 1];
+                  final isSelected = categoryProvider.selectedCategory == category;
+                  final shortName = categoryProvider.getShortCategoryName(category);
+                  final icon = categoryProvider.getCategoryIcon(category);
+
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: FilterChip(
+                      label: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(icon),
+                          const SizedBox(width: 4),
+                          Text(shortName),
+                        ],
+                      ),
+                      selected: isSelected,
+                      onSelected: (_) {
+                        categoryProvider.selectCategory(category);
+                        productProvider.filterByCategory(
+                          categoryProvider.selectedCategory,
+                        );
+                      },
+                      selectedColor: AppColors.primary,
+                      labelStyle: TextStyle(
+                        color: isSelected ? Colors.white : AppColors.textPrimary,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+
           // Ürün listesi
           Expanded(
             child: productProvider.isLoading
@@ -116,49 +188,68 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                       )
-                    : ListView.builder(
-                        padding: const EdgeInsets.all(16),
-                        itemCount: productProvider.productCount,
-                        itemBuilder: (context, index) {
-                          final product = productProvider.products[index];
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 12),
-                            child: ListTile(
-                              leading: product.fotografUrl != null
-                                  ? Image.network(
-                                      product.fotografUrl!,
-                                      width: 50,
-                                      height: 50,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) => const Icon(
-                                        Icons.image_not_supported,
-                                        size: 50,
+                    : productProvider.productCount == 0
+                        ? const Center(
+                            child: Text('Ürün bulunamadı'),
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.all(16),
+                            itemCount: productProvider.productCount,
+                            itemBuilder: (context, index) {
+                              final product = productProvider.products[index];
+                              return Card(
+                                margin: const EdgeInsets.only(bottom: 12),
+                                child: ListTile(
+                                  leading: product.fotografUrl != null
+                                      ? Image.network(
+                                          product.fotografUrl!,
+                                          width: 50,
+                                          height: 50,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (_, __, ___) => const Icon(
+                                            Icons.image_not_supported,
+                                            size: 50,
+                                          ),
+                                        )
+                                      : Container(
+                                          width: 50,
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.backgroundLight,
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              categoryProvider.getCategoryIcon(product.kategori),
+                                              style: const TextStyle(fontSize: 24),
+                                            ),
+                                          ),
+                                        ),
+                                  title: Text(
+                                    product.stokAdi,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  subtitle: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(height: 4),
+                                      Text('Stok Kodu: ${product.stokKodu}'),
+                                      Text(
+                                        categoryProvider.getShortCategoryName(product.kategori),
+                                        style: const TextStyle(
+                                          color: AppColors.primary,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
-                                    )
-                                  : const Icon(
-                                      Icons.shopping_bag,
-                                      size: 50,
-                                      color: AppColors.primary,
-                                    ),
-                              title: Text(
-                                product.stokAdi,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 4),
-                                  Text('Stok Kodu: ${product.stokKodu}'),
-                                  Text('Kategori: ${product.kategori}'),
-                                  Text('Birim: ${product.birim}'),
-                                ],
-                              ),
-                              isThreeLine: true,
-                            ),
-                          );
-                        },
-                      ),
+                                      Text('Birim: ${product.birim}'),
+                                    ],
+                                  ),
+                                  isThreeLine: true,
+                                ),
+                              );
+                            },
+                          ),
           ),
 
           // Ürün sayısı
@@ -167,7 +258,9 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.all(8),
               color: AppColors.backgroundLight,
               child: Text(
-                '${productProvider.productCount} ürün yüklendi',
+                categoryProvider.hasSelectedCategory
+                    ? '${productProvider.productCount} ürün (${categoryProvider.getShortCategoryName(categoryProvider.selectedCategory!)})'
+                    : '${productProvider.productCount} ürün',
                 style: const TextStyle(
                   fontSize: 12,
                   color: AppColors.textSecondary,

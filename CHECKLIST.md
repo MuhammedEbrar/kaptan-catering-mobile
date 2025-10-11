@@ -60,11 +60,13 @@
 ## 🔄 PHASE 4.5: Kategori & Filtreleme
 
 ### 4.7 Kategori Provider
-- [ ] `lib/presentation/providers/category_provider.dart` oluştur
-- [ ] Kategori listesi state (`List<String> categories`)
-- [ ] Seçili kategori state (`String? selectedCategory`)
-- [ ] `filterByCategory(String category)` fonksiyonu
-- [ ] Product Provider ile koordinasyon
+- [x] `lib/presentation/providers/category_provider.dart` oluştur
+- [x] Kategori listesi state
+- [x] Seçili kategori state
+- [x] `filterByCategory()` fonksiyonu
+- [x] Emoji iconlar
+- [x] Home screen'de kategori chips
+- [x] Test edildi
 
 ### 4.8 Arama Fonksiyonu
 - [ ] Product Provider'a `searchProducts(String query)` ekle

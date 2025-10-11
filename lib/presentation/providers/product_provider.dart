@@ -244,6 +244,22 @@ class ProductProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Kategorileri döndür (CategoryProvider için)
+  List<String> getAllCategories() {
+    final categories = _products.map((p) => p.kategori).toSet().toList();
+    categories.sort();
+    return categories;
+  }
+
+  // Kategori bazlı ürün sayısı
+  Map<String, int> getCategoryProductCount() {
+    final Map<String, int> count = {};
+    for (var product in _products) {
+      count[product.kategori] = (count[product.kategori] ?? 0) + 1;
+    }
+    return count;
+  }
+
   @override
   void dispose() {
     _debounceTimer?.cancel();

@@ -8,6 +8,7 @@ import 'presentation/providers/auth_provider.dart';
 import 'presentation/providers/product_provider.dart';
 import 'presentation/screens/auth/login_screen.dart';
 import 'presentation/screens/home/home_screen.dart';
+import 'presentation/providers/category_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +31,9 @@ class KaptanCateringApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => ProductProvider(getIt<ProductRepository>()),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => CategoryProvider(),
         ),
       ],
       child: MaterialApp(
