@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'core/constants/app_colors.dart';
 import 'core/di/injection.dart';
 import 'data/repositories/auth_repository.dart';
+import 'data/repositories/product_repository.dart';
 import 'presentation/providers/auth_provider.dart';
+import 'presentation/providers/product_provider.dart';
 import 'presentation/screens/auth/login_screen.dart';
 import 'presentation/screens/home/home_screen.dart';
 
@@ -25,6 +27,9 @@ class KaptanCateringApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (_) => AuthProvider(getIt<AuthRepository>()),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ProductProvider(getIt<ProductRepository>()),
         ),
       ],
       child: MaterialApp(
