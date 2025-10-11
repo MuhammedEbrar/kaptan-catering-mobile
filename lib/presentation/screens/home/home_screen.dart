@@ -14,19 +14,51 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
+    
     // Ürünleri yükle
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final productProvider = context.read<ProductProvider>();
       final categoryProvider = context.read<CategoryProvider>();
       
       productProvider.loadProducts().then((_) {
-        // Ürünler yüklendikten sonra kategorileri çıkar
         categoryProvider.extractCategories(productProvider.products);
       });
     });
+
+    // Scroll listener ekle
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    final productProvider = context.read<ProductProvider>();
+    
+    // Scroll sonuna yakın mı? (80% scroll olduğunda yükle)
+    if (_scrollController.position.pixels >= 
+        _scrollController.position.maxScrollExtent * 0.8) {
+      
+      // Yükleme devam ediyorsa veya daha fazla ürün yoksa çık
+      if (productProvider.isLoadingMore || !productProvider.hasMore) return;
+      
+      // Filtreleme varsa pagination yapma
+      if (productProvider.searchQuery.isNotEmpty || 
+          productProvider.selectedCategory != null) return;
+
+      // Daha fazla ürün yükle
+      productProvider.loadMoreProducts();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -94,8 +126,57 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
+          // Arama Bar
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Ürün ara... (Stok kodu veya ürün adı)',
+                prefixIcon: const Icon(Icons.search, color: AppColors.primary),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, color: AppColors.textSecondary),
+                        onPressed: () {
+                          _searchController.clear();
+                          productProvider.searchProducts('');
+                          FocusScope.of(context).unfocus();
+                          setState(() {});
+                        },
+                      )
+                    : null,
+                filled: true,
+                fillColor: AppColors.backgroundLight,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.border),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.border),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              ),
+              textInputAction: TextInputAction.search,
+              onChanged: (value) {
+                productProvider.searchProducts(value);
+                if (value.isNotEmpty && categoryProvider.hasSelectedCategory) {
+                  categoryProvider.clearFilter();
+                }
+                setState(() {});
+              },
+              onSubmitted: (value) {
+                FocusScope.of(context).unfocus();
+              },
+            ),
+          ),
+
           // Kategori Filtreleme Chips
-          if (categoryProvider.categories.isNotEmpty)
+          if (categoryProvider.categories.isNotEmpty && productProvider.searchQuery.isEmpty)
             Container(
               height: 50,
               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -105,7 +186,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: categoryProvider.categories.length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) {
-                    // "Tümü" chip
                     return Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: FilterChip(
@@ -173,10 +253,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               color: AppColors.error,
                             ),
                             const SizedBox(height: 16),
-                            Text(
-                              productProvider.errorMessage!,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(color: AppColors.error),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 32),
+                              child: Text(
+                                productProvider.errorMessage!,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(color: AppColors.error),
+                              ),
                             ),
                             const SizedBox(height: 16),
                             ElevatedButton(
@@ -189,13 +272,43 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       )
                     : productProvider.productCount == 0
-                        ? const Center(
-                            child: Text('Ürün bulunamadı'),
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.search_off,
+                                  size: 60,
+                                  color: AppColors.textLight,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  productProvider.searchQuery.isNotEmpty
+                                      ? 'Ürün bulunamadı'
+                                      : 'Henüz ürün yok',
+                                  style: const TextStyle(
+                                    color: AppColors.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
                           )
                         : ListView.builder(
+                            controller: _scrollController,
                             padding: const EdgeInsets.all(16),
-                            itemCount: productProvider.productCount,
+                            itemCount: productProvider.productCount + 
+                                       (productProvider.isLoadingMore ? 1 : 0),
                             itemBuilder: (context, index) {
+                              // Loading indicator
+                              if (index == productProvider.productCount) {
+                                return const Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
+
                               final product = productProvider.products[index];
                               return Card(
                                 margin: const EdgeInsets.only(bottom: 12),
@@ -252,19 +365,35 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
           ),
 
-          // Ürün sayısı
+          // Ürün sayısı ve durum
           if (!productProvider.isLoading && productProvider.productCount > 0)
             Container(
               padding: const EdgeInsets.all(8),
               color: AppColors.backgroundLight,
-              child: Text(
-                categoryProvider.hasSelectedCategory
-                    ? '${productProvider.productCount} ürün (${categoryProvider.getShortCategoryName(categoryProvider.selectedCategory!)})'
-                    : '${productProvider.productCount} ürün',
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: AppColors.textSecondary,
-                ),
+              child: Column(
+                children: [
+                  Text(
+                    categoryProvider.hasSelectedCategory
+                        ? '${productProvider.productCount} ürün (${categoryProvider.getShortCategoryName(categoryProvider.selectedCategory!)})'
+                        : productProvider.searchQuery.isNotEmpty
+                            ? '${productProvider.productCount} ürün bulundu'
+                            : '${productProvider.productCount} ürün',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  if (!productProvider.hasMore && 
+                      productProvider.searchQuery.isEmpty &&
+                      !categoryProvider.hasSelectedCategory)
+                    const Text(
+                      'Tüm ürünler yüklendi',
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: AppColors.textLight,
+                      ),
+                    ),
+                ],
               ),
             ),
         ],

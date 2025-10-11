@@ -147,32 +147,32 @@ class ProductProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> _performSearch() async {
-    if (_searchQuery.isEmpty) {
-      _selectedCategory = null;
-      _applyFilters();
-      notifyListeners();
-      return;
-    }
-
-    _isLoading = true;
-    _errorMessage = null;
+Future<void> _performSearch() async {
+  if (_searchQuery.isEmpty) {
     _selectedCategory = null;
+    _applyFilters();
     notifyListeners();
-
-    try {
-      final searchResults = await _productRepository.searchProducts(_searchQuery);
-      _filteredProducts = searchResults;
-      
-      print('🔍 ${searchResults.length} ürün bulundu (Arama: $_searchQuery)');
-    } catch (e) {
-      _errorMessage = e.toString();
-      print('❌ searchProducts hatası: $e');
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+    return;
   }
+
+  // LOCAL ARAMA (Client-side filtering)
+  _selectedCategory = null;
+  
+  final query = _searchQuery.toLowerCase().trim();
+  
+  _filteredProducts = _products.where((product) {
+    final stokAdi = product.stokAdi.toLowerCase();
+    final stokKodu = product.stokKodu.toLowerCase();
+    final kategori = product.kategori.toLowerCase();
+    
+    return stokAdi.contains(query) || 
+           stokKodu.contains(query) || 
+           kategori.contains(query);
+  }).toList();
+  
+  print('🔍 ${_filteredProducts.length} ürün bulundu (Arama: $_searchQuery)');
+  notifyListeners();
+}
 
   // Filtreleri uygula (local filtreleme)
   void _applyFilters() {
