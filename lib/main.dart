@@ -6,9 +6,11 @@ import 'data/repositories/auth_repository.dart';
 import 'data/repositories/product_repository.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'presentation/providers/product_provider.dart';
+import 'presentation/providers/category_provider.dart';
+import 'presentation/providers/cart_provider.dart'; // ⬅️ EKLE
 import 'presentation/screens/auth/login_screen.dart';
 import 'presentation/screens/home/home_screen.dart';
-import 'presentation/providers/category_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // ⬅️ EKLE
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +36,9 @@ class KaptanCateringApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => CategoryProvider(),
+        ),
+        ChangeNotifierProvider( // ⬅️ EKLE
+          create: (_) => CartProvider(getIt<SharedPreferences>()),
         ),
       ],
       child: MaterialApp(

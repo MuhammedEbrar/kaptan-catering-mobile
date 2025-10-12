@@ -4,6 +4,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/product_provider.dart';
 import '../../providers/category_provider.dart';
+import '../../providers/cart_provider.dart';
 import '../auth/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -66,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final authProvider = context.watch<AuthProvider>();
     final productProvider = context.watch<ProductProvider>();
     final categoryProvider = context.watch<CategoryProvider>();
+    final cartProvider = context.watch<CartProvider>();
     final user = authProvider.user;
 
     return Scaffold(
@@ -73,6 +75,49 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Kaptan Catering'),
         backgroundColor: AppColors.primary,
         actions: [
+          // Sepet ikonu
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () {
+                  // TODO: Sepet sayfasına git
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Sepet sayfası henüz hazır değil'),
+                      duration: Duration(seconds: 1),
+                    ),
+                  );
+                },
+              ),
+              // Sepet badge (ürün sayısı)
+              if (cartProvider.isNotEmpty)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      '${cartProvider.itemCount}',
+                      style: const TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
@@ -310,6 +355,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               }
 
                               final product = productProvider.products[index];
+                              
                               return Card(
                                 margin: const EdgeInsets.only(bottom: 12),
                                 child: ListTile(
@@ -357,6 +403,54 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       Text('Birim: ${product.birim}'),
                                     ],
+                                  ),
+                                  trailing: IconButton(
+                                    icon: Icon(
+                                      cartProvider.isInCart(product.id)
+                                          ? Icons.shopping_cart
+                                          : Icons.add_shopping_cart,
+                                      color: cartProvider.isInCart(product.id)
+                                          ? AppColors.primary
+                                          : AppColors.textSecondary,
+                                    ),
+                                    onPressed: () async {
+                                      try {
+                                        if (cartProvider.isInCart(product.id)) {
+                                          // Sepetten çıkar
+                                          await cartProvider.removeFromCart(product.id);
+                                          if (context.mounted) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text('${product.stokAdi} sepetten çıkarıldı'),
+                                                backgroundColor: AppColors.error,
+                                                duration: const Duration(seconds: 1),
+                                              ),
+                                            );
+                                          }
+                                        } else {
+                                          // Sepete ekle
+                                          await cartProvider.addToCart(product, quantity: 1);
+                                          if (context.mounted) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text('${product.stokAdi} sepete eklendi'),
+                                                backgroundColor: AppColors.success,
+                                                duration: const Duration(seconds: 1),
+                                              ),
+                                            );
+                                          }
+                                        }
+                                      } catch (e) {
+                                        if (context.mounted) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text(e.toString()),
+                                              backgroundColor: AppColors.error,
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    },
                                   ),
                                   isThreeLine: true,
                                 ),
