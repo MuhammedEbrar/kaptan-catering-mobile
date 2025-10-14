@@ -47,7 +47,9 @@ class _HomeScreenState extends State<HomeScreen> {
       
       // Filtreleme varsa pagination yapma
       if (productProvider.searchQuery.isNotEmpty || 
-          productProvider.selectedCategory != null) return;
+          productProvider.selectedCategory != null) {
+        return;
+      }
 
       // Daha fazla ürün yükle
       productProvider.loadMoreProducts();
