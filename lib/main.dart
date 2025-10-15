@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'core/constants/app_colors.dart';
 import 'core/di/injection.dart';
 import 'data/repositories/auth_repository.dart';
 import 'data/repositories/product_repository.dart';
+import 'data/repositories/order_repository.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'presentation/providers/product_provider.dart';
+import 'presentation/providers/category_provider.dart';
+import 'presentation/providers/cart_provider.dart';
+import 'presentation/providers/order_provider.dart';
 import 'presentation/screens/auth/login_screen.dart';
 import 'presentation/screens/main_screen.dart';
-import 'presentation/providers/category_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +38,12 @@ class KaptanCateringApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => CategoryProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => CartProvider(getIt<SharedPreferences>()),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => OrderProvider(getIt<OrderRepository>()),
         ),
       ],
       child: MaterialApp(

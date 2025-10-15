@@ -91,20 +91,26 @@
 
 ---
 
-## 🔄 PHASE 6.5: Sepet & Sipariş Entegrasyonu
+## 🔄 PHASE 6.5: Sepet & Sipariş Entegrasyonu (DEVAM EDİYOR)
 
 ### 6.1 Cart Provider
-- [ ] `lib/presentation/providers/cart_provider.dart` oluştur
-- [ ] Cart items state (`List<CartItem>`)
-- [ ] `addToCart(ProductModel product, int quantity)` fonksiyonu
-- [ ] `removeFromCart(String productId)` fonksiyonu
-- [ ] `updateQuantity(String productId, int quantity)` fonksiyonu
-- [ ] `clearCart()` fonksiyonu
-- [ ] `getTotalAmount()` fonksiyonu (ara toplam)
-- [ ] `getKdvAmount()` fonksiyonu (KDV tutarı)
-- [ ] `getGrandTotal()` fonksiyonu (genel toplam)
-- [ ] SharedPreferences ile sepeti kaydet (persistence)
-- [ ] Uygulama açılınca sepeti yükle
+- [x] `lib/data/models/cart_item_model.dart` oluştur
+- [x] `lib/presentation/providers/cart_provider.dart` oluştur
+- [x] Cart items list state
+- [x] `addToCart()` fonksiyonu
+- [x] `removeFromCart()` fonksiyonu
+- [x] `updateQuantity()` fonksiyonu
+- [x] `clearCart()` fonksiyonu
+- [x] `getTotalAmount()` fonksiyonu (ara toplam)
+- [x] `getKdvAmount()` fonksiyonu (KDV tutarı)
+- [x] `getGrandTotal()` fonksiyonu (genel toplam)
+- [x] `getShippingCost()` fonksiyonu (kargo)
+- [x] Local storage ile sepeti kaydet (SharedPreferences)
+- [x] Uygulama açılınca sepeti yükle
+- [x] Sepet validasyonu (minimum miktar, stok)
+- [x] Home screen entegrasyonu
+- [x] Sepet ikonu + badge
+- [x] Test edildi
 
 ### 6.2 Order Model
 - [ ] `lib/data/models/order_model.dart` oluştur

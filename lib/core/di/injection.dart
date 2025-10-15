@@ -1,50 +1,57 @@
 import 'package:get_it/get_it.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../core/network/api_client.dart';
 import '../../data/datasources/auth_datasource.dart';
 import '../../data/datasources/product_datasource.dart';
+import '../../data/datasources/order_datasource.dart';  
 import '../../data/repositories/auth_repository.dart';
 import '../../data/repositories/product_repository.dart';
+import '../../data/repositories/order_repository.dart'; 
 
 final getIt = GetIt.instance;
 
 Future<void> setupDependencies() async {
-  // Storage
-  getIt.registerLazySingleton<FlutterSecureStorage>(
-    () => const FlutterSecureStorage(),
-  );
+  // SharedPreferences
+  final prefs = await SharedPreferences.getInstance();
+  getIt.registerSingleton<SharedPreferences>(prefs);
 
-  // SharedPreferences (async olduğu için await ile)
-  final sharedPreferences = await SharedPreferences.getInstance();
-  getIt.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+  // FlutterSecureStorage
+  const storage = FlutterSecureStorage();
+  getIt.registerSingleton<FlutterSecureStorage>(storage);
 
-  // API Client
-  getIt.registerLazySingleton<ApiClient>(() => ApiClient());
+  // ApiClient
+  getIt.registerSingleton<ApiClient>(ApiClient());
 
   // DataSources
-  getIt.registerLazySingleton<AuthDataSource>(
-    () => AuthDataSource(getIt<ApiClient>()),
+  getIt.registerSingleton<AuthDataSource>(
+    AuthDataSource(getIt<ApiClient>()),
   );
 
-  getIt.registerLazySingleton<ProductDataSource>(
-    () => ProductDataSource(getIt<ApiClient>()),
+  getIt.registerSingleton<ProductDataSource>(
+    ProductDataSource(getIt<ApiClient>()),
+  );
+
+  getIt.registerSingleton<OrderDataSource>(  
+    OrderDataSource(getIt<ApiClient>()),
   );
 
   // Repositories
-  getIt.registerLazySingleton<AuthRepository>(
-    () => AuthRepository(
+  getIt.registerSingleton<AuthRepository>(
+    AuthRepository(
       getIt<AuthDataSource>(),
       getIt<FlutterSecureStorage>(),
     ),
   );
 
-  getIt.registerLazySingleton<ProductRepository>(
-    () => ProductRepository(
+  getIt.registerSingleton<ProductRepository>(
+    ProductRepository(
       getIt<ProductDataSource>(),
       getIt<SharedPreferences>(),
     ),
   );
 
-  print('✅ Dependency Injection kurulumu tamamlandı');
+  getIt.registerSingleton<OrderRepository>(  
+    OrderRepository(getIt<OrderDataSource>()),
+  );
 }
