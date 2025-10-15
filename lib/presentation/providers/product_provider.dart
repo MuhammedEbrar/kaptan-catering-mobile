@@ -6,13 +6,16 @@ import 'dart:async';
 class ProductProvider extends ChangeNotifier {
   final ProductRepository _productRepository;
 
-  ProductProvider(this._productRepository);
+  ProductProvider(this._productRepository) {
+    _initConnectivityListener();
+  }
 
   // States
   List<ProductModel> _products = [];
   List<ProductModel> _filteredProducts = [];
   bool _isLoading = false;
   bool _isLoadingMore = false;
+  bool _isOffline = false; // 🆕 Offline durumu
   String? _errorMessage;
   String? _selectedCategory;
   String _searchQuery = '';
@@ -24,6 +27,9 @@ class ProductProvider extends ChangeNotifier {
 
   // Debounce timer for search
   Timer? _debounceTimer;
+  
+  // Connectivity listener
+  StreamSubscription? _connectivitySubscription;
 
   // Getters
   List<ProductModel> get products => _filteredProducts.isEmpty && _searchQuery.isEmpty && _selectedCategory == null
@@ -31,11 +37,37 @@ class ProductProvider extends ChangeNotifier {
       : _filteredProducts;
   bool get isLoading => _isLoading;
   bool get isLoadingMore => _isLoadingMore;
+  bool get isOffline => _isOffline; // 🆕
   String? get errorMessage => _errorMessage;
   String? get selectedCategory => _selectedCategory;
   String get searchQuery => _searchQuery;
   bool get hasMore => _hasMore;
   int get productCount => products.length;
+
+  // 🆕 Connectivity listener
+  void _initConnectivityListener() {
+    // İlk durumu kontrol et
+    _checkConnectivity();
+    
+    // Not: NetworkChecker'ın stream'ini dinleyebiliriz ama şimdilik manuel kontrol yeterli
+  }
+
+  // 🆕 Bağlantı durumunu kontrol et
+  Future<void> _checkConnectivity() async {
+    try {
+      final cacheInfo = await _productRepository.getCacheInfo();
+      final wasOffline = _isOffline;
+      _isOffline = !(cacheInfo['isOnline'] as bool);
+      
+      // Offline'dan online'a geçtiyse otomatik yenile
+      if (wasOffline && !_isOffline && _products.isNotEmpty) {
+        print('🔄 Online\'a geçildi, ürünler yenileniyor...');
+        await loadProducts(forceRefresh: true);
+      }
+    } catch (e) {
+      print('❌ Connectivity check error: $e');
+    }
+  }
 
   // Ürünleri yükle
   Future<void> loadProducts({bool forceRefresh = false}) async {
@@ -48,6 +80,9 @@ class ProductProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // Bağlantı durumunu kontrol et
+      await _checkConnectivity();
+
       final fetchedProducts = await _productRepository.fetchProducts(
         page: _currentPage,
         limit: _pageSize,
@@ -59,9 +94,18 @@ class ProductProvider extends ChangeNotifier {
       _hasMore = fetchedProducts.length >= _pageSize;
 
       print('✅ ${fetchedProducts.length} ürün yüklendi');
+      
+      // Başarılıysa offline durumunu kaldır
+      _isOffline = false;
     } catch (e) {
       _errorMessage = e.toString();
       print('❌ loadProducts hatası: $e');
+      
+      // İnternet hatası mı kontrol et
+      if (_errorMessage?.contains('İnternet') == true || 
+          _errorMessage?.contains('bağlantı') == true) {
+        _isOffline = true;
+      }
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -70,8 +114,8 @@ class ProductProvider extends ChangeNotifier {
 
   // Daha fazla ürün yükle (Pagination)
   Future<void> loadMoreProducts() async {
-    if (_isLoadingMore || !_hasMore || _isLoading) return;
-    if (_selectedCategory != null || _searchQuery.isNotEmpty) return; // Filtreliyken pagination yapma
+    if (_isLoadingMore || !_hasMore || _isLoading || _isOffline) return;
+    if (_selectedCategory != null || _searchQuery.isNotEmpty) return;
 
     _isLoadingMore = true;
     notifyListeners();
@@ -94,7 +138,7 @@ class ProductProvider extends ChangeNotifier {
       print('✅ ${moreProducts.length} ürün daha yüklendi (Sayfa $_currentPage)');
     } catch (e) {
       _errorMessage = e.toString();
-      _currentPage--; // Hata olursa sayfayı geri al
+      _currentPage--;
       print('❌ loadMoreProducts hatası: $e');
     } finally {
       _isLoadingMore = false;
@@ -112,7 +156,6 @@ class ProductProvider extends ChangeNotifier {
     _hasMore = true;
 
     if (category == null || category.isEmpty) {
-      // Filtre kaldırıldı, tüm ürünleri göster
       _applyFilters();
       notifyListeners();
       return;
@@ -140,39 +183,38 @@ class ProductProvider extends ChangeNotifier {
   void searchProducts(String query) {
     _searchQuery = query;
 
-    // Debounce: 500ms bekle
     _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 500), () {
       _performSearch();
     });
   }
 
-Future<void> _performSearch() async {
-  if (_searchQuery.isEmpty) {
-    _selectedCategory = null;
-    _applyFilters();
-    notifyListeners();
-    return;
-  }
+  Future<void> _performSearch() async {
+    if (_searchQuery.isEmpty) {
+      _selectedCategory = null;
+      _applyFilters();
+      notifyListeners();
+      return;
+    }
 
-  // LOCAL ARAMA (Client-side filtering)
-  _selectedCategory = null;
-  
-  final query = _searchQuery.toLowerCase().trim();
-  
-  _filteredProducts = _products.where((product) {
-    final stokAdi = product.stokAdi.toLowerCase();
-    final stokKodu = product.stokKodu.toLowerCase();
-    final kategori = product.kategori.toLowerCase();
+    // LOCAL ARAMA (Client-side filtering)
+    _selectedCategory = null;
     
-    return stokAdi.contains(query) || 
-           stokKodu.contains(query) || 
-           kategori.contains(query);
-  }).toList();
-  
-  print('🔍 ${_filteredProducts.length} ürün bulundu (Arama: $_searchQuery)');
-  notifyListeners();
-}
+    final query = _searchQuery.toLowerCase().trim();
+    
+    _filteredProducts = _products.where((product) {
+      final stokAdi = product.stokAdi.toLowerCase();
+      final stokKodu = product.stokKodu.toLowerCase();
+      final kategori = product.kategori.toLowerCase();
+      
+      return stokAdi.contains(query) || 
+             stokKodu.contains(query) || 
+             kategori.contains(query);
+    }).toList();
+    
+    print('🔍 ${_filteredProducts.length} ürün bulundu (Arama: $_searchQuery)');
+    notifyListeners();
+  }
 
   // Filtreleri uygula (local filtreleme)
   void _applyFilters() {
@@ -203,7 +245,6 @@ Future<void> _performSearch() async {
   // Tek ürün getir
   Future<ProductModel?> getProductById(String productId) async {
     try {
-      // Önce local'de ara
       final localProduct = _products.firstWhere(
         (p) => p.id == productId,
         orElse: () => _filteredProducts.firstWhere(
@@ -213,7 +254,6 @@ Future<void> _performSearch() async {
       );
       return localProduct;
     } catch (e) {
-      // Local'de yoksa API'den çek
       try {
         return await _productRepository.fetchProductById(productId);
       } catch (e) {
@@ -229,12 +269,27 @@ Future<void> _performSearch() async {
     await loadProducts(forceRefresh: true);
   }
 
+  // 🆕 Cache bilgisini al
+  Future<Map<String, dynamic>> getCacheInfo() async {
+    return await _productRepository.getCacheInfo();
+  }
+
+  // 🆕 Manuel bağlantı kontrolü (Pull-to-refresh için)
+  Future<void> checkConnectivityAndRefresh() async {
+    await _checkConnectivity();
+    if (!_isOffline) {
+      await refreshProducts();
+    }
+    notifyListeners();
+  }
+
   // Reset
   void reset() {
     _products = [];
     _filteredProducts = [];
     _isLoading = false;
     _isLoadingMore = false;
+    _isOffline = false;
     _errorMessage = null;
     _selectedCategory = null;
     _searchQuery = '';
@@ -263,6 +318,7 @@ Future<void> _performSearch() async {
   @override
   void dispose() {
     _debounceTimer?.cancel();
+    _connectivitySubscription?.cancel();
     super.dispose();
   }
 }
