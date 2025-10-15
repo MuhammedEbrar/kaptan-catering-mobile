@@ -4,13 +4,15 @@ import 'core/constants/app_colors.dart';
 import 'core/di/injection.dart';
 import 'data/repositories/auth_repository.dart';
 import 'data/repositories/product_repository.dart';
+import 'data/repositories/order_repository.dart';  
 import 'presentation/providers/auth_provider.dart';
 import 'presentation/providers/product_provider.dart';
 import 'presentation/providers/category_provider.dart';
-import 'presentation/providers/cart_provider.dart'; // ⬅️ EKLE
+import 'presentation/providers/cart_provider.dart';
+import 'presentation/providers/order_provider.dart';  
 import 'presentation/screens/auth/login_screen.dart';
 import 'presentation/screens/home/home_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // ⬅️ EKLE
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,8 +39,11 @@ class KaptanCateringApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => CategoryProvider(),
         ),
-        ChangeNotifierProvider( // ⬅️ EKLE
+        ChangeNotifierProvider(
           create: (_) => CartProvider(getIt<SharedPreferences>()),
+        ),
+        ChangeNotifierProvider(  
+          create: (_) => OrderProvider(getIt<OrderRepository>()),
         ),
       ],
       child: MaterialApp(
@@ -66,6 +71,7 @@ class KaptanCateringApp extends StatelessWidget {
     );
   }
 }
+
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

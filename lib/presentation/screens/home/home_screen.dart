@@ -6,6 +6,7 @@ import '../../providers/product_provider.dart';
 import '../../providers/category_provider.dart';
 import '../../providers/cart_provider.dart';
 import '../auth/login_screen.dart';
+import '../cart/cart_screen.dart'; // 👈 YENİ EKLENEN
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -75,18 +76,15 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Kaptan Catering'),
         backgroundColor: AppColors.primary,
         actions: [
-          // Sepet ikonu
+          // Sepet ikonu - 👈 GÜNCELLENDİ
           Stack(
             children: [
               IconButton(
                 icon: const Icon(Icons.shopping_cart),
                 onPressed: () {
-                  // TODO: Sepet sayfasına git
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Sepet sayfası henüz hazır değil'),
-                      duration: Duration(seconds: 1),
-                    ),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const CartScreen()),
                   );
                 },
               ),
