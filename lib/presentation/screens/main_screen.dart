@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../providers/cart_provider.dart';
-import '../widgets/menu_bottom_sheet.dart';
 import 'home/home_screen.dart';
 import 'products/products_screen.dart';
 import 'cart/cart_screen.dart';
@@ -24,7 +23,6 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     _tabController = TabController(length: 4, vsync: this);
   }
 
-  // 👈 BU METODU EKLE
   void changeTab(int index) {
     setState(() {
       _tabController.animateTo(index);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../orders/orders_screen.dart';
 import '../favorites/favorites_screen.dart';
 import '../addresses/addresses_screen.dart';
+import '../settings/settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -99,12 +100,31 @@ class ProfileScreen extends StatelessWidget {
                 );
               },
             ),
-            _buildMenuItem(Icons.settings, 'Ayarlar', () {}),
+            _buildMenuItem(
+              Icons.settings,
+              'Ayarlar',
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                );
+              },
+            ),
             
             const Divider(),
             
-            _buildMenuItem(Icons.info, 'Hakkımızda', () {}),
-            _buildMenuItem(Icons.contact_support, 'İletişim', () {}),
+            _buildMenuItem(Icons.info, 'Hakkımızda', () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AboutScreen()),
+              );
+            }),
+            _buildMenuItem(Icons.contact_support, 'İletişim', () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ContactScreen()),
+              );
+            }),
             
             const Divider(),
             
