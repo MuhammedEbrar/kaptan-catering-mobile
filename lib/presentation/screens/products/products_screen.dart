@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'product_detail_screen.dart';
 
 class ProductsScreen extends StatefulWidget {
   const ProductsScreen({Key? key}) : super(key: key);
@@ -58,7 +59,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
           const SizedBox(height: 16),
 
-          // Ürün Grid (Placeholder)
+          // Ürün Grid
           Expanded(
             child: GridView.builder(
               padding: const EdgeInsets.all(16),
@@ -95,59 +96,69 @@ class _ProductsScreenState extends State<ProductsScreen> {
   }
 
   Widget _buildProductCard() {
-    return Card(
-      elevation: 2,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Ürün Resmi
-          Container(
-            height: 120,
-            color: Colors.grey[200],
-            child: const Center(
-              child: Icon(Icons.image, size: 50, color: Colors.grey),
-            ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ProductDetailScreen(),
           ),
-          
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Ürün Adı',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  '₺99.99',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+        );
+      },
+      child: Card(
+        elevation: 2,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Ürün Resmi
+            Container(
+              height: 120,
+              color: Colors.grey[200],
+              child: const Center(
+                child: Icon(Icons.image, size: 50, color: Colors.grey),
+              ),
+            ),
+            
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Ürün Adı',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'KG',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.add_shopping_cart, size: 20),
+                  const SizedBox(height: 4),
+                  const Text(
+                    '₺99.99',
+                    style: TextStyle(
                       color: Colors.red,
-                      onPressed: () {},
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'KG',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.add_shopping_cart, size: 20),
+                        color: Colors.red,
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
