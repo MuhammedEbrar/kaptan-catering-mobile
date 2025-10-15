@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'home/home_screen.dart';
 import 'products/products_screen.dart';
 import 'profile/profile_screen.dart';
+import '../widgets/menu_bottom_sheet.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -30,9 +31,14 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
+          if (index == 3) {
+            // Menü tab'ı - Bottom sheet aç
+            MenuBottomSheet.show(context);
+          } else {
+            setState(() {
+              _currentIndex = index;
+            });
+          }
         },
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.red,
