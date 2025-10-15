@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'home/home_screen.dart';
+import 'products/products_screen.dart';
+import 'profile/profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  const MainScreen({Key? key}) : super(key: key);
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -13,8 +15,8 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const Center(child: Text('Ürünler', style: TextStyle(fontSize: 24))),
-    const Center(child: Text('Profil', style: TextStyle(fontSize: 24))),
+    const ProductsScreen(),
+    const ProfileScreen(),
     const Center(child: Text('Menü', style: TextStyle(fontSize: 24))),
   ];
 
