@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'core/constants/app_colors.dart';
 import 'core/di/injection.dart';
 import 'data/repositories/auth_repository.dart';
 import 'data/repositories/product_repository.dart';
-import 'data/repositories/order_repository.dart';  
+import 'data/repositories/order_repository.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'presentation/providers/product_provider.dart';
 import 'presentation/providers/category_provider.dart';
 import 'presentation/providers/cart_provider.dart';
-import 'presentation/providers/order_provider.dart';  
+import 'presentation/providers/order_provider.dart';
 import 'presentation/screens/auth/login_screen.dart';
-import 'presentation/screens/home/home_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'presentation/screens/main_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,7 +42,7 @@ class KaptanCateringApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => CartProvider(getIt<SharedPreferences>()),
         ),
-        ChangeNotifierProvider(  
+        ChangeNotifierProvider(
           create: (_) => OrderProvider(getIt<OrderRepository>()),
         ),
       ],
@@ -72,7 +72,6 @@ class KaptanCateringApp extends StatelessWidget {
   }
 }
 
-
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -101,7 +100,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // Login durumuna göre yönlendir
     if (authProvider.isLoggedIn) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(builder: (_) => const MainScreen()),
       );
     } else {
       Navigator.of(context).pushReplacement(
@@ -112,19 +111,19 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: AppColors.primary,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.restaurant_menu,
               size: 100,
               color: Colors.white,
             ),
-            const SizedBox(height: 20),
-            const Text(
+            SizedBox(height: 20),
+            Text(
               'Kaptan Catering',
               style: TextStyle(
                 fontSize: 32,
@@ -132,8 +131,8 @@ class _SplashScreenState extends State<SplashScreen> {
                 color: Colors.white,
               ),
             ),
-            const SizedBox(height: 40),
-            const CircularProgressIndicator(
+            SizedBox(height: 40),
+            CircularProgressIndicator(
               color: Colors.white,
             ),
           ],
