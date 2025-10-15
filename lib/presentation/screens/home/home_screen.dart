@@ -5,6 +5,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/product_provider.dart';
 import '../../providers/category_provider.dart';
 import '../auth/login_screen.dart';
+import '../cart/cart_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -47,9 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
       
       // Filtreleme varsa pagination yapma
       if (productProvider.searchQuery.isNotEmpty || 
-          productProvider.selectedCategory != null) {
-        return;
-      }
+          productProvider.selectedCategory != null) return;
 
       // Daha fazla ürün yükle
       productProvider.loadMoreProducts();
@@ -75,6 +74,17 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Kaptan Catering'),
         backgroundColor: AppColors.primary,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const CartScreen(),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
