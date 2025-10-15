@@ -11,7 +11,7 @@ class HomeScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Hero Section - Kırmızı banner
+            // Hero Section
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
@@ -40,8 +40,6 @@ class HomeScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 24),
-                  
-                  // Butonlar - Responsive
                   Wrap(
                     spacing: 12,
                     runSpacing: 12,
@@ -49,7 +47,6 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       ElevatedButton.icon(
                         onPressed: () {
-                          // Ürünler sayfasına git (Navigator ile)
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -110,7 +107,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-            // Neden Kaptan Food Service?
+            // Özellikler
             Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
@@ -133,8 +130,6 @@ class HomeScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 32),
-
-                  // Özellikler
                   _buildFeatureCard(
                     icon: Icons.inventory_2,
                     title: 'Geniş Ürün Yelpazesi',

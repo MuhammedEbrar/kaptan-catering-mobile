@@ -1,6 +1,3 @@
-//Geçici sayfa Semma bunu değiştirebilirsin.
-
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
@@ -84,7 +81,7 @@ class _CartScreenState extends State<CartScreen> {
       userId: authProvider.user!.id.toString(),
       cartItems: cartProvider.items,
       totalAmount: cartProvider.getFinalTotal(),
-      paymentMethod: 'cash_on_delivery', // Geçici olarak kapıda ödeme
+      paymentMethod: 'cash_on_delivery',
       deliveryAddress: authProvider.user!.address ?? 'Adres bilgisi yok',
       deliveryPhone: authProvider.user!.phone,
       orderNote: _orderNoteController.text.isNotEmpty 
@@ -145,8 +142,8 @@ class _CartScreenState extends State<CartScreen> {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context); // Dialog kapat
-                  Navigator.pop(context); // Cart ekranını kapat
+                  Navigator.pop(context);
+                  Navigator.pop(context);
                 },
                 child: const Text('Tamam'),
               ),
@@ -155,7 +152,6 @@ class _CartScreenState extends State<CartScreen> {
         );
       }
     } else {
-      // Hata mesajı
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -177,7 +173,6 @@ class _CartScreenState extends State<CartScreen> {
       ),
       body: Consumer<CartProvider>(
         builder: (context, cartProvider, child) {
-          // Sepet boş
           if (cartProvider.isEmpty) {
             return Center(
               child: Column(
@@ -225,10 +220,8 @@ class _CartScreenState extends State<CartScreen> {
             );
           }
 
-          // Sepet dolu
           return Column(
             children: [
-              // Ürün listesi
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.all(16),
@@ -241,7 +234,6 @@ class _CartScreenState extends State<CartScreen> {
                         padding: const EdgeInsets.all(12),
                         child: Row(
                           children: [
-                            // Ürün resmi (placeholder)
                             Container(
                               width: 80,
                               height: 80,
@@ -256,8 +248,6 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                             ),
                             const SizedBox(width: 12),
-                            
-                            // Ürün bilgileri
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,11 +270,8 @@ class _CartScreenState extends State<CartScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 8),
-                                  
-                                  // Miktar seçici
                                   Row(
                                     children: [
-                                      // Azalt butonu
                                       IconButton(
                                         icon: const Icon(Icons.remove_circle_outline),
                                         onPressed: () {
@@ -292,8 +279,6 @@ class _CartScreenState extends State<CartScreen> {
                                         },
                                         color: AppColors.primary,
                                       ),
-                                      
-                                      // Miktar
                                       Container(
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 12,
@@ -310,8 +295,6 @@ class _CartScreenState extends State<CartScreen> {
                                           ),
                                         ),
                                       ),
-                                      
-                                      // Artır butonu
                                       IconButton(
                                         icon: const Icon(Icons.add_circle_outline),
                                         onPressed: () {
@@ -319,10 +302,7 @@ class _CartScreenState extends State<CartScreen> {
                                         },
                                         color: AppColors.primary,
                                       ),
-                                      
                                       const Spacer(),
-                                      
-                                      // Toplam fiyat
                                       Text(
                                         '${item.getTotalPrice().toStringAsFixed(2)} ₺',
                                         style: const TextStyle(
@@ -336,8 +316,6 @@ class _CartScreenState extends State<CartScreen> {
                                 ],
                               ),
                             ),
-                            
-                            // Sil butonu
                             IconButton(
                               icon: const Icon(Icons.delete_outline),
                               onPressed: () {
@@ -358,8 +336,6 @@ class _CartScreenState extends State<CartScreen> {
                   },
                 ),
               ),
-              
-              // Özet kartı
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -375,7 +351,6 @@ class _CartScreenState extends State<CartScreen> {
                 ),
                 child: Column(
                   children: [
-                    // Toplam Ürün
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -387,8 +362,6 @@ class _CartScreenState extends State<CartScreen> {
                       ],
                     ),
                     const SizedBox(height: 8),
-
-                    // Sipariş Notu (Opsiyonel) - GENİŞLETİLEBİLİR
                     ExpansionTile(
                       title: const Text(
                         'Sipariş Notu (Opsiyonel)',
@@ -408,10 +381,7 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                       ],
                     ),
-                    
                     const Divider(height: 24, thickness: 2),
-                    
-                    // Genel toplam
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -432,10 +402,7 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                       ],
                     ),
-                    
                     const SizedBox(height: 16),
-                    
-                    // Sipariş talebi gönder butonu
                     SizedBox(
                       width: double.infinity,
                       height: 50,
@@ -457,10 +424,7 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 8),
-
-                    // Sepeti Temizle butonu
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton(
@@ -506,10 +470,7 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 8),
-
-                    // Bilgilendirme
                     Row(
                       children: [
                         Icon(Icons.info_outline, size: 16, color: Colors.grey[600]),
