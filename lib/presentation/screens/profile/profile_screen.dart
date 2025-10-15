@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../orders/orders_screen.dart';
+import '../favorites/favorites_screen.dart';
+import '../addresses/addresses_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -66,9 +69,36 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Menü Items
-            _buildMenuItem(Icons.shopping_cart, 'Siparişlerim', () {}),
-            _buildMenuItem(Icons.favorite, 'Favorilerim', () {}),
-            _buildMenuItem(Icons.location_on, 'Adreslerim', () {}),
+            _buildMenuItem(
+              Icons.shopping_cart,
+              'Siparişlerim',
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const OrdersScreen()),
+                );
+              },
+            ),
+            _buildMenuItem(
+              Icons.favorite,
+              'Favorilerim',
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+                );
+              },
+            ),
+            _buildMenuItem(
+              Icons.location_on,
+              'Adreslerim',
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AddressesScreen()),
+                );
+              },
+            ),
             _buildMenuItem(Icons.settings, 'Ayarlar', () {}),
             
             const Divider(),
