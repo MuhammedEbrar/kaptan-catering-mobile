@@ -4,6 +4,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../data/models/product_model.dart';
 import '../../providers/cart_provider.dart';
 import '../../widgets/animated_button.dart';
+import '../../widgets/custom_snackbar.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final ProductModel product;
@@ -38,12 +39,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           IconButton(
             icon: const Icon(Icons.favorite_border),
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Favoriler özelliği yakında!'),
-                  duration: Duration(seconds: 1),
-                ),
-              );
+              CustomSnackBar.info(context, 'Favoriler özelliği yakında!');
             },
           ),
         ],
@@ -220,12 +216,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         if (isInCart) {
                           await cartProvider.removeFromCart(widget.product.id);
                           if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Sepetten çıkarıldı'),
-                                duration: Duration(seconds: 1),
-                              ),
-                            );
+                            CustomSnackBar.info(context, 'Sepetten çıkarıldı');
                           }
                         } else {
                           await cartProvider.addToCart(
@@ -233,23 +224,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             quantity: _quantity,
                           );
                           if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Sepete eklendi!'),
-                                backgroundColor: AppColors.success,
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
+                            CustomSnackBar.success(context, 'Sepete eklendi!');
                           }
                         }
                       } catch (e) {
                         if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(e.toString()),
-                              backgroundColor: AppColors.error,
-                            ),
-                          );
+                          CustomSnackBar.error(context, e.toString());
                         }
                       }
                     },
