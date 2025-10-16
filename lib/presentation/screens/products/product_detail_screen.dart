@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../data/models/product_model.dart';
 import '../../providers/cart_provider.dart';
+import '../../widgets/animated_button.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final ProductModel product;
@@ -207,68 +208,66 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
                   const SizedBox(height: 32),
 
-                  // Sepete Ekle Butonu
-                  SizedBox(
+                  // Sepete Ekle Butonu (Animated)
+                  AnimatedButton(
                     width: double.infinity,
                     height: 56,
-                    child: ElevatedButton.icon(
-                      onPressed: () async {
-                        try {
-                          if (isInCart) {
-                            await cartProvider.removeFromCart(widget.product.id);
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Sepetten çıkarıldı'),
-                                  duration: Duration(seconds: 1),
-                                ),
-                              );
-                            }
-                          } else {
-                            await cartProvider.addToCart(
-                              widget.product,
-                              quantity: _quantity,
-                            );
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Sepete eklendi!'),
-                                  backgroundColor: AppColors.success,
-                                  duration: Duration(seconds: 2),
-                                ),
-                              );
-                            }
-                          }
-                        } catch (e) {
+                    backgroundColor: isInCart 
+                        ? AppColors.textSecondary 
+                        : AppColors.primary,
+                    onPressed: () async {
+                      try {
+                        if (isInCart) {
+                          await cartProvider.removeFromCart(widget.product.id);
                           if (mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(e.toString()),
-                                backgroundColor: AppColors.error,
+                              const SnackBar(
+                                content: Text('Sepetten çıkarıldı'),
+                                duration: Duration(seconds: 1),
+                              ),
+                            );
+                          }
+                        } else {
+                          await cartProvider.addToCart(
+                            widget.product,
+                            quantity: _quantity,
+                          );
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Sepete eklendi!'),
+                                backgroundColor: AppColors.success,
+                                duration: Duration(seconds: 2),
                               ),
                             );
                           }
                         }
-                      },
-                      icon: Icon(
-                        isInCart ? Icons.shopping_cart : Icons.add_shopping_cart,
-                      ),
-                      label: Text(
-                        isInCart ? 'Sepetten Çıkar' : 'Sepete Ekle',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                      } catch (e) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(e.toString()),
+                              backgroundColor: AppColors.error,
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          isInCart ? Icons.shopping_cart : Icons.add_shopping_cart,
                         ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: isInCart 
-                            ? AppColors.textSecondary 
-                            : AppColors.primary,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                        const SizedBox(width: 8),
+                        Text(
+                          isInCart ? 'Sepetten Çıkar' : 'Sepete Ekle',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
 

@@ -4,6 +4,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../providers/product_provider.dart';
 import '../../providers/category_provider.dart';
 import '../../providers/cart_provider.dart';
+import '../../widgets/shimmer_product_card.dart';
 import 'product_detail_screen.dart';
 
 class ProductsScreen extends StatefulWidget {
@@ -165,7 +166,19 @@ class _ProductsScreenState extends State<ProductsScreen> {
           // Ürün grid
           Expanded(
             child: productProvider.isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? GridView.builder(
+                    padding: const EdgeInsets.all(16),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.75,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                    ),
+                    itemCount: 6,
+                    itemBuilder: (context, index) {
+                      return const ShimmerProductCard();
+                    },
+                  )
                 : productProvider.productCount == 0
                     ? const Center(
                         child: Text('Ürün bulunamadı'),
@@ -200,8 +213,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) =>
-                                      ProductDetailScreen(product: product),
+                                  builder: (_) => ProductDetailScreen(
+                                    product: product,
+                                    heroTag: 'product_${product.id}',
+                                  ),
                                 ),
                               );
                             },
@@ -213,21 +228,24 @@ class _ProductsScreenState extends State<ProductsScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Ürün resmi
+                                  // Ürün resmi (Hero animation)
                                   Expanded(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(12),
-                                          topRight: Radius.circular(12),
+                                    child: Hero(
+                                      tag: 'product_${product.id}',
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[200],
+                                          borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(12),
+                                            topRight: Radius.circular(12),
+                                          ),
                                         ),
-                                      ),
-                                      child: Center(
-                                        child: Icon(
-                                          Icons.fastfood,
-                                          size: 48,
-                                          color: Colors.grey[400],
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.fastfood,
+                                            size: 48,
+                                            color: Colors.grey[400],
+                                          ),
                                         ),
                                       ),
                                     ),
