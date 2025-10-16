@@ -5,12 +5,14 @@ import '../../../data/models/product_model.dart';
 import '../../providers/cart_provider.dart';
 
 class ProductDetailScreen extends StatefulWidget {
-  final ProductModel product; // 👈 BU SATIR OLMALI
+  final ProductModel product;
+  final String heroTag;
 
   const ProductDetailScreen({
-    super.key,
-    required this.product, // 👈 BU SATIR OLMALI
-  });
+    Key? key,
+    required this.product,
+    required this.heroTag,
+  }) : super(key: key);
 
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();
@@ -21,123 +23,160 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final product = widget.product; // 👈 product'a böyle erişiyoruz
     final cartProvider = context.watch<CartProvider>();
+    final isInCart = cartProvider.isInCart(widget.product.id);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(product.stokAdi),
+        title: Text(
+          widget.product.stokAdi,
+          overflow: TextOverflow.ellipsis,
+        ),
         backgroundColor: AppColors.primary,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.favorite_border),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Favoriler özelliği yakında!'),
+                  duration: Duration(seconds: 1),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Ürün resmi
-            Container(
-              height: 300,
-              width: double.infinity,
-              color: Colors.grey[200],
-              child: Center(
-                child: Icon(
-                  Icons.fastfood,
-                  size: 100,
-                  color: Colors.grey[400],
+            // Ürün Resmi (Hero animation)
+            Hero(
+              tag: widget.heroTag,
+              child: Container(
+                height: 300,
+                width: double.infinity,
+                color: Colors.grey[200],
+                child: Center(
+                  child: Icon(
+                    Icons.fastfood,
+                    size: 100,
+                    color: Colors.grey[400],
+                  ),
                 ),
               ),
             ),
 
-            // Ürün bilgileri
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Stok kodu
+                  // Stok Kodu Badge
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(6),
+                      color: AppColors.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      'Stok Kodu: ${product.stokKodu}',
+                      'Stok Kodu: ${widget.product.stokKodu}',
                       style: const TextStyle(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.bold,
                         fontSize: 12,
-                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
 
                   const SizedBox(height: 16),
 
-                  // Ürün adı
+                  // Ürün Adı
                   Text(
-                    product.stokAdi,
+                    widget.product.stokAdi,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
 
-                  // Kategori
-                  Text(
-                    product.kategori,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Birim
-                  Row(
+                  // Kategori ve Birim
+                  Wrap(
+                    spacing: 8,
                     children: [
-                      const Icon(Icons.straighten, size: 20),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Birim: ${product.birim}',
-                        style: const TextStyle(fontSize: 16),
+                      Chip(
+                        label: Text(widget.product.kategori),
+                        backgroundColor: Colors.orange[100],
+                        labelStyle: const TextStyle(fontSize: 12),
+                      ),
+                      Chip(
+                        label: Text('Birim: ${widget.product.birim}'),
+                        backgroundColor: Colors.blue[100],
+                        labelStyle: const TextStyle(fontSize: 12),
                       ),
                     ],
                   ),
 
                   const SizedBox(height: 24),
-                  const Divider(),
+
+                  // Stok Durumu
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.green[50],
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.green),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.check_circle, color: Colors.green),
+                        SizedBox(width: 8),
+                        Text(
+                          'Stokta Var',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
                   const SizedBox(height: 24),
 
-                  // Miktar seçici
+                  // Miktar Seçici
                   const Text(
-                    'Miktar',
+                    'Miktar:',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 12),
-
                   Row(
                     children: [
                       IconButton(
                         onPressed: () {
                           if (_quantity > 1) {
-                            setState(() => _quantity--);
+                            setState(() {
+                              _quantity--;
+                            });
                           }
                         },
                         icon: const Icon(Icons.remove_circle_outline),
                         color: AppColors.primary,
                         iconSize: 32,
                       ),
-                      const SizedBox(width: 16),
                       Container(
+                        width: 100,
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
+                          horizontal: 20,
                           vertical: 12,
                         ),
                         decoration: BoxDecoration(
@@ -145,17 +184,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          '$_quantity ${product.birim}',
+                          '$_quantity ${widget.product.birim}',
+                          textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 16),
                       IconButton(
                         onPressed: () {
-                          setState(() => _quantity++);
+                          setState(() {
+                            _quantity++;
+                          });
                         },
                         icon: const Icon(Icons.add_circle_outline),
                         color: AppColors.primary,
@@ -166,32 +207,40 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
                   const SizedBox(height: 32),
 
-                  // Sepete ekle butonu
+                  // Sepete Ekle Butonu
                   SizedBox(
                     width: double.infinity,
                     height: 56,
                     child: ElevatedButton.icon(
                       onPressed: () async {
                         try {
-                          await cartProvider.addToCart(
-                            product,
-                            quantity: _quantity,
-                          );
-
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  '${product.stokAdi} sepete eklendi',
+                          if (isInCart) {
+                            await cartProvider.removeFromCart(widget.product.id);
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Sepetten çıkarıldı'),
+                                  duration: Duration(seconds: 1),
                                 ),
-                                backgroundColor: AppColors.success,
-                                duration: const Duration(seconds: 2),
-                              ),
+                              );
+                            }
+                          } else {
+                            await cartProvider.addToCart(
+                              widget.product,
+                              quantity: _quantity,
                             );
-                            Navigator.pop(context);
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Sepete eklendi!'),
+                                  backgroundColor: AppColors.success,
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            }
                           }
                         } catch (e) {
-                          if (context.mounted) {
+                          if (mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(e.toString()),
@@ -201,16 +250,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           }
                         }
                       },
-                      icon: const Icon(Icons.shopping_cart),
-                      label: const Text(
-                        'Sepete Ekle',
-                        style: TextStyle(
-                          fontSize: 18,
+                      icon: Icon(
+                        isInCart ? Icons.shopping_cart : Icons.add_shopping_cart,
+                      ),
+                      label: Text(
+                        isInCart ? 'Sepetten Çıkar' : 'Sepete Ekle',
+                        style: const TextStyle(
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: isInCart 
+                            ? AppColors.textSecondary 
+                            : AppColors.primary,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -219,25 +272,24 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                   ),
 
-                  if (product.aciklama != null) ...[
-                    const SizedBox(height: 32),
-                    const Text(
-                      'Açıklama',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  const SizedBox(height: 24),
+
+                  // Ürün Açıklaması
+                  ExpansionTile(
+                    title: const Text(
+                      'Ürün Detayları',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      product.aciklama!,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[700],
-                        height: 1.5,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Text(
+                          'Bu ürün hakkında detaylı bilgi buraya eklenecek.',
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ],
               ),
             ),

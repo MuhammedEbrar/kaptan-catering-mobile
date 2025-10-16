@@ -6,45 +6,45 @@
 ---
 
 ## ✅ PHASE 0: Proje Kurulumu
-- [ ] Flutter SDK kurulumu (Windows 11)
-- [ ] Android Studio kurulumu
-- [ ] VS Code kurulumu ve eklentiler
-- [ ] Git kurulumu ve yapılandırma
-- [ ] Projeyi GitHub'dan clone'lama
-- [ ] `flutter pub get` çalıştırma
-- [ ] Emulator kurulumu (Pixel 4, API 30 önerilen)
-- [ ] İlk çalıştırma (`flutter run`)
-- [ ] Hot reload test (`r` tuşu)
-- [ ] Mevcut ekranları keşfet (Login, Register, Home)
+- [x] Flutter SDK kurulumu (Windows 11)
+- [x] Android Studio kurulumu
+- [x] VS Code kurulumu ve eklentiler
+- [x] Git kurulumu ve yapılandırma
+- [x] Projeyi GitHub'dan clone'lama
+- [x] `flutter pub get` çalıştırma
+- [x] Emulator kurulumu (Pixel 4, API 30 önerilen)
+- [x] İlk çalıştırma (`flutter run`)
+- [x] Hot reload test (`r` tuşu)
+- [x] Mevcut ekranları keşfet (Login, Register, Home)
 
 ---
 
 ## ✅ PHASE 1: Git Workflow Öğrenme
-- [ ] Git branch yapısını anlama
-- [ ] `feature/ui-screens` branch'i oluşturma
-- [ ] İlk commit yapma
-- [ ] GitHub'a push etme
-- [ ] Main'den pull alma
-- [ ] Merge işlemi yapma
-- [ ] Pull Request açma (deneme)
-- [ ] Conflict çözme pratiği
+- [x] Git branch yapısını anlama
+- [x] `feature/ui-screens` branch'i oluşturma
+- [x] İlk commit yapma
+- [x] GitHub'a push etme
+- [x] Main'den pull alma
+- [x] Merge işlemi yapma
+- [x] Pull Request açma (deneme)
+- [x] Conflict çözme pratiği
 
 ---
 
 ## 🔄 PHASE 3: Bottom Navigation & Ana Sayfa (ŞİMDİ)
 
 ### 3.1 Bottom Navigation Bar
-- [ ] `lib/presentation/widgets/custom_bottom_nav.dart` dosyasını aç
-- [ ] 4 tab yapısını güncelle:
-  - [ ] Ana Sayfa (Icons.home_outlined / Icons.home)
-  - [ ] Ürünler (Icons.shopping_bag_outlined / Icons.shopping_bag)
-  - [ ] Profil (Icons.person_outline / Icons.person)
-  - [ ] Menü (Icons.menu)
-- [ ] Aktif tab rengi: `AppColors.primary` (kırmızı)
-- [ ] İnaktif tab rengi: `AppColors.bottomNavInactive` (gri)
-- [ ] Selected/unselected icon ayrımı
-- [ ] Label'lar ekle
-- [ ] Smooth transition animasyonu
+- [x] `lib/presentation/widgets/custom_bottom_nav.dart` dosyasını aç
+- [x] 4 tab yapısını güncelle:
+  - [x] Ana Sayfa (Icons.home_outlined / Icons.home)
+  - [x] Ürünler (Icons.shopping_bag_outlined / Icons.shopping_bag)
+  - [x] Profil (Icons.person_outline / Icons.person)
+  - [x] Menü (Icons.menu)
+- [x] Aktif tab rengi: `AppColors.primary` (kırmızı)
+- [x] İnaktif tab rengi: `AppColors.bottomNavInactive` (gri)
+- [x] Selected/unselected icon ayrımı
+- [x] Label'lar ekle
+- [x] Smooth transition animasyonu
 
 ### 3.2 Main Screen (Tab Controller)
 - [ ] `lib/presentation/screens/main_screen.dart` oluştur

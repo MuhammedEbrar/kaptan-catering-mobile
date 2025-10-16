@@ -3,6 +3,8 @@ import '../orders/orders_screen.dart';
 import '../favorites/favorites_screen.dart';
 import '../addresses/addresses_screen.dart';
 import '../settings/settings_screen.dart';
+import 'edit_profile_screen.dart';
+import '../../utils/page_transitions.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -61,7 +63,14 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   IconButton(
                     icon: const Icon(Icons.edit),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const EditProfileScreen(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -76,7 +85,7 @@ class ProfileScreen extends StatelessWidget {
               () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const OrdersScreen()),
+                  FadeSlidePageRoute(page: const OrdersScreen()),
                 );
               },
             ),
@@ -86,7 +95,7 @@ class ProfileScreen extends StatelessWidget {
               () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+                  FadeSlidePageRoute(page: const FavoritesScreen()),
                 );
               },
             ),
@@ -96,7 +105,7 @@ class ProfileScreen extends StatelessWidget {
               () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const AddressesScreen()),
+                  FadeSlidePageRoute(page: const AddressesScreen()),
                 );
               },
             ),
@@ -106,32 +115,46 @@ class ProfileScreen extends StatelessWidget {
               () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                  FadeSlidePageRoute(page: const SettingsScreen()),
                 );
               },
             ),
             
             const Divider(),
             
-            _buildMenuItem(Icons.info, 'Hakkımızda', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const AboutScreen()),
-              );
-            }),
-            _buildMenuItem(Icons.contact_support, 'İletişim', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const ContactScreen()),
-              );
-            }),
-            
-            const Divider(),
-            
             _buildMenuItem(
               Icons.logout,
               'Çıkış Yap',
-              () {},
+              () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Çıkış Yap'),
+                    content: const Text('Çıkış yapmak istediğinize emin misiniz?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('İptal'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Çıkış yapıldı'),
+                              duration: Duration(seconds: 1),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'Çıkış Yap',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
               isDestructive: true,
             ),
           ],
