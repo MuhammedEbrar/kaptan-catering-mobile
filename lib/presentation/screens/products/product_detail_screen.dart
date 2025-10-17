@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../data/models/product_model.dart';
 import '../../providers/cart_provider.dart';
+import '../../providers/favorite_provider.dart';
 import '../../widgets/animated_button.dart';
 import '../../widgets/custom_snackbar.dart';
 import '../../widgets/success_animation.dart';
@@ -37,10 +38,26 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         ),
         backgroundColor: AppColors.primary,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.favorite_border),
-            onPressed: () {
-              CustomSnackBar.info(context, 'Favoriler özelliği yakında!');
+          Consumer<FavoriteProvider>(
+            builder: (context, favoriteProvider, child) {
+              final isFavorite = favoriteProvider.isFavorite(widget.product.id);
+
+              return IconButton(
+                icon: Icon(
+                  isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: isFavorite ? Colors.red : Colors.white,
+                ),
+                onPressed: () async {
+                  await favoriteProvider.toggleFavorite(widget.product);
+
+                  if (context.mounted) {
+                    CustomSnackBar.success(
+                      context,
+                      isFavorite ? 'Favorilerden çıkarıldı' : 'Favorilere eklendi!',
+                    );
+                  }
+                },
+              );
             },
           ),
         ],

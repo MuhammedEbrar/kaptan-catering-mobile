@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/constants/app_colors.dart';
 import '../orders/orders_screen.dart';
 import '../favorites/favorites_screen.dart';
 import '../addresses/addresses_screen.dart';
@@ -14,7 +15,7 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profilim'),
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.primary,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -22,12 +23,12 @@ class ProfileScreen extends StatelessWidget {
             // Kullanıcı Bilgileri Card
             Container(
               padding: const EdgeInsets.all(20),
-              color: Colors.red[50],
+              color: AppColors.primary.withOpacity(0.1),
               child: Row(
                 children: [
                   CircleAvatar(
                     radius: 40,
-                    backgroundColor: Colors.red,
+                    backgroundColor: AppColors.primary,
                     child: const Icon(Icons.person, size: 40, color: Colors.white),
                   ),
                   const SizedBox(width: 16),
@@ -148,7 +149,7 @@ class ProfileScreen extends StatelessWidget {
                         },
                         child: const Text(
                           'Çıkış Yap',
-                          style: TextStyle(color: Colors.red),
+                          style: TextStyle(color: AppColors.error),
                         ),
                       ),
                     ],
@@ -172,12 +173,12 @@ class ProfileScreen extends StatelessWidget {
     return ListTile(
       leading: Icon(
         icon,
-        color: isDestructive ? Colors.red : Colors.grey[700],
+        color: isDestructive ? AppColors.error : Colors.grey[700],
       ),
       title: Text(
         title,
         style: TextStyle(
-          color: isDestructive ? Colors.red : Colors.black,
+          color: isDestructive ? AppColors.error : Colors.black,
           fontWeight: isDestructive ? FontWeight.bold : FontWeight.normal,
         ),
       ),

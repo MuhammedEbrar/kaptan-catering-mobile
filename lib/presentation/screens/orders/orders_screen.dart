@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../widgets/custom_refresh_indicator.dart';
 import '../../widgets/empty_state_widget.dart';
 
@@ -55,7 +56,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Siparişlerim'),
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.primary,
       ),
       body: _orders.isEmpty
           ? EmptyStateWidget(
@@ -106,12 +107,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: Colors.red[50],
+                  color: AppColors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
                   Icons.receipt_long,
-                  color: Colors.red,
+                  color: AppColors.primary,
                   size: 28,
                 ),
               ),
@@ -177,7 +178,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
-                      color: Colors.red,
+                      color: AppColors.primary,
                     ),
                   ),
                 ],
@@ -201,7 +202,7 @@ class OrderDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Sipariş ${order['orderNo']}'),
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.primary,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -292,7 +293,7 @@ class OrderDetailScreen extends StatelessWidget {
                 },
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  side: const BorderSide(color: Colors.red, width: 2),
+                  side: const BorderSide(color: AppColors.primary, width: 2),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -300,7 +301,7 @@ class OrderDetailScreen extends StatelessWidget {
                 child: const Text(
                   'Tekrar Sipariş Ver',
                   style: TextStyle(
-                    color: Colors.red,
+                    color: AppColors.primary,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -357,7 +358,7 @@ class OrderDetailScreen extends StatelessWidget {
             style: TextStyle(
               fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
               fontSize: isBold ? 16 : 14,
-              color: isBold ? Colors.red : Colors.black,
+              color: isBold ? AppColors.primary : Colors.black,
             ),
           ),
         ],

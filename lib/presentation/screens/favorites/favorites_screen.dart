@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../widgets/empty_state_widget.dart';
 
 class FavoritesScreen extends StatefulWidget {
@@ -36,7 +37,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Favorilerim (${_favorites.length})'),
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.primary,
       ),
       body: _favorites.isEmpty
           ? EmptyStateWidget(
@@ -129,7 +130,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                             Text(
                               '₺${product['price'].toStringAsFixed(2)}',
                               style: const TextStyle(
-                                color: Colors.red,
+                                color: AppColors.primary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                               ),
@@ -145,7 +146,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         ),
                         IconButton(
                           icon: const Icon(Icons.add_shopping_cart, size: 20),
-                          color: Colors.red,
+                          color: AppColors.primary,
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
                           onPressed: () {
@@ -153,7 +154,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                               const SnackBar(
                                 content: Text('Sepete eklendi!'),
                                 duration: Duration(seconds: 1),
-                                backgroundColor: Colors.green,
+                                backgroundColor: AppColors.success,
                               ),
                             );
                           },
@@ -183,7 +184,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 ],
               ),
               child: IconButton(
-                icon: const Icon(Icons.favorite, color: Colors.red, size: 20),
+                icon: const Icon(Icons.favorite, color: AppColors.primary, size: 20),
                 onPressed: () {
                   setState(() {
                     _favorites.removeAt(index);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/constants/app_colors.dart';
 
 class EmptyStateWidget extends StatelessWidget {
   final IconData icon;
@@ -71,7 +72,7 @@ class EmptyStateWidget extends StatelessWidget {
               ElevatedButton(
                 onPressed: onButtonPressed,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
+                  backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 32,
