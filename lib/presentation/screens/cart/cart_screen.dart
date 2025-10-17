@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/constants/app_colors.dart';
 import 'checkout_screen.dart';
 
 class CartScreen extends StatefulWidget {
@@ -42,7 +43,7 @@ class _CartScreenState extends State<CartScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Sepetim (${_cartItems.length} Ürün)'),
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.primary,
       ),
       body: _cartItems.isEmpty
           ? _buildEmptyCart()
@@ -93,7 +94,7 @@ class _CartScreenState extends State<CartScreen> {
               Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.primary,
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
             ),
             child: const Text(
@@ -113,7 +114,7 @@ class _CartScreenState extends State<CartScreen> {
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
-        color: Colors.red,
+        color: AppColors.error,
         child: const Icon(Icons.delete, color: Colors.white),
       ),
       onDismissed: (direction) {
@@ -129,6 +130,10 @@ class _CartScreenState extends State<CartScreen> {
       },
       child: Card(
         margin: const EdgeInsets.only(bottom: 12),
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
@@ -137,8 +142,11 @@ class _CartScreenState extends State<CartScreen> {
               Container(
                 width: 80,
                 height: 80,
-                color: Colors.grey[200],
-                child: const Icon(Icons.image, color: Colors.grey),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.fastfood, color: Colors.grey, size: 40),
               ),
               const SizedBox(width: 12),
               
@@ -182,7 +190,7 @@ class _CartScreenState extends State<CartScreen> {
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
-                      color: Colors.red,
+                      color: AppColors.primary,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -190,7 +198,7 @@ class _CartScreenState extends State<CartScreen> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.remove_circle_outline, size: 20),
-                        color: Colors.red,
+                        color: AppColors.primary,
                         onPressed: () {
                           setState(() {
                             if (item['quantity'] > 1) {
@@ -198,19 +206,26 @@ class _CartScreenState extends State<CartScreen> {
                             }
                           });
                         },
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
                       ),
-                      Text(
-                        '${item['quantity']}',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Text(
+                          '${item['quantity']}',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                       IconButton(
                         icon: const Icon(Icons.add_circle_outline, size: 20),
-                        color: Colors.red,
+                        color: AppColors.primary,
                         onPressed: () {
                           setState(() {
                             item['quantity']++;
                           });
                         },
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
                       ),
                     ],
                   ),
@@ -254,7 +269,7 @@ class _CartScreenState extends State<CartScreen> {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.primary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               minimumSize: const Size(double.infinity, 0),
               shape: RoundedRectangleBorder(
@@ -291,7 +306,7 @@ class _CartScreenState extends State<CartScreen> {
           style: TextStyle(
             fontSize: isBold ? 18 : 14,
             fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-            color: isBold ? Colors.red : Colors.black,
+            color: isBold ? AppColors.primary : Colors.black,
           ),
         ),
       ],
