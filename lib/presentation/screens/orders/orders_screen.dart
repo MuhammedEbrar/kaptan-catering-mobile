@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/order_provider.dart';
 import '../../../data/models/order_model.dart';
+import '../../widgets/empty_state_widget.dart';
+import '../../widgets/custom_refresh_indicator.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -15,7 +17,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
   @override
   void initState() {
     super.initState();
-    // Sayfa açıldığında siparişleri yükle
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<OrderProvider>().loadOrders();
     });
@@ -39,14 +40,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
       ),
       body: Consumer<OrderProvider>(
         builder: (context, orderProvider, child) {
-          // Loading durumu
           if (orderProvider.isLoading) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
 
-          // Hata durumu
           if (orderProvider.errorMessage != null) {
             return Center(
               child: Column(
@@ -84,6 +83,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     label: const Text('Tekrar Dene'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
                     ),
                   ),
                 ],
@@ -91,13 +91,19 @@ class _OrdersScreenState extends State<OrdersScreen> {
             );
           }
 
-          // Boş durum
           if (orderProvider.orders.isEmpty) {
-            return _buildEmptyState();
+            return EmptyStateWidget(
+              icon: Icons.receipt_long,
+              title: 'Henüz Sipariş Yok',
+              subtitle: 'İlk siparişinizi vererek başlayın',
+              buttonText: 'Alışverişe Başla',
+              onButtonPressed: () {
+                Navigator.pop(context);
+              },
+            );
           }
 
-          // Sipariş listesi
-          return RefreshIndicator(
+          return CustomRefreshIndicator(
             onRefresh: () => orderProvider.loadOrders(),
             child: ListView.builder(
               padding: const EdgeInsets.all(16),
@@ -113,57 +119,15 @@ class _OrdersScreenState extends State<OrdersScreen> {
     );
   }
 
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.receipt_long,
-            size: 100,
-            color: Colors.grey[300],
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Henüz Sipariş Yok',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'İlk siparişinizi verin',
-            style: TextStyle(color: Colors.grey),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context); // Ana sayfaya dön
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 32,
-                vertical: 12,
-              ),
-            ),
-            child: const Text(
-              'Alışverişe Başla',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildOrderCard(BuildContext context, OrderModel order) {
     final statusColor = _getStatusColor(order.status);
-    
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: InkWell(
         onTap: () {
           Navigator.push(
@@ -173,11 +137,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
             ),
           );
         },
+        borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              // İkon
               Container(
                 width: 50,
                 height: 50,
@@ -192,8 +156,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
                 ),
               ),
               const SizedBox(width: 16),
-              
-              // Sipariş Bilgileri
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,8 +186,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   ],
                 ),
               ),
-              
-              // Durum ve Fiyat
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -253,6 +213,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
+                      color: AppColors.primary,
                     ),
                   ),
                 ],
@@ -301,7 +262,7 @@ class OrderDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final statusColor = _getStatusColor(order.status);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Sipariş #${order.id}'),
@@ -312,7 +273,6 @@ class OrderDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Durum Badge
             Center(
               child: Container(
                 padding: const EdgeInsets.symmetric(
@@ -333,10 +293,7 @@ class OrderDetailScreen extends StatelessWidget {
                 ),
               ),
             ),
-            
             const SizedBox(height: 24),
-            
-            // Sipariş Bilgileri
             _buildInfoCard(
               'Sipariş Bilgileri',
               [
@@ -346,10 +303,7 @@ class OrderDetailScreen extends StatelessWidget {
                 _buildInfoRow('Ödeme', order.getPaymentMethodDisplayName()),
               ],
             ),
-            
             const SizedBox(height: 16),
-            
-            // Ürünler
             _buildInfoCard(
               'Sipariş Detayları',
               [
@@ -390,10 +344,7 @@ class OrderDetailScreen extends StatelessWidget {
                 )),
               ],
             ),
-            
             const SizedBox(height: 16),
-            
-            // Teslimat Adresi
             _buildInfoCard(
               'Teslimat Adresi',
               [
@@ -410,10 +361,7 @@ class OrderDetailScreen extends StatelessWidget {
                 ],
               ],
             ),
-            
             const SizedBox(height: 16),
-            
-            // Sipariş Notu
             if (order.orderNote != null) ...[
               _buildInfoCard(
                 'Sipariş Notu',
@@ -429,8 +377,6 @@ class OrderDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
             ],
-            
-            // Tutar Özeti
             _buildInfoCard(
               'Ödeme Özeti',
               [
@@ -443,26 +389,28 @@ class OrderDetailScreen extends StatelessWidget {
                 ),
               ],
             ),
-            
             const SizedBox(height: 24),
-            
-            // İptal Butonu (sadece pending durum için)
             if (order.status == OrderModel.statusPending) ...[
-              OutlinedButton(
-                onPressed: () {
-                  _showCancelDialog(context, order.id!);
-                },
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  minimumSize: const Size(double.infinity, 0),
-                  side: const BorderSide(color: Colors.red),
-                ),
-                child: const Text(
-                  'Siparişi İptal Et',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: () {
+                    _showCancelDialog(context, order.id!);
+                  },
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    side: const BorderSide(color: Colors.red, width: 2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Siparişi İptal Et',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -475,6 +423,10 @@ class OrderDetailScreen extends StatelessWidget {
 
   Widget _buildInfoCard(String title, List<Widget> children) {
     return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -563,9 +515,8 @@ class OrderDetailScreen extends StatelessWidget {
           ),
           TextButton(
             onPressed: () async {
-              Navigator.pop(context); // Dialog'u kapat
+              Navigator.pop(context);
               
-              // Loading göster
               showDialog(
                 context: context,
                 barrierDismissible: false,
@@ -574,15 +525,12 @@ class OrderDetailScreen extends StatelessWidget {
                 ),
               );
               
-              // Siparişi iptal et
               final success = await context.read<OrderProvider>().cancelOrder(orderId);
               
-              // Loading'i kapat
               if (context.mounted) {
                 Navigator.pop(context);
               }
               
-              // Sonuç göster
               if (context.mounted) {
                 if (success) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -591,7 +539,7 @@ class OrderDetailScreen extends StatelessWidget {
                       backgroundColor: Colors.green,
                     ),
                   );
-                  Navigator.pop(context); // Detay sayfasını kapat
+                  Navigator.pop(context);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

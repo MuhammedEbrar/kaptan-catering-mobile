@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../../core/constants/app_colors.dart';
 import '../orders/orders_screen.dart';
 import '../favorites/favorites_screen.dart';
 import '../addresses/addresses_screen.dart';
 import '../settings/settings_screen.dart';
+import 'edit_profile_screen.dart';
+import '../../utils/page_transitions.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -12,7 +15,7 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profilim'),
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.primary,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -20,12 +23,12 @@ class ProfileScreen extends StatelessWidget {
             // Kullanıcı Bilgileri Card
             Container(
               padding: const EdgeInsets.all(20),
-              color: Colors.red[50],
+              color: AppColors.primary.withOpacity(0.1),
               child: Row(
                 children: [
                   CircleAvatar(
                     radius: 40,
-                    backgroundColor: Colors.red,
+                    backgroundColor: AppColors.primary,
                     child: const Icon(Icons.person, size: 40, color: Colors.white),
                   ),
                   const SizedBox(width: 16),
@@ -61,7 +64,14 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   IconButton(
                     icon: const Icon(Icons.edit),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const EditProfileScreen(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -76,7 +86,7 @@ class ProfileScreen extends StatelessWidget {
               () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const OrdersScreen()),
+                  FadeSlidePageRoute(page: const OrdersScreen()),
                 );
               },
             ),
@@ -86,7 +96,7 @@ class ProfileScreen extends StatelessWidget {
               () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+                  FadeSlidePageRoute(page: const FavoritesScreen()),
                 );
               },
             ),
@@ -96,7 +106,7 @@ class ProfileScreen extends StatelessWidget {
               () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const AddressesScreen()),
+                  FadeSlidePageRoute(page: const AddressesScreen()),
                 );
               },
             ),
@@ -106,32 +116,46 @@ class ProfileScreen extends StatelessWidget {
               () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                  FadeSlidePageRoute(page: const SettingsScreen()),
                 );
               },
             ),
             
             const Divider(),
             
-            _buildMenuItem(Icons.info, 'Hakkımızda', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const AboutScreen()),
-              );
-            }),
-            _buildMenuItem(Icons.contact_support, 'İletişim', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const ContactScreen()),
-              );
-            }),
-            
-            const Divider(),
-            
             _buildMenuItem(
               Icons.logout,
               'Çıkış Yap',
-              () {},
+              () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Çıkış Yap'),
+                    content: const Text('Çıkış yapmak istediğinize emin misiniz?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('İptal'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Çıkış yapıldı'),
+                              duration: Duration(seconds: 1),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'Çıkış Yap',
+                          style: TextStyle(color: AppColors.error),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
               isDestructive: true,
             ),
           ],
@@ -149,12 +173,12 @@ class ProfileScreen extends StatelessWidget {
     return ListTile(
       leading: Icon(
         icon,
-        color: isDestructive ? Colors.red : Colors.grey[700],
+        color: isDestructive ? AppColors.error : Colors.grey[700],
       ),
       title: Text(
         title,
         style: TextStyle(
-          color: isDestructive ? Colors.red : Colors.black,
+          color: isDestructive ? AppColors.error : Colors.black,
           fontWeight: isDestructive ? FontWeight.bold : FontWeight.normal,
         ),
       ),

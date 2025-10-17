@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/constants/app_colors.dart';
 
 class AddressesScreen extends StatefulWidget {
   const AddressesScreen({Key? key}) : super(key: key);
@@ -29,7 +30,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Adreslerim'),
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.primary,
       ),
       body: _addresses.isEmpty
           ? _buildEmptyState()
@@ -44,7 +45,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
         onPressed: () {
           _showAddAddressDialog();
         },
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.primary,
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
@@ -85,7 +86,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
               style: TextStyle(color: Colors.white),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.primary,
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
             ),
           ),
@@ -97,6 +98,10 @@ class _AddressesScreenState extends State<AddressesScreen> {
   Widget _buildAddressCard(Map<String, dynamic> address, int index) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -120,13 +125,13 @@ class _AddressesScreenState extends State<AddressesScreen> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.green[50],
+                      color: AppColors.success.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: const Text(
                       'Varsayılan',
                       style: TextStyle(
-                        color: Colors.green,
+                        color: AppColors.success,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
@@ -169,7 +174,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
                   },
                   icon: const Icon(Icons.edit, size: 18),
                   label: const Text('Düzenle'),
-                  style: TextButton.styleFrom(foregroundColor: Colors.blue),
+                  style: TextButton.styleFrom(foregroundColor: AppColors.info),
                 ),
                 TextButton.icon(
                   onPressed: () {
@@ -177,7 +182,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
                   },
                   icon: const Icon(Icons.delete, size: 18),
                   label: const Text('Sil'),
-                  style: TextButton.styleFrom(foregroundColor: Colors.red),
+                  style: TextButton.styleFrom(foregroundColor: AppColors.error),
                 ),
               ],
             ),
@@ -247,6 +252,12 @@ class _AddressesScreenState extends State<AddressesScreen> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                       child: const Text('İptal'),
                     ),
                   ),
@@ -258,12 +269,16 @@ class _AddressesScreenState extends State<AddressesScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Adres eklendi!'),
-                            backgroundColor: Colors.green,
+                            backgroundColor: AppColors.success,
                           ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
+                        backgroundColor: AppColors.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                       child: const Text(
                         'Kaydet',
@@ -308,13 +323,13 @@ class _AddressesScreenState extends State<AddressesScreen> {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Adres silindi'),
-                  backgroundColor: Colors.red,
+                  backgroundColor: AppColors.error,
                 ),
               );
             },
             child: const Text(
               'Sil',
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(color: AppColors.error),
             ),
           ),
         ],

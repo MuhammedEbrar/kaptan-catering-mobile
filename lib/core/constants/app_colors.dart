@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Kaptan Catering Marka Renkleri
-  static const Color primary = Color(0xFFDC143C);
-  static const Color primaryDark = Color(0xFFB22222);
-  static const Color primaryLight = Color(0xFFFF6B6B);
+  static const Color primary = Color.fromARGB(255, 219, 17, 57);
+  static const Color primaryDark = Color.fromARGB(255, 219, 17, 57);
+  static const Color primaryLight = Color.fromARGB(255, 219, 17, 57);
   
   static const Color background = Color(0xFFFFFFFF);
   static const Color backgroundLight = Color(0xFFF8F9FA);

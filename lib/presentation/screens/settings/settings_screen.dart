@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/constants/app_colors.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -19,7 +20,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ayarlar'),
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.primary,
       ),
       body: ListView(
         children: [
@@ -34,7 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _orderNotifications = value;
               });
             },
-            activeColor: Colors.red,
+            activeColor: AppColors.primary,
           ),
           SwitchListTile(
             title: const Text('Kampanya Bildirimleri'),
@@ -45,7 +46,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _campaignNotifications = value;
               });
             },
-            activeColor: Colors.red,
+            activeColor: AppColors.primary,
           ),
           SwitchListTile(
             title: const Text('Ürün Bildirimleri'),
@@ -56,7 +57,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _productNotifications = value;
               });
             },
-            activeColor: Colors.red,
+            activeColor: AppColors.primary,
           ),
 
           const Divider(height: 32),
@@ -177,7 +178,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SnackBar(content: Text('Dil değiştirildi: Türkçe')),
                 );
               },
-              activeColor: Colors.red,
+              activeColor: AppColors.primary,
             ),
             RadioListTile<String>(
               title: const Text('English'),
@@ -192,7 +193,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SnackBar(content: Text('Language changed: English')),
                 );
               },
-              activeColor: Colors.red,
+              activeColor: AppColors.primary,
             ),
           ],
         ),
@@ -221,7 +222,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SnackBar(content: Text('Tema değiştirildi: Açık')),
                 );
               },
-              activeColor: Colors.red,
+              activeColor: AppColors.primary,
             ),
             RadioListTile<String>(
               title: const Text('Koyu'),
@@ -236,7 +237,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SnackBar(content: Text('Tema değiştirildi: Koyu')),
                 );
               },
-              activeColor: Colors.red,
+              activeColor: AppColors.primary,
             ),
           ],
         ),
@@ -254,7 +255,7 @@ class AboutScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Hakkımızda'),
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.primary,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -264,7 +265,7 @@ class AboutScreen extends StatelessWidget {
             const Icon(
               Icons.restaurant_menu,
               size: 100,
-              color: Colors.red,
+              color: AppColors.primary,
             ),
             const SizedBox(height: 24),
             const Text(
@@ -284,6 +285,10 @@ class AboutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -307,6 +312,10 @@ class AboutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -344,7 +353,7 @@ class ContactScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('İletişim'),
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.primary,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -353,7 +362,7 @@ class ContactScreen extends StatelessWidget {
             const Icon(
               Icons.contact_support,
               size: 100,
-              color: Colors.red,
+              color: AppColors.primary,
             ),
             const SizedBox(height: 24),
             const Text(
@@ -365,13 +374,17 @@ class ContactScreen extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: ListTile(
-                leading: const Icon(Icons.phone, color: Colors.red),
+                leading: const Icon(Icons.phone, color: AppColors.primary),
                 title: const Text('Telefon'),
                 subtitle: const Text('0332 123 45 67'),
                 trailing: IconButton(
                   icon: const Icon(Icons.call),
-                  color: Colors.red,
+                  color: AppColors.primary,
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Arama özelliği yakında!')),
@@ -381,13 +394,17 @@ class ContactScreen extends StatelessWidget {
               ),
             ),
             Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: ListTile(
-                leading: const Icon(Icons.email, color: Colors.red),
+                leading: const Icon(Icons.email, color: AppColors.primary),
                 title: const Text('E-posta'),
                 subtitle: const Text('info@kaptancatering.com'),
                 trailing: IconButton(
                   icon: const Icon(Icons.send),
-                  color: Colors.red,
+                  color: AppColors.primary,
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Email gönderme yakında!')),
@@ -397,10 +414,14 @@ class ContactScreen extends StatelessWidget {
               ),
             ),
             Card(
-              child: ListTile(
-                leading: const Icon(Icons.location_on, color: Colors.red),
-                title: const Text('Adres'),
-                subtitle: const Text('Mevlana Mah. Adliye Cad. No:15/A\nKaratay/Konya'),
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const ListTile(
+                leading: Icon(Icons.location_on, color: AppColors.primary),
+                title: Text('Adres'),
+                subtitle: Text('Mevlana Mah. Adliye Cad. No:15/A\nKaratay/Konya'),
                 isThreeLine: true,
               ),
             ),
