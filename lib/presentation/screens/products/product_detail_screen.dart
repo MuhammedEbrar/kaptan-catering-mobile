@@ -283,10 +283,111 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
                     ],
                   ),
+
+                  const SizedBox(height: 24),
+
+                  // Benzer Ürünler
+                  const Text(
+                    'Benzer Ürünler',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    height: 220,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 5,
+                      itemBuilder: (context, index) {
+                        return _buildSimilarProductCard(context);
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                 ],
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSimilarProductCard(BuildContext context) {
+    return Container(
+      width: 140,
+      margin: const EdgeInsets.only(right: 12),
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: InkWell(
+          onTap: () {
+            CustomSnackBar.info(context, 'Ürün detayı açılıyor...');
+          },
+          borderRadius: BorderRadius.circular(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Ürün Resmi
+              Container(
+                height: 100,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12),
+                  ),
+                ),
+                child: Center(
+                  child: Icon(
+                    Icons.fastfood,
+                    size: 40,
+                    color: Colors.grey[400],
+                  ),
+                ),
+              ),
+              // Ürün Bilgileri
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.product.kategori,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          widget.product.birim,
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        Icon(
+                          Icons.add_shopping_cart,
+                          size: 16,
+                          color: Colors.red[400],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
