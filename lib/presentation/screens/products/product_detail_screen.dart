@@ -5,6 +5,7 @@ import '../../../data/models/product_model.dart';
 import '../../providers/cart_provider.dart';
 import '../../widgets/animated_button.dart';
 import '../../widgets/custom_snackbar.dart';
+import '../../widgets/success_animation.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final ProductModel product;
@@ -224,7 +225,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             quantity: _quantity,
                           );
                           if (mounted) {
-                            CustomSnackBar.success(context, 'Sepete eklendi!');
+                            // Success animation göster
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              barrierColor: Colors.black54,
+                              builder: (context) => Center(
+                                child: SuccessAnimation(
+                                  onComplete: () {
+                                    Navigator.pop(context);
+                                    CustomSnackBar.success(context, 'Sepete eklendi!');
+                                  },
+                                ),
+                              ),
+                            );
                           }
                         }
                       } catch (e) {

@@ -1,87 +1,92 @@
 import 'package:flutter/material.dart';
+import '../../widgets/custom_refresh_indicator.dart';
+import '../../widgets/empty_state_widget.dart';
 
-class OrdersScreen extends StatelessWidget {
+class OrdersScreen extends StatefulWidget {
   const OrdersScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    // Mock sipariş verileri
-    final orders = [
-      {
-        'orderNo': '#12345',
-        'date': '15 Eki 2025',
-        'itemCount': 2,
-        'total': 530.98,
-        'status': 'Hazırlanıyor',
-        'statusColor': Colors.blue,
-      },
-      {
-        'orderNo': '#12344',
-        'date': '10 Eki 2025',
-        'itemCount': 5,
-        'total': 1250.00,
-        'status': 'Teslim Edildi',
-        'statusColor': Colors.green,
-      },
-      {
-        'orderNo': '#12343',
-        'date': '5 Eki 2025',
-        'itemCount': 3,
-        'total': 780.50,
-        'status': 'Kargoda',
-        'statusColor': Colors.purple,
-      },
-    ];
+  State<OrdersScreen> createState() => _OrdersScreenState();
+}
 
+class _OrdersScreenState extends State<OrdersScreen> {
+  // Mock sipariş verileri
+  final List<Map<String, dynamic>> _orders = [
+    {
+      'orderNo': '#12345',
+      'date': '15 Eki 2025',
+      'itemCount': 2,
+      'total': 530.98,
+      'status': 'Hazırlanıyor',
+      'statusColor': Colors.blue,
+    },
+    {
+      'orderNo': '#12344',
+      'date': '10 Eki 2025',
+      'itemCount': 5,
+      'total': 1250.00,
+      'status': 'Teslim Edildi',
+      'statusColor': Colors.green,
+    },
+    {
+      'orderNo': '#12343',
+      'date': '5 Eki 2025',
+      'itemCount': 3,
+      'total': 780.50,
+      'status': 'Kargoda',
+      'statusColor': Colors.purple,
+    },
+  ];
+
+  Future<void> _refreshOrders() async {
+    await Future.delayed(const Duration(seconds: 1));
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Siparişler güncellendi'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Siparişlerim'),
         backgroundColor: Colors.red,
       ),
-      body: orders.isEmpty
-          ? _buildEmptyState()
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: orders.length,
-              itemBuilder: (context, index) {
-                return _buildOrderCard(context, orders[index]);
+      body: _orders.isEmpty
+          ? EmptyStateWidget(
+              icon: Icons.receipt_long,
+              title: 'Henüz Sipariş Yok',
+              subtitle: 'İlk siparişinizi vererek başlayın',
+              buttonText: 'Alışverişe Başla',
+              onButtonPressed: () {
+                Navigator.pop(context);
               },
+            )
+          : CustomRefreshIndicator(
+              onRefresh: _refreshOrders,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: _orders.length,
+                itemBuilder: (context, index) {
+                  return _buildOrderCard(context, _orders[index]);
+                },
+              ),
             ),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.receipt_long,
-            size: 100,
-            color: Colors.grey[300],
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Henüz Sipariş Yok',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'İlk siparişinizi verin',
-            style: TextStyle(color: Colors.grey),
-          ),
-        ],
-      ),
     );
   }
 
   Widget _buildOrderCard(BuildContext context, Map<String, dynamic> order) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: InkWell(
         onTap: () {
           Navigator.push(
@@ -91,6 +96,7 @@ class OrdersScreen extends StatelessWidget {
             ),
           );
         },
+        borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
@@ -110,7 +116,7 @@ class OrdersScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              
+
               // Sipariş Bilgileri
               Expanded(
                 child: Column(
@@ -142,7 +148,7 @@ class OrdersScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               // Durum ve Fiyat
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -171,6 +177,7 @@ class OrdersScreen extends StatelessWidget {
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
+                      color: Colors.red,
                     ),
                   ),
                 ],
@@ -222,9 +229,9 @@ class OrderDetailScreen extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Sipariş Bilgileri
             _buildInfoCard(
               'Sipariş Bilgileri',
@@ -234,9 +241,9 @@ class OrderDetailScreen extends StatelessWidget {
                 _buildInfoRow('Ürün Sayısı', '${order['itemCount']} ürün'),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Teslimat Adresi
             _buildInfoCard(
               'Teslimat Adresi',
@@ -251,9 +258,9 @@ class OrderDetailScreen extends StatelessWidget {
                 const Text('0332 123 45 67'),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Ödeme Bilgileri
             _buildInfoCard(
               'Ödeme Bilgileri',
@@ -268,27 +275,35 @@ class OrderDetailScreen extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Tekrar Sipariş Ver Butonu
-            OutlinedButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Ürünler sepete eklendi!')),
-                );
-              },
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                minimumSize: const Size(double.infinity, 0),
-                side: const BorderSide(color: Colors.red),
-              ),
-              child: const Text(
-                'Tekrar Sipariş Ver',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Ürünler sepete eklendi!'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                },
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  side: const BorderSide(color: Colors.red, width: 2),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  'Tekrar Sipariş Ver',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -300,6 +315,10 @@ class OrderDetailScreen extends StatelessWidget {
 
   Widget _buildInfoCard(String title, List<Widget> children) {
     return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
