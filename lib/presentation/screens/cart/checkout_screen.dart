@@ -1,37 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../providers/cart_provider.dart';
+import '../../providers/order_provider.dart';
+import '../../providers/auth_provider.dart';
 
 class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({Key? key}) : super(key: key);
+  const CheckoutScreen({super.key});
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
+
+
 class _CheckoutScreenState extends State<CheckoutScreen> {
   int _currentStep = 0;
-  int _selectedAddressIndex = 0;
-  int _selectedPaymentIndex = 0;
+  int _selectedPaymentIndex = 0; // 0: Kredi Kartı, 1: Kapıda Ödeme
   bool _termsAccepted = false;
+  final TextEditingController _orderNoteController = TextEditingController();
 
-  final List<Map<String, String>> _addresses = [
-    {
-      'title': 'İş Adresi',
-      'address': 'Mevlana Mah. Adliye Cad. No:15/A Karatay/Konya',
-      'phone': '0332 123 45 67',
-    },
-    {
-      'title': 'Depo Adresi',
-      'address': 'Organize Sanayi Bölgesi 5. Cad. No:22 Selçuklu/Konya',
-      'phone': '0332 987 65 43',
-    },
-  ];
+  @override
+  void dispose() {
+    _orderNoteController.dispose();
+    super.dispose();
+  }
+
+    @override
+    void initState() {
+    super.initState();
+      // User bilgisini yenile
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.read<AuthProvider>().checkLoginStatus();
+  });
+}
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = context.watch<CartProvider>();
+    final authProvider = context.watch<AuthProvider>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sipariş Özeti'),
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.primary,
       ),
       body: Stepper(
         currentStep: _currentStep,
@@ -41,7 +53,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               _currentStep++;
             });
           } else {
-            _completeOrder();
+            _completeOrder(context);
           }
         },
         onStepCancel: () {
@@ -59,7 +71,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ElevatedButton(
                   onPressed: details.onStepContinue,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
+                    backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                   ),
                   child: Text(
@@ -81,7 +93,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         steps: [
           Step(
             title: const Text('Teslimat Adresi'),
-            content: _buildAddressStep(),
+            content: _buildAddressStep(authProvider),
             isActive: _currentStep >= 0,
             state: _currentStep > 0 ? StepState.complete : StepState.indexed,
           ),
@@ -93,7 +105,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
           Step(
             title: const Text('Sipariş Özeti'),
-            content: _buildSummaryStep(),
+            content: _buildSummaryStep(cartProvider, authProvider),
             isActive: _currentStep >= 2,
           ),
         ],
@@ -101,56 +113,122 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  Widget _buildAddressStep() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Teslimat adresinizi seçin',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        const SizedBox(height: 16),
-        ...List.generate(_addresses.length, (index) {
-          final address = _addresses[index];
-          return Card(
-            margin: const EdgeInsets.only(bottom: 12),
-            child: RadioListTile<int>(
-              value: index,
-              groupValue: _selectedAddressIndex,
-              onChanged: (value) {
-                setState(() {
-                  _selectedAddressIndex = value!;
-                });
-              },
-              title: Text(
-                address['title']!,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+Widget _buildAddressStep(AuthProvider authProvider) {
+  final user = authProvider.user;
+  
+  // Debug için print ekle
+  print('🔍 User address: ${user?.address}');
+  print('🔍 User phone: ${user?.phone}');
+  
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text(
+        'Teslimat Adresi',
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      ),
+      const SizedBox(height: 16),
+      
+      // Adres var mı kontrol et
+      if (user != null && user.address != null && user.address!.trim().isNotEmpty) ...[
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.location_on, color: AppColors.primary),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        user.companyName ?? 'Firma Adresi',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  user.address!,
+                  style: const TextStyle(height: 1.5),
+                ),
+                if (user.phone != null && user.phone!.isNotEmpty) ...[
                   const SizedBox(height: 8),
-                  Text(address['address']!),
-                  const SizedBox(height: 4),
-                  Text(
-                    address['phone']!,
-                    style: const TextStyle(color: Colors.grey),
+                  Row(
+                    children: [
+                      const Icon(Icons.phone, size: 16, color: Colors.grey),
+                      const SizedBox(width: 4),
+                      Text(
+                        user.phone!,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ],
                   ),
                 ],
-              ),
-              activeColor: Colors.red,
+              ],
             ),
-          );
-        }),
-        const SizedBox(height: 8),
-        OutlinedButton.icon(
-          onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Yeni adres ekleme yakında!')),
-            );
-          },
-          icon: const Icon(Icons.add),
-          label: const Text('Yeni Adres Ekle'),
+          ),
+        ),
+      ] else ...[
+        Card(
+          color: Colors.orange[50],
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  children: [
+                    Icon(Icons.warning_amber, color: Colors.orange),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Profil ayarlarınızdan adres bilgisi ekleyiniz.',
+                        style: TextStyle(
+                          color: Colors.orange,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    // Profile sayfasına git
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                    // TODO: Profil tab'ına geç
+                  },
+                  icon: const Icon(Icons.person),
+                  label: const Text('Profile Git'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.orange,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+      
+      // ... Sipariş notu kısmı aynı kalacak
+        
+        // Sipariş Notu
+        TextField(
+          controller: _orderNoteController,
+          decoration: const InputDecoration(
+            labelText: 'Sipariş Notu (Opsiyonel)',
+            hintText: 'Özel talepleriniz varsa buraya yazın...',
+            border: OutlineInputBorder(),
+            prefixIcon: Icon(Icons.note),
+          ),
+          maxLines: 3,
+          maxLength: 500,
         ),
       ],
     );
@@ -176,8 +254,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             },
             title: const Text('Kredi/Banka Kartı'),
             subtitle: const Text('İyzico güvenli ödeme'),
-            secondary: const Icon(Icons.credit_card, color: Colors.red),
-            activeColor: Colors.red,
+            secondary: Icon(Icons.credit_card, color: AppColors.primary),
+            activeColor: AppColors.primary,
           ),
         ),
         Card(
@@ -191,19 +269,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             },
             title: const Text('Kapıda Ödeme'),
             subtitle: const Text('Teslimat sırasında nakit veya POS ile'),
-            secondary: const Icon(Icons.money, color: Colors.red),
-            activeColor: Colors.red,
+            secondary: Icon(Icons.money, color: AppColors.primary),
+            activeColor: AppColors.primary,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildSummaryStep() {
-    final selectedAddress = _addresses[_selectedAddressIndex];
-    final paymentMethod = _selectedPaymentIndex == 0 
-        ? 'Kredi/Banka Kartı' 
-        : 'Kapıda Ödeme';
+  Widget _buildSummaryStep(CartProvider cartProvider, AuthProvider authProvider) {
+    final paymentMethod = _selectedPaymentIndex == 0 ? 'Kredi/Banka Kartı' : 'Kapıda Ödeme';
+    final user = authProvider.user;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,40 +302,46 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-                const Text('2 ürün'),
-                const Text('170 CC TEKSÖT YARIM YAĞLI AYRAN x2'),
-                const Text('2000GR ÇOBANYILDIZI KAŞAR PEYNİRİ x1'),
+                ...cartProvider.items.map((item) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    '${item.product.stokAdi} x${item.quantity}',
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                )),
               ],
             ),
           ),
         ),
         
         // Teslimat Adresi
-        Card(
-          child: ListTile(
-            leading: const Icon(Icons.location_on, color: Colors.red),
-            title: Text(
-              selectedAddress['title']!,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text(selectedAddress['address']!),
-            trailing: TextButton(
-              onPressed: () {
-                setState(() {
-                  _currentStep = 0;
-                });
-              },
-              child: const Text('Değiştir'),
+        if (user?.address != null) ...[
+          Card(
+            child: ListTile(
+              leading: Icon(Icons.location_on, color: AppColors.primary),
+              title: Text(
+                user!.companyName ?? 'Teslimat Adresi',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(user.address!),
+              trailing: TextButton(
+                onPressed: () {
+                  setState(() {
+                    _currentStep = 0;
+                  });
+                },
+                child: const Text('Değiştir'),
+              ),
             ),
           ),
-        ),
+        ],
         
         // Ödeme Yöntemi
         Card(
           child: ListTile(
             leading: Icon(
               _selectedPaymentIndex == 0 ? Icons.credit_card : Icons.money,
-              color: Colors.red,
+              color: AppColors.primary,
             ),
             title: const Text(
               'Ödeme Yöntemi',
@@ -277,16 +359,31 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
         ),
         
+        // Sipariş Notu
+        if (_orderNoteController.text.isNotEmpty) ...[
+          Card(
+            child: ListTile(
+              leading: Icon(Icons.note, color: AppColors.primary),
+              title: const Text(
+                'Sipariş Notu',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(_orderNoteController.text),
+            ),
+          ),
+        ],
+        
         // Tutar Özeti
         Card(
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                _buildPriceRow('Ara Toplam', '₺449.98'),
-                _buildPriceRow('KDV (%18)', '₺81.00'),
+                _buildPriceRow('Ara Toplam', cartProvider.getSubtotal()),
+                _buildPriceRow('KDV', cartProvider.getKdvAmount()),
+                _buildPriceRow('Kargo', cartProvider.getShippingCost()),
                 const Divider(height: 24),
-                _buildPriceRow('Toplam', '₺530.98', isBold: true),
+                _buildPriceRow('Toplam', cartProvider.getFinalTotal(), isBold: true),
               ],
             ),
           ),
@@ -304,13 +401,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           },
           title: const Text('Kullanım koşullarını kabul ediyorum'),
           controlAffinity: ListTileControlAffinity.leading,
-          activeColor: Colors.red,
+          activeColor: AppColors.primary,
         ),
       ],
     );
   }
 
-  Widget _buildPriceRow(String label, String price, {bool isBold = false}) {
+  Widget _buildPriceRow(String label, double price, {bool isBold = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -324,11 +421,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
           ),
           Text(
-            price,
+            '₺${price.toStringAsFixed(2)}',
             style: TextStyle(
               fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
               fontSize: isBold ? 16 : 14,
-              color: isBold ? Colors.red : Colors.black,
+              color: isBold ? AppColors.primary : Colors.black,
             ),
           ),
         ],
@@ -336,7 +433,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  void _completeOrder() {
+  Future<void> _completeOrder(BuildContext context) async {
     if (!_termsAccepted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -347,19 +444,123 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       return;
     }
 
-    // Sipariş başarılı sayfasına git
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const OrderSuccessScreen(),
-      ),
+    final cartProvider = context.read<CartProvider>();
+    final orderProvider = context.read<OrderProvider>();
+    final authProvider = context.read<AuthProvider>();
+
+    // Validasyon
+    final errors = cartProvider.validateCart();
+    if (errors.isNotEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errors.join('\n')),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+      return;
+    }
+
+    // Kullanıcı kontrolü
+    if (authProvider.user == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Kullanıcı bilgisi bulunamadı'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+      return;
+    }
+
+    // Adres kontrolü
+    if (authProvider.user!.address == null || authProvider.user!.address!.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Lütfen profil ayarlarınızdan adres bilgisi ekleyin'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+      return;
+    }
+
+    // Loading dialog göster
+    if (mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: Card(
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Sipariş oluşturuluyor...'),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Sipariş oluştur
+    final success = await orderProvider.createOrder(
+      userId: authProvider.user!.id.toString(),
+      cartItems: cartProvider.items,
+      totalAmount: cartProvider.getFinalTotal(),
+      paymentMethod: _selectedPaymentIndex == 0 ? 'iyzico' : 'cash_on_delivery',
+      deliveryAddress: authProvider.user!.address!,
+      deliveryPhone: authProvider.user!.phone,
+      orderNote: _orderNoteController.text.isNotEmpty ? _orderNoteController.text : null,
     );
+
+    // Dialog'u kapat
+    if (mounted) {
+      Navigator.pop(context);
+    }
+
+    if (success) {
+      // ✅ SEPET TEMİZLE
+      await cartProvider.clearCart();
+
+      // Başarı sayfasına git
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => OrderSuccessScreen(
+              orderId: orderProvider.currentOrder!.id!,
+            ),
+          ),
+        );
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(orderProvider.errorMessage ?? 'Sipariş oluşturulamadı'),
+            backgroundColor: AppColors.error,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
   }
 }
 
-// Basit sipariş başarılı sayfası
+// Sipariş Başarılı Sayfası
 class OrderSuccessScreen extends StatelessWidget {
-  const OrderSuccessScreen({Key? key}) : super(key: key);
+  final String orderId;
+  
+  const OrderSuccessScreen({super.key, required this.orderId});
 
   @override
   Widget build(BuildContext context) {
@@ -390,9 +591,9 @@ class OrderSuccessScreen extends StatelessWidget {
                   border: Border.all(color: Colors.grey),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Text(
-                  'Sipariş No: #12345',
-                  style: TextStyle(
+                child: Text(
+                  'Sipariş No: #$orderId',
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -407,10 +608,11 @@ class OrderSuccessScreen extends StatelessWidget {
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: () {
+                  // Ana sayfaya dön (tüm navigation stack'i temizle)
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
+                  backgroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                 ),
                 child: const Text(

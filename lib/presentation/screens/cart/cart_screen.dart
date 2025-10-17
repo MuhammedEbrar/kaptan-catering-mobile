@@ -50,7 +50,10 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                   const SizedBox(height: 30),
                   ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                    // Ana sayfaya dön (MainScreen'in Ürünler tab'ına geç)
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       padding: const EdgeInsets.symmetric(
