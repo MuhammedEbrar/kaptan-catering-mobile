@@ -6,19 +6,19 @@ import 'core/di/injection.dart';
 import 'data/repositories/auth_repository.dart';
 import 'data/repositories/product_repository.dart';
 import 'data/repositories/order_repository.dart';
+import 'data/repositories/address_repository.dart'; // 👈 EKLE
 import 'presentation/providers/auth_provider.dart';
 import 'presentation/providers/product_provider.dart';
 import 'presentation/providers/category_provider.dart';
 import 'presentation/providers/cart_provider.dart';
 import 'presentation/providers/order_provider.dart';
-import 'presentation/providers/favorite_provider.dart';
+import 'presentation/providers/address_provider.dart'; // 👈 EKLE
 import 'presentation/screens/auth/login_screen.dart';
 import 'presentation/screens/main_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Dependency Injection kurulumu
   await setupDependencies();
   
   runApp(const KaptanCateringApp());
@@ -46,8 +46,9 @@ class KaptanCateringApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => OrderProvider(getIt<OrderRepository>()),
         ),
+        // 👇 YENİ: AddressProvider
         ChangeNotifierProvider(
-          create: (_) => FavoriteProvider()..loadFavorites(),
+          create: (_) => AddressProvider(getIt<AddressRepository>()),
         ),
       ],
       child: MaterialApp(
@@ -91,7 +92,6 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkLoginStatus() async {
-    // Splash screen 2 saniye göster
     await Future.delayed(const Duration(seconds: 2));
 
     if (!mounted) return;
@@ -101,7 +101,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (!mounted) return;
 
-    // Login durumuna göre yönlendir
     if (authProvider.isLoggedIn) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const MainScreen()),
