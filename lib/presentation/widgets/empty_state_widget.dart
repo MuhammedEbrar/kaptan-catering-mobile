@@ -9,13 +9,13 @@ class EmptyStateWidget extends StatelessWidget {
   final VoidCallback? onButtonPressed;
 
   const EmptyStateWidget({
-    Key? key,
+    super.key,
     required this.icon,
     required this.title,
     required this.subtitle,
     this.buttonText,
     this.onButtonPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,50 +25,32 @@ class EmptyStateWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Icon
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                size: 60,
-                color: Colors.grey[400],
-              ),
+            Icon(
+              icon,
+              size: 100,
+              color: Colors.grey[300],
             ),
-
-            const SizedBox(height: 24),
-
-            // Title
+            const SizedBox(height: 16),
             Text(
               title,
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: Colors.grey,
               ),
               textAlign: TextAlign.center,
             ),
-
-            const SizedBox(height: 12),
-
-            // Subtitle
+            const SizedBox(height: 8),
             Text(
               subtitle,
-              style: TextStyle(
+              style: const TextStyle(
+                color: Colors.grey,
                 fontSize: 14,
-                color: Colors.grey[600],
               ),
               textAlign: TextAlign.center,
             ),
-
-            const SizedBox(height: 32),
-
-            // Button (optional)
-            if (buttonText != null && onButtonPressed != null)
+            if (buttonText != null && onButtonPressed != null) ...[
+              const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: onButtonPressed,
                 style: ElevatedButton.styleFrom(
@@ -76,20 +58,15 @@ class EmptyStateWidget extends StatelessWidget {
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 32,
-                    vertical: 14,
+                    vertical: 12,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text(
-                  buttonText!,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: Text(buttonText!),
               ),
+            ],
           ],
         ),
       ),

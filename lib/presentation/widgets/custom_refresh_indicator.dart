@@ -1,4 +1,7 @@
+// widgets/custom_refresh_indicator.dart
+
 import 'package:flutter/material.dart';
+import '../../core/constants/app_colors.dart';
 
 class CustomRefreshIndicator extends StatelessWidget {
   final Future<void> Function() onRefresh;
@@ -14,7 +17,7 @@ class CustomRefreshIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: onRefresh,
-      color: Colors.red,
+      color: AppColors.primary,
       backgroundColor: Colors.white,
       strokeWidth: 3.0,
       displacement: 40.0,

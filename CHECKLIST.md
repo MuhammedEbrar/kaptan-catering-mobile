@@ -13,7 +13,7 @@
 
 ---
 
-## 🔄 PHASE 4: Ürün Listeleme & API Entegrasyonu (TAMAMLANDI ✅)
+## ✅ PHASE 4: Ürün Listeleme & API Entegrasyonu (TAMAMLANDI ✅)
 
 ### 4.1 Product Model Güncelleme
 - [x] `lib/data/models/product_model.dart` dosyasını aç
@@ -52,12 +52,12 @@
 ### 4.6 API Test
 - [x] Telefonda çalıştır
 - [x] Console'da API response'u gör
-- [x] Ürün sayısını kontrol et (~850)
+- [x] Ürün sayısını kontrol et (~14)
 - [x] Hata durumlarını test et
 
 ---
 
-## 🔄 PHASE 4.5: Kategori & Filtreleme (TAMAMLANDI ✅)
+## ✅ PHASE 4.5: Kategori & Filtreleme (TAMAMLANDI ✅)
 
 ### 4.7 Kategori Provider
 - [x] `lib/presentation/providers/category_provider.dart` oluştur
@@ -91,7 +91,7 @@
 
 ---
 
-## 🔄 PHASE 6.5: Sepet & Sipariş Entegrasyonu (DEVAM EDİYOR)
+## ✅ PHASE 6: Sepet & Sipariş Entegrasyonu (TAMAMLANDI ✅)
 
 ### 6.1 Cart Provider
 - [x] `lib/data/models/cart_item_model.dart` oluştur
@@ -113,52 +113,96 @@
 - [x] Test edildi
 
 ### 6.2 Order Model
-- [ ] `lib/data/models/order_model.dart` oluştur
-- [ ] Order fields:
-  - [ ] `String id`
-  - [ ] `String userId`
-  - [ ] `List<OrderItem> items`
-  - [ ] `double totalAmount`
-  - [ ] `String status` (Ödeme Bekliyor, Hazırlanıyor, vb.)
-  - [ ] `String paymentMethod` (iyzico, kapida_odeme)
-  - [ ] `String deliveryAddress`
-  - [ ] `DateTime createdAt`
-- [ ] OrderItem model (productId, productName, quantity, price, unit)
-- [ ] JSON serialization (fromJson, toJson)
+- [x] `lib/data/models/order_model.dart` oluştur
+- [x] Order fields (id, userId, items, totalAmount, status, paymentMethod, deliveryAddress, etc.)
+- [x] OrderItem model (productId, productName, quantity, price, unit)
+- [x] JSON serialization (fromJson, toJson)
+- [x] Sipariş durumları (pending, paid, preparing, shipped, delivered, cancelled)
+- [x] Display name fonksiyonları
+- [x] CartItem'dan OrderItem dönüşümü
 
 ### 6.3 Order DataSource
-- [ ] `lib/data/datasources/order_datasource.dart` oluştur
-- [ ] `createOrder(Map<String, dynamic> orderData)` - POST /api/siparisler
-- [ ] `getOrders()` - GET /api/siparisler
-- [ ] `getOrderById(String orderId)` - GET /api/siparisler/:id
-- [ ] Error handling
+- [x] `lib/data/datasources/order_datasource.dart` oluştur
+- [x] `createOrder(Map<String, dynamic> orderData)` - POST /api/siparisler
+- [x] `getOrders()` - GET /api/siparisler
+- [x] `getOrderById(String orderId)` - GET /api/siparisler/:id
+- [x] `getOrdersByStatus(String status)` - Duruma göre filtrele
+- [x] `cancelOrder(String orderId)` - PATCH /api/siparisler/:id
+- [x] Error handling
+- [x] Flexible JSON parsing (farklı backend formatları için)
 
 ### 6.4 Order Repository
-- [ ] `lib/data/repositories/order_repository.dart` oluştur
-- [ ] `createOrder()` fonksiyonu
-- [ ] `fetchOrders()` fonksiyonu
-- [ ] `fetchOrderById()` fonksiyonu
-- [ ] Error handling
+- [x] `lib/data/repositories/order_repository.dart` oluştur
+- [x] `createOrder()` fonksiyonu
+- [x] `fetchOrders()` fonksiyonu
+- [x] `fetchOrderById()` fonksiyonu
+- [x] `fetchOrdersByStatus()` fonksiyonu
+- [x] `cancelOrder()` fonksiyonu
+- [x] `fetchActiveOrders()` - Aktif siparişler
+- [x] `fetchCompletedOrders()` - Tamamlanan siparişler
+- [x] `fetchCancelledOrders()` - İptal edilen siparişler
+- [x] Error handling
 
 ### 6.5 Order Provider
-- [ ] `lib/presentation/providers/order_provider.dart` oluştur
-- [ ] Order list state (`List<OrderModel> orders`)
-- [ ] Loading states
-- [ ] `createOrder(OrderModel order)` fonksiyonu
-- [ ] `fetchOrders()` fonksiyonu
-- [ ] `fetchOrderById(String id)` fonksiyonu
-- [ ] Filter by status
+- [x] `lib/presentation/providers/order_provider.dart` oluştur
+- [x] Order list state (`List<OrderModel> orders`)
+- [x] Loading states (isLoading, isCreatingOrder)
+- [x] `createOrder(OrderModel order)` fonksiyonu
+- [x] `loadOrders()` fonksiyonu
+- [x] `loadOrderById(String id)` fonksiyonu
+- [x] `getOrdersByStatus()` - Duruma göre filtrele
+- [x] `activeOrders`, `completedOrders`, `cancelledOrders` getters
+- [x] `cancelOrder()` fonksiyonu
+- [x] Error handling
 
 ### 6.6 Dependency Injection
-- [ ] OrderDataSource register et
-- [ ] OrderRepository register et
-- [ ] CartProvider register et
-- [ ] OrderProvider register et
-- [ ] main.dart'ta Provider'ları ekle
+- [x] OrderDataSource register et
+- [x] OrderRepository register et
+- [x] CartProvider register et
+- [x] OrderProvider register et
+- [x] main.dart'ta Provider'ları ekle
+- [x] ApiClient'e `patch` metodu ekle
+
+### 6.7 Cart Screen (Geçici)
+- [x] `lib/presentation/screens/cart/cart_screen.dart` oluştur
+- [x] Sepet ürün listesi
+- [x] Miktar artır/azalt
+- [x] Ürün silme
+- [x] Ara toplam, KDV, Toplam gösterimi
+- [x] Sipariş notu (opsiyonel)
+- [x] "Sipariş Talebi Gönder" butonu
+- [x] Sepeti temizle butonu
+- [x] Backend'e sipariş gönderme
+- [x] Test edildi
+
+### 6.8 UI Entegrasyonu
+- [x] Ana sayfa landing page'e çevrildi
+- [x] Bottom navigation bar (Ana Sayfa, Ürünler, Sepet, Profil)
+- [x] Ürünler sayfası grid layout
+- [x] Sepet badge (ürün sayısı gösterimi)
+- [x] Test edildi (Samsung S10 Lite)
 
 ---
 
-## 🔄 PHASE 8.5: Offline Mode & Caching
+## 📝 ÖNEMLİ NOTLAR
+
+### ⚠️ Backend Durumu:
+- **Backend'den gelen ürünlerde FİYAT YOK** (price: 0.0)
+- **Sipariş API'si 500 hatası veriyor** ama sipariş oluşuyor (DB'ye kaydediliyor)
+- Backend düzeltilene kadar geçici çözümlerle devam ediyoruz
+
+### ✅ Tamamlanan:
+- Phase 0-2: Authentication ✅
+- Phase 4: Ürün listeleme & API ✅
+- Phase 4.5: Kategori & Filtreleme ✅
+- Phase 6: Sepet & Sipariş entegrasyonu ✅
+
+### 🔄 Sırada:
+- **Phase 8: Offline Mode & Caching**
+
+---
+
+## 🔄 PHASE 8: Offline Mode & Caching (SONRAKİ HEDEF)
 
 ### 8.1 Shared Preferences Setup
 - [ ] Product cache için key tanımla (`cached_products`)
@@ -181,43 +225,13 @@
 
 ---
 
-## 🔄 PHASE 9: Testing & Bug Fixing
-
-### 9.1 Unit Tests
-- [ ] `test/models/product_model_test.dart` oluştur
-  - [ ] JSON parsing test
-  - [ ] KDV hesaplama test
-- [ ] `test/repositories/product_repository_test.dart`
-  - [ ] Mock data ile test
-- [ ] `test/providers/product_provider_test.dart`
-  - [ ] State değişimleri test
-- [ ] `test/providers/cart_provider_test.dart`
-  - [ ] Sepet işlemleri test
-  - [ ] Toplam hesaplama test
-
-### 9.2 Integration Tests
-- [ ] `integration_test/app_test.dart` oluştur
-- [ ] End-to-end flow test:
-  - [ ] Login → Ürün listesi → Detay → Sepete ekle
-- [ ] API entegrasyonu test
-
-### 9.3 Bug Fixing & Optimization
-- [ ] Memory leak kontrolü
-- [ ] Null safety kontrolleri
-- [ ] Performance profiling
-- [ ] Code cleanup (unused imports, vb.)
-- [ ] Arkadaşın bulduğu UI buglarını çöz
-
----
-
 ## 📊 İlerleme
 
-- **Toplam Görev:** ~60
-- **Tamamlanan:** ~25 (Phase 0-2)
-- **Kalan:** ~35
-
+- **Toplam Görev:** ~65
+- **Tamamlanan:** ~50
+- **Kalan:** ~15
 
 ---
 
-**Son Güncelleme:** 10 Ekim 2025
-**Sıradaki Görev:** Phase 4.1 - Product Model güncelleme
+**Son Güncelleme:** 15 Ekim 2025
+**Sıradaki Görev:** Phase 8.1 - Offline Mode & Caching
