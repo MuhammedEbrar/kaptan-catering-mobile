@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-import '../../../core/constants/app_colors.dart';
-=======
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/cart_provider.dart';
->>>>>>> 9ff15536414de7d29a9e137a922d1da039e244b2
 import 'checkout_screen.dart';
 
 class CartScreen extends StatefulWidget {
@@ -20,150 +16,6 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-<<<<<<< HEAD
-        title: Text('Sepetim (${_cartItems.length} Ürün)'),
-        backgroundColor: AppColors.primary,
-      ),
-      body: _cartItems.isEmpty
-          ? _buildEmptyCart()
-          : Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _cartItems.length,
-                    itemBuilder: (context, index) {
-                      return _buildCartItem(_cartItems[index], index);
-                    },
-                  ),
-                ),
-                _buildCartSummary(),
-              ],
-            ),
-    );
-  }
-
-  Widget _buildEmptyCart() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.shopping_cart_outlined,
-            size: 100,
-            color: Colors.grey[300],
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Sepetiniz Boş',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Ürün eklemek için alışverişe başlayın',
-            style: TextStyle(color: Colors.grey),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-            ),
-            child: const Text(
-              'Alışverişe Başla',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCartItem(Map<String, dynamic> item, int index) {
-    return Dismissible(
-      key: Key(item['name']),
-      direction: DismissDirection.endToStart,
-      background: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        color: AppColors.error,
-        child: const Icon(Icons.delete, color: Colors.white),
-      ),
-      onDismissed: (direction) {
-        setState(() {
-          _cartItems.removeAt(index);
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Ürün sepetten silindi'),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      },
-      child: Card(
-        margin: const EdgeInsets.only(bottom: 12),
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              // Ürün Resmi
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(Icons.fastfood, color: Colors.grey, size: 40),
-              ),
-              const SizedBox(width: 12),
-              
-              // Ürün Bilgileri
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item['name'],
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '${item['quantity']} ${item['unit']}',
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '₺${item['price'].toStringAsFixed(2)} / ${item['unit']}',
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              
-              // Miktar ve Fiyat
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-=======
         title: const Text('Sepetim'),
         backgroundColor: AppColors.primary,
       ),
@@ -173,7 +25,6 @@ class _CartScreenState extends State<CartScreen> {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
->>>>>>> 9ff15536414de7d29a9e137a922d1da039e244b2
                 children: [
                   Icon(
                     Icons.shopping_cart_outlined,
@@ -186,47 +37,6 @@ class _CartScreenState extends State<CartScreen> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-<<<<<<< HEAD
-                      fontSize: 16,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.remove_circle_outline, size: 20),
-                        color: AppColors.primary,
-                        onPressed: () {
-                          setState(() {
-                            if (item['quantity'] > 1) {
-                              item['quantity']--;
-                            }
-                          });
-                        },
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(
-                          '${item['quantity']}',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.add_circle_outline, size: 20),
-                        color: AppColors.primary,
-                        onPressed: () {
-                          setState(() {
-                            item['quantity']++;
-                          });
-                        },
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      ),
-                    ],
-=======
                       color: Colors.grey[600],
                     ),
                   ),
@@ -241,8 +51,8 @@ class _CartScreenState extends State<CartScreen> {
                   const SizedBox(height: 30),
                   ElevatedButton(
                     onPressed: () {
-                    // Ana sayfaya dön (MainScreen'in Ürünler tab'ına geç)
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                      // Ana sayfaya dön
+                      Navigator.of(context).popUntil((route) => route.isFirst);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
@@ -255,7 +65,6 @@ class _CartScreenState extends State<CartScreen> {
                       'Alışverişe Başla',
                       style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
->>>>>>> 9ff15536414de7d29a9e137a922d1da039e244b2
                   ),
                 ],
               ),
@@ -273,6 +82,10 @@ class _CartScreenState extends State<CartScreen> {
                     final item = cartProvider.items[index];
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12),
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(12),
                         child: Row(
@@ -326,12 +139,15 @@ class _CartScreenState extends State<CartScreen> {
                                           cartProvider.decrementQuantity(item.product.id);
                                         },
                                         color: AppColors.primary,
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(),
                                       ),
                                       Container(
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 12,
                                           vertical: 4,
                                         ),
+                                        margin: const EdgeInsets.symmetric(horizontal: 8),
                                         decoration: BoxDecoration(
                                           border: Border.all(color: Colors.grey[300]!),
                                           borderRadius: BorderRadius.circular(4),
@@ -349,6 +165,8 @@ class _CartScreenState extends State<CartScreen> {
                                           cartProvider.incrementQuantity(item.product.id);
                                         },
                                         color: AppColors.primary,
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(),
                                       ),
                                       const Spacer(),
                                       Text(
@@ -377,7 +195,7 @@ class _CartScreenState extends State<CartScreen> {
                                   ),
                                 );
                               },
-                              color: Colors.red,
+                              color: AppColors.error,
                             ),
                           ],
                         ),
@@ -403,7 +221,7 @@ class _CartScreenState extends State<CartScreen> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -433,7 +251,7 @@ class _CartScreenState extends State<CartScreen> {
           
           const SizedBox(height: 16),
           
-          // Siparişi Tamamla Butonu (Checkout'a gider)
+          // Siparişi Tamamla Butonu
           ElevatedButton(
             onPressed: () {
               // Validasyon
@@ -504,7 +322,7 @@ class _CartScreenState extends State<CartScreen> {
                       },
                       child: const Text(
                         'Temizle',
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(color: AppColors.error),
                       ),
                     ),
                   ],
@@ -512,7 +330,7 @@ class _CartScreenState extends State<CartScreen> {
               );
             },
             style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: Colors.red),
+              side: const BorderSide(color: AppColors.error),
               minimumSize: const Size(double.infinity, 48),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -520,7 +338,7 @@ class _CartScreenState extends State<CartScreen> {
             ),
             child: const Text(
               'Sepeti Temizle',
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(color: AppColors.error),
             ),
           ),
         ],

@@ -40,7 +40,6 @@ dependencies:
   intl: ^0.19.0
   url_launcher: ^6.2.2
   image_picker: ^1.0.7
-
   cupertino_icons: ^1.0.6
 
 dev_dependencies:
@@ -52,9 +51,23 @@ dev_dependencies:
   build_runner: ^2.4.7
   json_serializable: ^6.7.1
 
+  # Icon Generator
+  flutter_launcher_icons: ^0.14.4
+
 flutter:
   uses-material-design: true
 
   assets:
-  - assets/images/
-  - assets/icons/
+    - assets/images/
+    - assets/icons/
+
+# --- İKON AYARLARI ---
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/kaptan_logo.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true  # Apple App Store için alpha kanalı kaldır
+  # Android adaptif icon ayarları
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icons/kaptan_logo.png"

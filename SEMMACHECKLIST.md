@@ -36,10 +36,10 @@
 ### 3.1 Bottom Navigation Bar
 - [x] `lib/presentation/widgets/custom_bottom_nav.dart` dosyasını aç
 - [x] 4 tab yapısını güncelle:
-  - [x] Ana Sayfa (Icons.home_outlined / Icons.home)
-  - [x] Ürünler (Icons.shopping_bag_outlined / Icons.shopping_bag)
-  - [x] Profil (Icons.person_outline / Icons.person)
-  - [x] Menü (Icons.menu)
+- [x] Ana Sayfa (Icons.home_outlined / Icons.home)
+- [x] Ürünler (Icons.shopping_bag_outlined / Icons.shopping_bag)
+- [x] Profil (Icons.person_outline / Icons.person)
+- [x] Menü (Icons.menu)
 - [x] Aktif tab rengi: `AppColors.primary` (kırmızı)
 - [x] İnaktif tab rengi: `AppColors.bottomNavInactive` (gri)
 - [x] Selected/unselected icon ayrımı
