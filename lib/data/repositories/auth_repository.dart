@@ -1,4 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../core/constants/customer_type.dart';
 import '../datasources/auth_datasource.dart';
 import '../models/auth_response_model.dart';
 import '../models/user_model.dart';
@@ -21,13 +22,11 @@ class AuthRepository {
         password: password,
       );
 
-      // Token'ı kaydet
       await _storage.write(
         key: ApiConstants.tokenKey,
         value: response.token,
       );
 
-      // User bilgisini kaydet
       await _storage.write(
         key: ApiConstants.userKey,
         value: response.user.toJsonString(),
@@ -49,6 +48,7 @@ class AuthRepository {
     required String taxOffice,
     required String phone,
     required String address,
+    required CustomerType customerType,
   }) async {
     try {
       final response = await _authDataSource.signup(
@@ -60,15 +60,14 @@ class AuthRepository {
         taxOffice: taxOffice,
         phone: phone,
         address: address,
+        customerType: customerType,
       );
 
-      // Token'ı kaydet
       await _storage.write(
         key: ApiConstants.tokenKey,
         value: response.token,
       );
 
-      // User bilgisini kaydet
       await _storage.write(
         key: ApiConstants.userKey,
         value: response.user.toJsonString(),
@@ -83,13 +82,11 @@ class AuthRepository {
   // Get Current User
   Future<UserModel?> getCurrentUser() async {
     try {
-      // Önce local storage'dan oku
       final userString = await _storage.read(key: ApiConstants.userKey);
       if (userString != null) {
         return UserModel.fromJsonString(userString);
       }
 
-      // Local'de yoksa API'den çek
       final user = await _authDataSource.getCurrentUser();
       await _storage.write(
         key: ApiConstants.userKey,
@@ -101,19 +98,16 @@ class AuthRepository {
     }
   }
 
-  // Token kontrolü
   Future<bool> isLoggedIn() async {
     final token = await _storage.read(key: ApiConstants.tokenKey);
     return token != null;
   }
 
-  // Logout
   Future<void> logout() async {
     await _storage.delete(key: ApiConstants.tokenKey);
     await _storage.delete(key: ApiConstants.userKey);
   }
 
-  // Get Token
   Future<String?> getToken() async {
     return await _storage.read(key: ApiConstants.tokenKey);
   }

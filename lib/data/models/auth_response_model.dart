@@ -30,4 +30,7 @@ class AuthResponseModel {
       'message': message,
     };
   }
+
+  // Hesap onaylı mı?
+  bool get isAccountApproved => user.isApproved;
 }

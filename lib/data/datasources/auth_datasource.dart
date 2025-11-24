@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import '../../core/network/api_client.dart';
 import '../../core/constants/api_constants.dart';
+import '../../core/constants/customer_type.dart';
 import '../models/auth_response_model.dart';
 import '../models/user_model.dart';
 
@@ -39,6 +40,7 @@ class AuthDataSource {
     required String taxOffice,
     required String phone,
     required String address,
+    required CustomerType customerType,
   }) async {
     try {
       final response = await _apiClient.post(
@@ -47,11 +49,12 @@ class AuthDataSource {
           'email': email,
           'password': password,
           'name': name,
-          'companyName': companyName,
-          'taxNumber': taxNumber,
-          'taxOffice': taxOffice,
+          'company_name': companyName,
+          'tax_number': taxNumber,
+          'tax_office': taxOffice,
           'phone': phone,
           'address': address,
+          'customer_type': customerType.value,
         },
       );
 

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../../core/constants/customer_type.dart';
 
 class UserModel {
   final int id;
@@ -10,6 +11,8 @@ class UserModel {
   final String? taxOffice;
   final String? phone;
   final String? address;
+  final bool isActive;
+  final CustomerType? customerType;
 
   UserModel({
     required this.id,
@@ -21,6 +24,8 @@ class UserModel {
     this.taxOffice,
     this.phone,
     this.address,
+    this.isActive = true,
+    this.customerType,
   });
 
   // JSON'dan UserModel oluştur
@@ -30,11 +35,15 @@ class UserModel {
       email: json['email'] ?? '',
       name: json['name'] ?? '',
       role: json['role'] ?? 'company_user',
-      companyName: json['companyName'],
-      taxNumber: json['taxNumber'],
-      taxOffice: json['taxOffice'],
+      companyName: json['companyName'] ?? json['company_name'],
+      taxNumber: json['taxNumber'] ?? json['tax_number'],
+      taxOffice: json['taxOffice'] ?? json['tax_office'],
       phone: json['phone'],
       address: json['address'],
+      isActive: json['isActive'] ?? json['is_active'] ?? true,
+      customerType: json['customerType'] != null || json['customer_type'] != null
+          ? CustomerType.fromString(json['customerType'] ?? json['customer_type'])
+          : null,
     );
   }
 
@@ -50,6 +59,8 @@ class UserModel {
       'taxOffice': taxOffice,
       'phone': phone,
       'address': address,
+      'isActive': isActive,
+      'customerType': customerType?.value,
     };
   }
 
@@ -66,4 +77,13 @@ class UserModel {
   
   // Company user mı kontrol et
   bool get isCompanyUser => role == 'company_user';
+
+  // Onaylı hesap mı kontrol et
+  bool get isApproved => isActive;
+
+  // Müşteri tipi gösterim metni
+  String get customerTypeDisplay => 
+      customerType != null 
+          ? '${customerType!.emoji} ${customerType!.displayName}'
+          : '';
 }

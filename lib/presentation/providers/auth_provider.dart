@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../../data/models/user_model.dart';
+import '../../core/constants/customer_type.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthRepository _authRepository;
@@ -53,6 +54,7 @@ class AuthProvider extends ChangeNotifier {
     required String taxOffice,
     required String phone,
     required String address,
+    required CustomerType customerType,
   }) async {
     _isLoading = true;
     _errorMessage = null;
@@ -68,6 +70,7 @@ class AuthProvider extends ChangeNotifier {
         taxOffice: taxOffice,
         phone: phone,
         address: address,
+        customerType: customerType,
       );
 
       _user = response.user;
@@ -82,7 +85,6 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Check if logged in
   Future<void> checkLoginStatus() async {
     _isLoading = true;
     notifyListeners();
@@ -100,7 +102,6 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Logout
   Future<void> logout() async {
     await _authRepository.logout();
     _user = null;

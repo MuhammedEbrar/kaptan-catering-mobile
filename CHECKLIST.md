@@ -1,237 +1,111 @@
-# 👤 MEKZCGL - Görev Checklist'i (Backend Integration & Data)
+## 👤 MEKZCGL - Backend Entegrasyonu & Veri Yönetimi
 
-## 📅 Başlangıç: 10 Ekim 2025
-**Rolün:** Backend Entegrasyonu & Veri Yönetimi
+### ✅ TAMAMLANAN GÖREVLER
 
----
-
-## ✅ PHASE 0-2: Tamamlandı
+#### Phase 0-4: Temel Altyapı
 - [x] Proje kurulumu
-- [x] API altyapısı
-- [x] Authentication
-- [x] Login/Register test (Samsung S10 Lite)
+- [x] API altyapısı (Dio, Interceptor)
+- [x] Authentication (Login/Register)
+- [x] Product listeleme & API entegrasyonu
+- [x] Kategori & Filtreleme
+- [x] Pagination (Infinite scroll)
+
+#### Phase 6: Sepet & Sipariş
+- [x] Cart Provider (Sepet yönetimi)
+- [x] Order Model & DataSource
+- [x] Order Repository & Provider
+- [x] Sepet UI & Checkout akışı
+- [x] Sipariş oluşturma (Backend entegrasyonu)
+
+#### Phase 7: Adres Yönetimi
+- [x] Address Model
+- [x] Address DataSource & Repository
+- [x] Address Provider
+- [x] Adres CRUD işlemleri
+- [x] Checkout'ta adres seçimi
+
+#### Phase 8: Offline Mode & Caching
+- [x] Product cache (SharedPreferences)
+- [x] Cart local storage
+- [x] Network durumu kontrolü
+
+#### Phase 9: UI/UX İyileştirmeleri
+- [x] Shimmer loading effects
+- [x] Empty state widgets
+- [x] Success animations
+- [x] Pull-to-refresh
+- [x] Custom bottom navigation
+- [x] Animated buttons
+
+#### Phase 10: Favori Ürünler
+- [x] Favorites Provider
+- [x] Local storage (SharedPreferences)
+- [x] Favorites UI
+- [x] Ürün detayında favori toggle
+
+#### Phase 11: Profil & Ayarlar
+- [x] Profile screen
+- [x] Edit profile
+- [x] Settings screen
+- [x] Logout fonksiyonu
 
 ---
 
-## ✅ PHASE 4: Ürün Listeleme & API Entegrasyonu (TAMAMLANDI ✅)
+### 🔄 YENİ REVİZYON - MÜŞTERİ TİPİ & ADMIN ONAY SİSTEMİ
 
-### 4.1 Product Model Güncelleme
-- [x] `lib/data/models/product_model.dart` dosyasını aç
-- [x] KDV alanlarını kontrol et (kdvDahil, kdvOrani)
-- [x] Birim alanını kontrol et (kg, adet, litre)
-- [x] Minimum sipariş miktarı ekle (minSiparisMiktari)
-- [x] JSON serialization test et
-
-### 4.2 Product DataSource
-- [x] `lib/data/datasources/product_datasource.dart` oluştur
-- [x] `getProducts()` fonksiyonu yaz
-- [x] `GET /api/products` endpoint'ini entegre et
-- [x] Error handling ekle
-- [x] Postman/curl ile API test et
-
-### 4.3 Product Repository
-- [x] `lib/data/repositories/product_repository.dart` oluştur
-- [x] DataSource'u inject et
-- [x] `fetchProducts()` fonksiyonu
-- [x] Cache mekanizması (SharedPreferences)
-- [x] Error handling
-
-### 4.4 Product Provider
-- [x] `lib/presentation/providers/product_provider.dart` oluştur
-- [x] `ChangeNotifier` extend et
-- [x] States tanımla
-- [x] `loadProducts()` fonksiyonu
-- [x] `notifyListeners()` ekle
-
-### 4.5 Dependency Injection
-- [x] `lib/core/di/injection.dart` aç
-- [x] ProductDataSource register et
-- [x] ProductRepository register et
-- [x] Test et
-
-### 4.6 API Test
-- [x] Telefonda çalıştır
-- [x] Console'da API response'u gör
-- [x] Ürün sayısını kontrol et (~14)
-- [x] Hata durumlarını test et
+#### Phase 12: Müşteri Tipi Sistemi ✅
+- [x] `CustomerType` enum oluşturuldu (`lib/core/constants/customer_type.dart`)
+  - [x] Okul 🏫
+  - [x] Restoran 🍽️
+  - [x] Otel 🏨
+- [x] `UserModel` güncellendi
+  - [x] `isActive` (bool) eklendi
+  - [x] `customerType` (enum) eklendi
+  - [x] `isApproved` getter eklendi
+  - [x] `customerTypeDisplay` getter eklendi
+- [x] `AuthResponseModel` güncellendi
+  - [x] `isAccountApproved` getter eklendi
+- [x] `AuthDataSource` güncellendi
+  - [x] `signup()` metoduna `customerType` parametresi eklendi
+  - [x] Backend'e snake_case format (`customer_type`) gönderimi
+- [x] `AuthRepository` güncellendi
+  - [x] `signup()` metoduna `customerType` parametresi eklendi
+- [x] `AuthProvider` güncellendi
+  - [x] `signup()` metoduna `customerType` parametresi eklendi
+- [x] `SignupScreen` güncellendi
+  - [x] Dropdown ile müşteri tipi seçimi UI
+  - [x] Form validation (müşteri tipi seçilmeli)
+  - [x] Emoji + isim gösterimi
+- [x] `LoginScreen` güncellendi
+  - [x] `RegisterScreen` → `SignupScreen` değişikliği
+  - [x] Import düzeltmeleri
 
 ---
 
-## ✅ PHASE 4.5: Kategori & Filtreleme (TAMAMLANDI ✅)
+### ⏳ DEVAM EDEN GÖREVLER
 
-### 4.7 Kategori Provider
-- [x] `lib/presentation/providers/category_provider.dart` oluştur
-- [x] Kategori listesi state
-- [x] Seçili kategori state
-- [x] `filterByCategory()` fonksiyonu
-- [x] Emoji iconlar
-- [x] Home screen'de kategori chips
-- [x] Test edildi
+#### Phase 12.1: Backend Entegrasyonu Tamamlanacak
+- [ ] Backend'de `customer_type` alanı kabul edilmeli
+- [ ] Backend validation güncellenmeli
+- [ ] Test: Kayıt akışı (customerType ile)
 
-### 4.8 Arama Fonksiyonu
-- [x] Arama bar UI (TextField + TextEditingController)
-- [x] Local arama (client-side filtering)
-- [x] Stok kodu ile arama
-- [x] Stok adı ile arama
-- [x] Kategori ile arama
-- [x] Debounce mekanizması (500ms)
-- [x] Arama temizleme (X butonu)
-- [x] Klavye 'Ara' butonu
-- [x] Test edildi
-
-### 4.9 Pagination
-- [x] ScrollController eklendi
-- [x] Infinite scroll mekanizması (80% scroll'da tetikle)
-- [x] `loadMore()` fonksiyonu
-- [x] Loading indicator (liste altında)
-- [x] `hasMore` flag kontrolü
-- [x] "Tüm ürünler yüklendi" mesajı
-- [x] Filtreleme sırasında pagination devre dışı
-- [x] Test edildi
+#### Phase 13: Admin Onay Sistemi (PLANLANAN)
+- [ ] Login sonrası `isActive` kontrolü
+- [ ] Onay bekleyen kullanıcı ekranı
+- [ ] Admin paneli entegrasyonu
+- [ ] Kullanıcı aktifleştirme/deaktifleştirme
+- [ ] Email bildirimleri (opsiyonel)
 
 ---
 
-## ✅ PHASE 6: Sepet & Sipariş Entegrasyonu (TAMAMLANDI ✅)
+### 📊 İLERLEME DURUMU
 
-### 6.1 Cart Provider
-- [x] `lib/data/models/cart_item_model.dart` oluştur
-- [x] `lib/presentation/providers/cart_provider.dart` oluştur
-- [x] Cart items list state
-- [x] `addToCart()` fonksiyonu
-- [x] `removeFromCart()` fonksiyonu
-- [x] `updateQuantity()` fonksiyonu
-- [x] `clearCart()` fonksiyonu
-- [x] `getTotalAmount()` fonksiyonu (ara toplam)
-- [x] `getKdvAmount()` fonksiyonu (KDV tutarı)
-- [x] `getGrandTotal()` fonksiyonu (genel toplam)
-- [x] `getShippingCost()` fonksiyonu (kargo)
-- [x] Local storage ile sepeti kaydet (SharedPreferences)
-- [x] Uygulama açılınca sepeti yükle
-- [x] Sepet validasyonu (minimum miktar, stok)
-- [x] Home screen entegrasyonu
-- [x] Sepet ikonu + badge
-- [x] Test edildi
+- **Toplam Görev:** ~75
+- **Tamamlanan:** ~68
+- **Devam Eden:** ~2
+- **Planlanan:** ~5
 
-### 6.2 Order Model
-- [x] `lib/data/models/order_model.dart` oluştur
-- [x] Order fields (id, userId, items, totalAmount, status, paymentMethod, deliveryAddress, etc.)
-- [x] OrderItem model (productId, productName, quantity, price, unit)
-- [x] JSON serialization (fromJson, toJson)
-- [x] Sipariş durumları (pending, paid, preparing, shipped, delivered, cancelled)
-- [x] Display name fonksiyonları
-- [x] CartItem'dan OrderItem dönüşümü
-
-### 6.3 Order DataSource
-- [x] `lib/data/datasources/order_datasource.dart` oluştur
-- [x] `createOrder(Map<String, dynamic> orderData)` - POST /api/siparisler
-- [x] `getOrders()` - GET /api/siparisler
-- [x] `getOrderById(String orderId)` - GET /api/siparisler/:id
-- [x] `getOrdersByStatus(String status)` - Duruma göre filtrele
-- [x] `cancelOrder(String orderId)` - PATCH /api/siparisler/:id
-- [x] Error handling
-- [x] Flexible JSON parsing (farklı backend formatları için)
-
-### 6.4 Order Repository
-- [x] `lib/data/repositories/order_repository.dart` oluştur
-- [x] `createOrder()` fonksiyonu
-- [x] `fetchOrders()` fonksiyonu
-- [x] `fetchOrderById()` fonksiyonu
-- [x] `fetchOrdersByStatus()` fonksiyonu
-- [x] `cancelOrder()` fonksiyonu
-- [x] `fetchActiveOrders()` - Aktif siparişler
-- [x] `fetchCompletedOrders()` - Tamamlanan siparişler
-- [x] `fetchCancelledOrders()` - İptal edilen siparişler
-- [x] Error handling
-
-### 6.5 Order Provider
-- [x] `lib/presentation/providers/order_provider.dart` oluştur
-- [x] Order list state (`List<OrderModel> orders`)
-- [x] Loading states (isLoading, isCreatingOrder)
-- [x] `createOrder(OrderModel order)` fonksiyonu
-- [x] `loadOrders()` fonksiyonu
-- [x] `loadOrderById(String id)` fonksiyonu
-- [x] `getOrdersByStatus()` - Duruma göre filtrele
-- [x] `activeOrders`, `completedOrders`, `cancelledOrders` getters
-- [x] `cancelOrder()` fonksiyonu
-- [x] Error handling
-
-### 6.6 Dependency Injection
-- [x] OrderDataSource register et
-- [x] OrderRepository register et
-- [x] CartProvider register et
-- [x] OrderProvider register et
-- [x] main.dart'ta Provider'ları ekle
-- [x] ApiClient'e `patch` metodu ekle
-
-### 6.7 Cart Screen (Geçici)
-- [x] `lib/presentation/screens/cart/cart_screen.dart` oluştur
-- [x] Sepet ürün listesi
-- [x] Miktar artır/azalt
-- [x] Ürün silme
-- [x] Ara toplam, KDV, Toplam gösterimi
-- [x] Sipariş notu (opsiyonel)
-- [x] "Sipariş Talebi Gönder" butonu
-- [x] Sepeti temizle butonu
-- [x] Backend'e sipariş gönderme
-- [x] Test edildi
-
-### 6.8 UI Entegrasyonu
-- [x] Ana sayfa landing page'e çevrildi
-- [x] Bottom navigation bar (Ana Sayfa, Ürünler, Sepet, Profil)
-- [x] Ürünler sayfası grid layout
-- [x] Sepet badge (ürün sayısı gösterimi)
-- [x] Test edildi (Samsung S10 Lite)
+**Tamamlanma Oranı:** ~91% ✅
 
 ---
 
-## 📝 ÖNEMLİ NOTLAR
-
-### ⚠️ Backend Durumu:
-- **Backend'den gelen ürünlerde FİYAT YOK** (price: 0.0)
-- **Sipariş API'si 500 hatası veriyor** ama sipariş oluşuyor (DB'ye kaydediliyor)
-- Backend düzeltilene kadar geçici çözümlerle devam ediyoruz
-
-### ✅ Tamamlanan:
-- Phase 0-2: Authentication ✅
-- Phase 4: Ürün listeleme & API ✅
-- Phase 4.5: Kategori & Filtreleme ✅
-- Phase 6: Sepet & Sipariş entegrasyonu ✅
-
-### 🔄 Sırada:
-- **Phase 8: Offline Mode & Caching**
-
----
-
-## 🔄 PHASE 8: Offline Mode & Caching (SONRAKİ HEDEF)
-
-### 8.1 Shared Preferences Setup
-- [ ] Product cache için key tanımla (`cached_products`)
-- [ ] Cache timestamp key (`products_cache_time`)
-- [ ] Cache süresi belirle (24 saat)
-- [ ] `saveProductsToCache(List<ProductModel>)` fonksiyonu
-- [ ] `loadProductsFromCache()` fonksiyonu
-- [ ] Cache validation (expired mı?)
-
-### 8.2 Network Check
-- [ ] `lib/core/utils/network_checker.dart` oluştur
-- [ ] Internet bağlantı kontrolü (connectivity_plus paketi)
-- [ ] Offline durumu provider'da yönet
-- [ ] Online olunca otomatik sync
-
-### 8.3 Offline Product Access
-- [ ] İnternet yoksa cache'den yükle
-- [ ] "Offline moddasınız" bildirimi göster
-- [ ] Sepet offline da çalışsın (local)
-
----
-
-## 📊 İlerleme
-
-- **Toplam Görev:** ~65
-- **Tamamlanan:** ~50
-- **Kalan:** ~15
-
----
-
-**Son Güncelleme:** 15 Ekim 2025
-**Sıradaki Görev:** Phase 8.1 - Offline Mode & Caching
