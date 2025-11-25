@@ -13,6 +13,7 @@ import 'presentation/providers/category_provider.dart';
 import 'presentation/providers/cart_provider.dart';
 import 'presentation/providers/order_provider.dart';
 import 'presentation/providers/address_provider.dart';
+import 'presentation/providers/favorite_provider.dart';
 import 'presentation/screens/auth/login_screen.dart';
 import 'presentation/screens/main_screen.dart';
 
@@ -48,6 +49,9 @@ class KaptanCateringApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => AddressProvider(getIt<AddressRepository>()),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => FavoriteProvider(),
         ),
       ],
       child: MaterialApp(

@@ -7,6 +7,10 @@ class FavoriteProvider extends ChangeNotifier {
   final List<ProductModel> _favorites = [];
   bool _isLoading = false;
 
+  FavoriteProvider() {
+    loadFavorites();
+  }
+
   List<ProductModel> get favorites => _favorites;
   bool get isLoading => _isLoading;
   int get favoriteCount => _favorites.length;

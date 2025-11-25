@@ -2,6 +2,7 @@ import 'dart:convert';
 
 class ProductModel {
   final String id;
+  final int categoryId;
   final String stokKodu;
   final String stokAdi;
   final String kategori;
@@ -16,6 +17,7 @@ class ProductModel {
 
   ProductModel({
     required this.id,
+    required this.categoryId,
     required this.stokKodu,
     required this.stokAdi,
     required this.kategori,
@@ -52,29 +54,31 @@ class ProductModel {
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
       id: json['id']?.toString() ?? '',
+      categoryId: int.tryParse(json['category_id']?.toString() ?? '0') ?? 0,
       // Backend: stock_code, name, category_id, unit, image_url
-      stokKodu: json['stock_code'] ?? '',
-      stokAdi: json['name'] ?? '',
-      kategori: json['category_id'] ?? '',
-      birim: json['unit'] ?? 'AD',
-      fotografUrl: json['image_url'],
-      // Fiyat backend'de yok, geçici 0 (sonra eklenecek)
-      fiyat: (json['price'] ?? json['fiyat'] ?? 0).toDouble(),
+      stokKodu: json['stock_code']?.toString() ?? '',
+      stokAdi: json['name']?.toString() ?? '',
+      kategori: json['category_name']?.toString() ?? '', // Mapped category_name to kategori
+      birim: json['unit']?.toString() ?? 'AD',
+      fotografUrl: json['image_url']?.toString(),
+      // Fiyat string gelebilir, güvenli parse
+      fiyat: double.tryParse(json['price']?.toString() ?? '0') ?? 0.0,
       kdvDahil: json['kdv_dahil'] ?? true,
-      kdvOrani: (json['kdv_orani'] ?? 18).toDouble(),
-      // Stok miktarı backend'de yok, geçici 100
-      stokMiktari: json['stock_quantity'] ?? json['stok_miktari'] ?? 100,
-      minSiparisMiktari: json['min_order_quantity'] ?? json['min_siparis_miktari'],
-      aciklama: json['description'],
+      kdvOrani: double.tryParse(json['kdv_orani']?.toString() ?? '18') ?? 18.0,
+      // Stok miktarı
+      stokMiktari: int.tryParse(json['stock_quantity']?.toString() ?? '100') ?? 100,
+      minSiparisMiktari: int.tryParse(json['min_order_quantity']?.toString() ?? '1') ?? 1,
+      aciklama: json['description']?.toString(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'category_id': categoryId,
       'stock_code': stokKodu,
       'name': stokAdi,
-      'category_id': kategori,
+      'category_name': kategori,
       'unit': birim,
       'image_url': fotografUrl,
       'price': fiyat,

@@ -59,10 +59,7 @@ class CategoryProvider extends ChangeNotifier {
 
   // Kategori adını kısalt (UI için)
   String getShortCategoryName(String category) {
-    // "GG1 - PİLİÇ PİŞMİŞ DNR" -> "PİLİÇ PİŞMİŞ DNR"
-    if (category.contains(' - ')) {
-      return category.split(' - ').last;
-    }
+    // Kullanıcı isteği üzerine kategori adı olduğu gibi gösteriliyor
     return category;
   }
 

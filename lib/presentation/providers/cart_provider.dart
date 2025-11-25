@@ -152,6 +152,7 @@ class CartProvider extends ChangeNotifier {
       (item) => item.product.id == productId,
       orElse: () => CartItem(product: ProductModel(
         id: '',
+        categoryId: 0,
         stokKodu: '',
         stokAdi: '',
         kategori: '',

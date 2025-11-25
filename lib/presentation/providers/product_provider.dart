@@ -97,6 +97,11 @@ class ProductProvider extends ChangeNotifier {
       
       // Başarılıysa offline durumunu kaldır
       _isOffline = false;
+
+      // 🆕 Tüm kategorileri çekmek için arka planda tüm ürünleri getir
+      // Bu sayede pagination olsa bile tüm kategoriler listelenebilir
+      _fetchAllCategoriesInBackground();
+
     } catch (e) {
       _errorMessage = e.toString();
       print('❌ loadProducts hatası: $e');
@@ -111,6 +116,32 @@ class ProductProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  // Arka planda tüm kategorileri çek
+  Future<void> _fetchAllCategoriesInBackground() async {
+    try {
+      final allProducts = await _productRepository.fetchProducts(
+        page: 1,
+        limit: 1000, // Hepsini getir
+        forceRefresh: true, // Cache'i atla, API'den çek
+      );
+      
+      // Sadece kategorileri güncellemek için kullanılacak bir liste tutabiliriz
+      // Ancak şimdilik _products listesine eklemiyoruz çünkü pagination bozulur.
+      // CategoryProvider bu listeyi kullanmalı.
+      // Bu yüzden geçici olarak _allProductsForCategories gibi bir liste tutalım.
+      _allProductsForCategories = allProducts;
+      notifyListeners(); // CategoryProvider bunu dinleyip güncelleyecek
+      print('📂 Tüm kategoriler için ${allProducts.length} ürün arka planda çekildi');
+    } catch (e) {
+      print('⚠️ Kategoriler çekilemedi: $e');
+    }
+  }
+
+  // Kategoriler için tüm ürünler
+  List<ProductModel> _allProductsForCategories = [];
+  List<ProductModel> get allProductsForCategories => _allProductsForCategories.isNotEmpty ? _allProductsForCategories : _products;
+
 
   // Daha fazla ürün yükle (Pagination)
   Future<void> loadMoreProducts() async {
@@ -128,14 +159,27 @@ class ProductProvider extends ChangeNotifier {
         limit: _pageSize,
       );
 
-      if (moreProducts.isEmpty || moreProducts.length < _pageSize) {
+      // 🆕 Duplicate Kontrolü
+      // Backend pagination hatası varsa aynı veriyi dönebilir
+      final newUniqueProducts = moreProducts.where((newProduct) {
+        return !_products.any((existingProduct) => existingProduct.id == newProduct.id);
+      }).toList();
+
+      if (newUniqueProducts.isEmpty) {
+        // Eğer gelen tüm ürünler zaten listemizde varsa, daha fazla veri yok demektir
         _hasMore = false;
+        print('⚠️ Duplicate veri algılandı, pagination sonlandırıldı.');
+      } else {
+        _products.addAll(newUniqueProducts);
+        _applyFilters();
+        
+        if (moreProducts.length < _pageSize) {
+          _hasMore = false;
+        }
+        
+        print('✅ ${newUniqueProducts.length} yeni ürün eklendi (Sayfa $_currentPage)');
       }
 
-      _products.addAll(moreProducts);
-      _applyFilters();
-
-      print('✅ ${moreProducts.length} ürün daha yüklendi (Sayfa $_currentPage)');
     } catch (e) {
       _errorMessage = e.toString();
       _currentPage--;
@@ -197,23 +241,44 @@ class ProductProvider extends ChangeNotifier {
       return;
     }
 
-    // LOCAL ARAMA (Client-side filtering)
+    // API ARAMA ÇALIŞMIYOR -> TÜM ÜRÜNLERİ ÇEKİP LOCAL FİLTRELEME
+    // Backend search parametresini (search, q, name, s) tanımıyor.
+    // Bu yüzden tüm ürünleri çekip (limit=1000) burada filtreleyeceğiz.
+    
     _selectedCategory = null;
-    
-    final query = _searchQuery.toLowerCase().trim();
-    
-    _filteredProducts = _products.where((product) {
-      final stokAdi = product.stokAdi.toLowerCase();
-      final stokKodu = product.stokKodu.toLowerCase();
-      final kategori = product.kategori.toLowerCase();
-      
-      return stokAdi.contains(query) || 
-             stokKodu.contains(query) || 
-             kategori.contains(query);
-    }).toList();
-    
-    print('🔍 ${_filteredProducts.length} ürün bulundu (Arama: $_searchQuery)');
+    _isLoading = true;
     notifyListeners();
+
+    try {
+      // Tüm ürünleri çek
+      final allProducts = await _productRepository.fetchProducts(
+        page: 1,
+        limit: 1000, // Hepsini getir
+        forceRefresh: true, // Cache kullanma, taze veri çek
+      );
+
+      final query = _searchQuery.toLowerCase().trim();
+      
+      // Local filtreleme
+      _filteredProducts = allProducts.where((product) {
+        final stokAdi = product.stokAdi.toLowerCase();
+        final stokKodu = product.stokKodu.toLowerCase();
+        final kategori = product.kategori.toLowerCase();
+        
+        return stokAdi.contains(query) || 
+               stokKodu.contains(query) || 
+               kategori.contains(query);
+      }).toList();
+      
+      print('🔍 Local Filtreleme: ${_filteredProducts.length} ürün bulundu (Toplam: ${allProducts.length}, Arama: $_searchQuery)');
+    } catch (e) {
+      print('❌ Arama hatası: $e');
+      _errorMessage = 'Arama yapılırken bir hata oluştu';
+      _filteredProducts = [];
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   // Filtreleri uygula (local filtreleme)

@@ -28,10 +28,11 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
       if (productProvider.products.isEmpty) {
         productProvider.loadProducts().then((_) {
-          categoryProvider.extractCategories(productProvider.products);
+          // Kategorileri tüm ürünlerden çek (background fetch tamamlanınca güncellenecek)
+          categoryProvider.extractCategories(productProvider.allProductsForCategories);
         });
       } else {
-        categoryProvider.extractCategories(productProvider.products);
+        categoryProvider.extractCategories(productProvider.allProductsForCategories);
       }
     });
 
@@ -48,6 +49,20 @@ class _ProductsScreenState extends State<ProductsScreen> {
           productProvider.selectedCategory != null) return;
 
       productProvider.loadMoreProducts();
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Background fetch tamamlandığında kategorileri güncelle
+    final productProvider = context.watch<ProductProvider>();
+    final categoryProvider = context.read<CategoryProvider>();
+    
+    if (productProvider.allProductsForCategories.isNotEmpty && 
+        productProvider.allProductsForCategories.length > productProvider.products.length) {
+      // Sadece yeni veri geldiyse güncelle
+      categoryProvider.extractCategories(productProvider.allProductsForCategories);
     }
   }
 
