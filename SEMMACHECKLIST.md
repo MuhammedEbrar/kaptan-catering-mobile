@@ -78,20 +78,20 @@
 ## 🔄 YENİ REVİZYON - MÜŞTERİ TİPİ & ADMIN ONAY SİSTEMİ
 
 ### ✅ PHASE 12: Kayıt Ekranı Güncelleme
-- [x] **Müşteri Tipi Dropdown Tasarımı**
-  - [x] Dropdown container border & radius
-  - [x] Emoji + isim birlikte gösterimi (🏫 Okul, 🍽️ Restoran, 🏨 Otel)
-  - [x] Hover/Focus states
-  - [x] Placeholder text ("İşletme türünü seçin")
-- [x] **Form Layout Düzenleme**
-  - [x] Müşteri tipi alanı en üste konumlandırma
-  - [x] Zorunlu alan yıldızı (*) ekle
-  - [x] Label typography düzenleme
-  - [x] Spacing ayarları (16-24px arası)
-- [x] **Validation Feedback**
-  - [x] Seçim yapılmadıysa hata mesajı (SnackBar)
-  - [x] Snackbar tasarımı (kırmızı background)
-  - [x] Error state gösterimi
+- [] **Müşteri Tipi Dropdown Tasarımı**
+  - [] Dropdown container border & radius
+  - [] Emoji + isim birlikte gösterimi (🏫 Okul, 🍽️ Restoran, 🏨 Otel)
+  - [] Hover/Focus states
+  - [] Placeholder text ("İşletme türünü seçin")
+- [] **Form Layout Düzenleme**
+  - [] Müşteri tipi alanı en üste konumlandırma
+  - [] Zorunlu alan yıldızı (*) ekle
+  - [] Label typography düzenleme
+  - [] Spacing ayarları (16-24px arası)
+- [] **Validation Feedback**
+  - [] Seçim yapılmadıysa hata mesajı (SnackBar)
+  - [] Snackbar tasarımı (kırmızı background)
+  - [] Error state gösterimi
 
 ---
 

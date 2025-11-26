@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/auth_provider.dart';
+import '../../widgets/status_badge.dart';
 import '../auth/login_screen.dart';
 import '../addresses/addresses_screen.dart';
 import '../orders/orders_screen.dart';
@@ -37,6 +38,7 @@ class ProfileScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
+                      // Profil Resmi
                       CircleAvatar(
                         radius: 40,
                         backgroundColor: AppColors.primary,
@@ -50,23 +52,45 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
+
+                      // Ad Soyad
                       Text(
                         user.name,
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 4),
+
+                      // Email
                       Text(
                         user.email,
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[600],
                         ),
+                        textAlign: TextAlign.center,
                       ),
+                      const SizedBox(height: 16),
+
+                      // Status Badge
+                      StatusBadge(
+                        status: _getAccountStatus(user.isActive),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Müşteri Tipi Badge
+                      if (user.customerType != null)
+                        CustomerTypeBadge(
+                          emoji: user.customerType!.emoji,
+                          displayName: user.customerType!.displayName,
+                        ),
+
+                      // Firma Adı (Eğer varsa)
                       if (user.companyName != null) ...[
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -76,13 +100,27 @@ class ProfileScreen extends StatelessWidget {
                             color: AppColors.primary.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: Text(
-                            user.companyName!,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.business,
+                                size: 14,
+                                color: AppColors.primary,
+                              ),
+                              const SizedBox(width: 6),
+                              Flexible(
+                                child: Text(
+                                  user.companyName!,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -132,6 +170,20 @@ class ProfileScreen extends StatelessWidget {
               ),
               _buildMenuCard(
                 context,
+                icon: Icons.settings,
+                title: 'Ayarlar',
+                subtitle: 'Uygulama ayarlarınızı yönetin',
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Ayarlar sayfası yakında eklenecek'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+              ),
+              _buildMenuCard(
+                context,
                 icon: Icons.logout,
                 title: 'Çıkış Yap',
                 subtitle: 'Hesabınızdan çıkış yapın',
@@ -145,6 +197,13 @@ class ProfileScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  // Helper: Hesap durumu belirleme
+  AccountStatus _getAccountStatus(bool isActive) {
+    // Backend'den isActive bilgisi gelecek
+    // Şimdilik aktif olarak göster
+    return isActive ? AccountStatus.active : AccountStatus.pending;
   }
 
   Widget _buildMenuCard(
@@ -162,6 +221,10 @@ class ProfileScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 8,
+        ),
         leading: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
@@ -180,10 +243,20 @@ class ProfileScreen extends StatelessWidget {
           title,
           style: TextStyle(
             fontWeight: FontWeight.bold,
+            fontSize: 16,
             color: isDestructive ? Colors.red : Colors.black,
           ),
         ),
-        subtitle: Text(subtitle),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(
+            subtitle,
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.grey[600],
+            ),
+          ),
+        ),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
         onTap: onTap,
       ),
@@ -194,7 +267,16 @@ class ProfileScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Hesap Bilgileri'),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: const Text(
+          'Hesap Bilgileri',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -211,13 +293,52 @@ class ProfileScreen extends StatelessWidget {
                 _buildInfoRow('Vergi Dairesi', user.taxOffice!),
               if (user.address != null)
                 _buildInfoRow('Adres', user.address!),
+              
+              // Hesap Durumu
+              const Divider(height: 24),
+              const Text(
+                'Hesap Durumu',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              StatusBadge(
+                status: _getAccountStatus(user.isActive),
+              ),
+              
+              // Müşteri Tipi
+              if (user.customerType != null) ...[
+                const SizedBox(height: 16),
+                const Text(
+                  'İşletme Türü',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                CustomerTypeBadge(
+                  emoji: user.customerType!.emoji,
+                  displayName: user.customerType!.displayName,
+                ),
+              ],
             ],
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Kapat'),
+            child: const Text(
+              'Kapat',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -255,6 +376,9 @@ class ProfileScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
         title: const Text('Çıkış Yap'),
         content: const Text('Çıkış yapmak istediğinize emin misiniz?'),
         actions: [
@@ -264,7 +388,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           TextButton(
             onPressed: () async {
-              // 👇 CONTEXT'LERİ KAYDET
+              // Context'leri kaydet
               final navigator = Navigator.of(context);
               final authProvider = context.read<AuthProvider>();
 
@@ -274,17 +398,20 @@ class ProfileScreen extends StatelessWidget {
               // Logout yap
               await authProvider.logout();
 
-              // 👇 LOGIN EKRANINA GİT, TÜM STACK'İ TEMİZLE
+              // Login ekranına git
               navigator.pushAndRemoveUntil(
                 MaterialPageRoute(
                   builder: (_) => const LoginScreen(),
                 ),
-                (route) => false, // Tüm önceki ekranları temizle
+                (route) => false,
               );
             },
             child: const Text(
               'Çıkış Yap',
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
