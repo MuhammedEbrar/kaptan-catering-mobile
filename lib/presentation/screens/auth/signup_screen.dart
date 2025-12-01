@@ -50,7 +50,9 @@ class _SignupScreenState extends State<SignupScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Lütfen işletme türünü seçin'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 2),
         ),
       );
       return;
@@ -75,7 +77,9 @@ class _SignupScreenState extends State<SignupScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Kayıt başarılı! Giriş yapabilirsiniz.'),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.success,
+            behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 2),
           ),
         );
         Navigator.pushReplacement(
@@ -86,7 +90,9 @@ class _SignupScreenState extends State<SignupScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(authProvider.errorMessage ?? 'Kayıt başarısız'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 2),
           ),
         );
       }
@@ -134,7 +140,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     const SizedBox(height: 32),
 
-                    // Müşteri Tipi Seçimi
+                    // Müşteri Tipi Seçimi - EN ÜSTTE
                     const Text(
                       'İşletme Türü *',
                       style: TextStyle(
@@ -146,19 +152,41 @@ class _SignupScreenState extends State<SignupScreen> {
                     const SizedBox(height: 8),
                     Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]!),
+                        border: Border.all(
+                          color: _selectedCustomerType == null
+                              ? Colors.grey[300]!
+                              : AppColors.primary,
+                          width: _selectedCustomerType == null ? 1 : 2,
+                        ),
                         borderRadius: BorderRadius.circular(12),
+                        color: _selectedCustomerType == null
+                            ? Colors.white
+                            : AppColors.primary.withOpacity(0.05),
                       ),
                       child: DropdownButtonFormField<CustomerType>(
-                        initialValue: _selectedCustomerType,
+                        value: _selectedCustomerType,
                         decoration: const InputDecoration(
                           hintText: 'İşletme türünü seçin',
+                          hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 16,
+                          ),
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: 16,
-                            vertical: 12,
+                            vertical: 14,
                           ),
                         ),
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: _selectedCustomerType == null
+                              ? Colors.grey
+                              : AppColors.primary,
+                          size: 28,
+                        ),
+                        isExpanded: true,
+                        dropdownColor: Colors.white,
+                        elevation: 8,
                         items: CustomerType.values.map((type) {
                           return DropdownMenuItem(
                             value: type,
@@ -171,7 +199,10 @@ class _SignupScreenState extends State<SignupScreen> {
                                 const SizedBox(width: 12),
                                 Text(
                                   type.displayName,
-                                  style: const TextStyle(fontSize: 16),
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ],
                             ),
@@ -182,6 +213,12 @@ class _SignupScreenState extends State<SignupScreen> {
                             _selectedCustomerType = value;
                           });
                         },
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Lütfen işletme türünü seçin';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -191,11 +228,22 @@ class _SignupScreenState extends State<SignupScreen> {
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
-                        labelText: 'E-posta',
+                        labelText: 'E-posta *',
                         hintText: 'ornek@firma.com',
                         prefixIcon: const Icon(Icons.email_outlined),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                            width: 2,
+                          ),
                         ),
                       ),
                       validator: (value) {
@@ -208,14 +256,14 @@ class _SignupScreenState extends State<SignupScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
                     // Şifre
                     TextFormField(
                       controller: _passwordController,
                       obscureText: !_isPasswordVisible,
                       decoration: InputDecoration(
-                        labelText: 'Şifre',
+                        labelText: 'Şifre *',
                         hintText: 'En az 6 karakter',
                         prefixIcon: const Icon(Icons.lock_outlined),
                         suffixIcon: IconButton(
@@ -233,6 +281,17 @@ class _SignupScreenState extends State<SignupScreen> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                            width: 2,
+                          ),
+                        ),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -244,17 +303,28 @@ class _SignupScreenState extends State<SignupScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
                     // Ad Soyad
                     TextFormField(
                       controller: _nameController,
                       decoration: InputDecoration(
-                        labelText: 'Ad Soyad',
+                        labelText: 'Ad Soyad *',
                         hintText: 'Yetkili adı',
                         prefixIcon: const Icon(Icons.person_outlined),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                            width: 2,
+                          ),
                         ),
                       ),
                       validator: (value) {
@@ -264,17 +334,28 @@ class _SignupScreenState extends State<SignupScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
                     // Firma Adı
                     TextFormField(
                       controller: _companyNameController,
                       decoration: InputDecoration(
-                        labelText: 'Firma Adı',
+                        labelText: 'Firma Adı *',
                         hintText: 'Firma unvanı',
                         prefixIcon: const Icon(Icons.business_outlined),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                            width: 2,
+                          ),
                         ),
                       ),
                       validator: (value) {
@@ -284,18 +365,29 @@ class _SignupScreenState extends State<SignupScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
                     // Vergi No
                     TextFormField(
                       controller: _taxNumberController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        labelText: 'Vergi Numarası',
+                        labelText: 'Vergi Numarası *',
                         hintText: '10 haneli vergi numarası',
                         prefixIcon: const Icon(Icons.numbers_outlined),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                            width: 2,
+                          ),
                         ),
                       ),
                       validator: (value) {
@@ -305,17 +397,28 @@ class _SignupScreenState extends State<SignupScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
                     // Vergi Dairesi
                     TextFormField(
                       controller: _taxOfficeController,
                       decoration: InputDecoration(
-                        labelText: 'Vergi Dairesi',
+                        labelText: 'Vergi Dairesi *',
                         hintText: 'Vergi dairesi adı',
                         prefixIcon: const Icon(Icons.account_balance_outlined),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                            width: 2,
+                          ),
                         ),
                       ),
                       validator: (value) {
@@ -325,18 +428,29 @@ class _SignupScreenState extends State<SignupScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
                     // Telefon
                     TextFormField(
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
-                        labelText: 'Telefon',
+                        labelText: 'Telefon *',
                         hintText: '5XX XXX XX XX',
                         prefixIcon: const Icon(Icons.phone_outlined),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                            width: 2,
+                          ),
                         ),
                       ),
                       validator: (value) {
@@ -346,18 +460,32 @@ class _SignupScreenState extends State<SignupScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
                     // Adres
                     TextFormField(
                       controller: _addressController,
                       maxLines: 3,
                       decoration: InputDecoration(
-                        labelText: 'Adres',
+                        labelText: 'Adres *',
                         hintText: 'Firma adresi',
-                        prefixIcon: const Icon(Icons.location_on_outlined),
+                        prefixIcon: const Padding(
+                          padding: EdgeInsets.only(bottom: 48),
+                          child: Icon(Icons.location_on_outlined),
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                            width: 2,
+                          ),
                         ),
                       ),
                       validator: (value) {
@@ -377,12 +505,21 @@ class _SignupScreenState extends State<SignupScreen> {
                         onPressed: authProvider.isLoading ? null : _handleSignup,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
+                          disabledBackgroundColor: Colors.grey[300],
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
+                          elevation: 2,
                         ),
                         child: authProvider.isLoading
-                            ? const CircularProgressIndicator(color: Colors.white)
+                            ? const SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
                             : const Text(
                                 'Kayıt Ol',
                                 style: TextStyle(
@@ -393,13 +530,16 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 24),
 
                     // Giriş Yap Linki
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('Zaten hesabınız var mı? '),
+                        const Text(
+                          'Zaten hesabınız var mı? ',
+                          style: TextStyle(fontSize: 15),
+                        ),
                         TextButton(
                           onPressed: () {
                             Navigator.pushReplacement(
@@ -414,6 +554,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             style: TextStyle(
                               color: AppColors.primary,
                               fontWeight: FontWeight.bold,
+                              fontSize: 15,
                             ),
                           ),
                         ),
