@@ -126,35 +126,50 @@ class _CartScreenState extends State<CartScreen> {
                                   const SizedBox(height: 8),
                                   Row(
                                     children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.remove_circle_outline),
-                                        onPressed: () {
-                                          cartProvider.decrementQuantity(item.product.id);
-                                        },
-                                        color: AppColors.primary,
+                                      InkWell(
+                                        onTap: () => cartProvider.decrementQuantity(item.product.id),
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Container(
+                                          width: 32,
+                                          height: 32,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.primary,
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: const Icon(
+                                            Icons.remove,
+                                            color: Colors.white,
+                                            size: 16,
+                                          ),
+                                        ),
                                       ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: Colors.grey[300]!),
-                                          borderRadius: BorderRadius.circular(4),
-                                        ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 12),
                                         child: Text(
                                           '${item.quantity} ${item.product.birim}',
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                            color: AppColors.primary,
                                           ),
                                         ),
                                       ),
-                                      IconButton(
-                                        icon: const Icon(Icons.add_circle_outline),
-                                        onPressed: () {
-                                          cartProvider.incrementQuantity(item.product.id);
-                                        },
-                                        color: AppColors.primary,
+                                      InkWell(
+                                        onTap: () => cartProvider.incrementQuantity(item.product.id),
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Container(
+                                          width: 32,
+                                          height: 32,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.primary,
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: const Icon(
+                                            Icons.add,
+                                            color: Colors.white,
+                                            size: 16,
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   ),

@@ -7,7 +7,7 @@ class CustomSnackBar {
     BuildContext context, {
     required String message,
     SnackBarType type = SnackBarType.info,
-    Duration duration = const Duration(seconds: 2),
+    Duration duration = const Duration(milliseconds: 1500),
   }) {
     Color backgroundColor;
     IconData icon;
@@ -56,13 +56,6 @@ class CustomSnackBar {
         ),
         margin: const EdgeInsets.all(16),
         duration: duration,
-        action: SnackBarAction(
-          label: 'Kapat',
-          textColor: Colors.white,
-          onPressed: () {
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          },
-        ),
       ),
     );
   }

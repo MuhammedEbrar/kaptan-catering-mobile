@@ -390,88 +390,131 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
                                           // Sepete ekle butonu
                                           SizedBox(
-                                            width: double.infinity,
-                                            child: ElevatedButton.icon(
-                                              onPressed: () async {
-                                                try {
-                                                  if (isInCart) {
-                                                    await cartProvider
-                                                        .removeFromCart(
-                                                            product.id);
-                                                    if (context.mounted) {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        const SnackBar(
-                                                          content: Text(
-                                                              'Sepetten çıkarıldı'),
-                                                          duration:
-                                                              Duration(seconds: 1),
+                                            height: 40,
+                                            child: isInCart
+                                                ? Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      InkWell(
+                                                        onTap: () => cartProvider
+                                                            .decrementQuantity(
+                                                                product.id),
+                                                        borderRadius:
+                                                            BorderRadius.circular(8),
+                                                        child: Container(
+                                                          width: 32,
+                                                          height: 32,
+                                                          decoration: BoxDecoration(
+                                                            color: AppColors.primary,
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                    8),
+                                                          ),
+                                                          child: const Icon(
+                                                            Icons.remove,
+                                                            color: Colors.white,
+                                                            size: 16,
+                                                          ),
                                                         ),
-                                                      );
-                                                    }
-                                                  } else {
-                                                    await cartProvider.addToCart(
-                                                      product,
-                                                      quantity: 1,
-                                                    );
-                                                    if (context.mounted) {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        const SnackBar(
-                                                          content: Text(
-                                                              'Sepete eklendi'),
-                                                          duration:
-                                                              Duration(seconds: 1),
-                                                          backgroundColor:
-                                                              AppColors.success,
-                                                        ),
-                                                      );
-                                                    }
-                                                  }
-                                                } catch (e) {
-                                                  if (context.mounted) {
-                                                    ScaffoldMessenger.of(context)
-                                                        .showSnackBar(
-                                                      SnackBar(
-                                                        content: Text(
-                                                            e.toString()),
-                                                        backgroundColor:
-                                                            AppColors.error,
                                                       ),
-                                                    );
-                                                  }
-                                                }
-                                              },
-                                              icon: Icon(
-                                                isInCart
-                                                    ? Icons.shopping_cart
-                                                    : Icons.add_shopping_cart,
-                                                size: 18,
-                                              ),
-                                              label: Text(
-                                                isInCart
-                                                    ? 'Sepette'
-                                                    : 'Sepete Ekle',
-                                                style:
-                                                    const TextStyle(fontSize: 12),
-                                              ),
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: isInCart
-                                                    ? AppColors.textSecondary
-                                                    : AppColors.primary,
-                                                foregroundColor: Colors.white,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                  vertical: 8,
-                                                ),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                              ),
-                                            ),
+                                                      Text(
+                                                        '${cartProvider.getQuantityInCart(product.id)}',
+                                                        style: const TextStyle(
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 16,
+                                                          color: AppColors.primary,
+                                                        ),
+                                                      ),
+                                                      InkWell(
+                                                        onTap: () => cartProvider
+                                                            .incrementQuantity(
+                                                                product.id),
+                                                        borderRadius:
+                                                            BorderRadius.circular(8),
+                                                        child: Container(
+                                                          width: 32,
+                                                          height: 32,
+                                                          decoration: BoxDecoration(
+                                                            color: AppColors.primary,
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                    8),
+                                                          ),
+                                                          child: const Icon(
+                                                            Icons.add,
+                                                            color: Colors.white,
+                                                            size: 16,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )
+                                                : SizedBox(
+                                                    width: double.infinity,
+                                                    child: ElevatedButton.icon(
+                                                      onPressed: () async {
+                                                        try {
+                                                          await cartProvider.addToCart(
+                                                            product,
+                                                            quantity: 1,
+                                                          );
+                                                          if (context.mounted) {
+                                                            ScaffoldMessenger.of(
+                                                                    context)
+                                                                .showSnackBar(
+                                                              const SnackBar(
+                                                                content: Text(
+                                                                    'Sepete eklendi'),
+                                                                duration: Duration(
+                                                                    seconds: 1),
+                                                                backgroundColor:
+                                                                    AppColors
+                                                                        .success,
+                                                              ),
+                                                            );
+                                                          }
+                                                        } catch (e) {
+                                                          if (context.mounted) {
+                                                            ScaffoldMessenger.of(
+                                                                    context)
+                                                                .showSnackBar(
+                                                              SnackBar(
+                                                                content: Text(
+                                                                    e.toString()),
+                                                                backgroundColor:
+                                                                    AppColors.error,
+                                                              ),
+                                                            );
+                                                          }
+                                                        }
+                                                      },
+                                                      icon: const Icon(
+                                                        Icons.add_shopping_cart,
+                                                        size: 18,
+                                                      ),
+                                                      label: const Text(
+                                                        'Sepete Ekle',
+                                                        style:
+                                                            TextStyle(fontSize: 12),
+                                                      ),
+                                                      style: ElevatedButton.styleFrom(
+                                                        backgroundColor:
+                                                            AppColors.primary,
+                                                        foregroundColor: Colors.white,
+                                                        padding: const EdgeInsets
+                                                            .symmetric(
+                                                          vertical: 8,
+                                                        ),
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                  8),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
                                           ),
                                         ],
                                       ),

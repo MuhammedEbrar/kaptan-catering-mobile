@@ -176,46 +176,61 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      IconButton(
-                        onPressed: () {
+                      InkWell(
+                        onTap: () {
                           if (_quantity > 1) {
                             setState(() {
                               _quantity--;
                             });
                           }
                         },
-                        icon: const Icon(Icons.remove_circle_outline),
-                        color: AppColors.primary,
-                        iconSize: 32,
-                      ),
-                      Container(
-                        width: 100,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey[300]!),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          '$_quantity ${widget.product.birim}',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.remove,
+                            color: Colors.white,
+                            size: 20,
                           ),
                         ),
                       ),
-                      IconButton(
-                        onPressed: () {
+                      Container(
+                        width: 100,
+                        alignment: Alignment.center,
+                        child: Text(
+                          '$_quantity ${widget.product.birim}',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
                           setState(() {
                             _quantity++;
                           });
                         },
-                        icon: const Icon(Icons.add_circle_outline),
-                        color: AppColors.primary,
-                        iconSize: 32,
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
                       ),
                     ],
                   ),
