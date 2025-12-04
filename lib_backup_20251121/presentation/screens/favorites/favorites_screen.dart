@@ -3,7 +3,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../widgets/empty_state_widget.dart';
 
 class FavoritesScreen extends StatefulWidget {
-  const FavoritesScreen({Key? key}) : super(key: key);
+  const FavoritesScreen({super.key});
 
   @override
   State<FavoritesScreen> createState() => _FavoritesScreenState();
@@ -43,7 +43,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           ? EmptyStateWidget(
               icon: Icons.favorite_border,
               title: 'Henüz Favori Ürün Yok',
-              subtitle: 'Beğendiğiniz ürünleri favorilerinize ekleyerek hızlıca ulaşabilirsiniz',
+              subtitle:
+                  'Beğendiğiniz ürünleri favorilerinize ekleyerek hızlıca ulaşabilirsiniz',
               buttonText: 'Ürünleri Keşfet',
               onButtonPressed: () {
                 Navigator.pop(context);
@@ -184,7 +185,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 ],
               ),
               child: IconButton(
-                icon: const Icon(Icons.favorite, color: AppColors.primary, size: 20),
+                icon: const Icon(Icons.favorite,
+                    color: AppColors.primary, size: 20),
                 onPressed: () {
                   setState(() {
                     _favorites.removeAt(index);

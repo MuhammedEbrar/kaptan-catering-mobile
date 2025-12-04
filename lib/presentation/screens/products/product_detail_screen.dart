@@ -7,16 +7,19 @@ import '../../providers/favorite_provider.dart';
 import '../../widgets/animated_button.dart';
 import '../../widgets/custom_snackbar.dart';
 import '../../widgets/success_animation.dart';
+import '../../providers/auth_provider.dart';
+import '../auth/login_screen.dart';
+import '../auth/signup_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final ProductModel product;
   final String heroTag;
 
   const ProductDetailScreen({
-    Key? key,
+    super.key,
     required this.product,
     required this.heroTag,
-  }) : super(key: key);
+  });
 
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();
@@ -48,12 +51,61 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   color: isFavorite ? Colors.red : Colors.white,
                 ),
                 onPressed: () async {
+                  final authProvider = context.read<AuthProvider>();
+                  if (!authProvider.isLoggedIn) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Giriş Yapmanız Gerekiyor'),
+                        content: const Text(
+                            'Favorilere ürün ekleyebilmek için giriş yapmanız veya kayıt olmanız gerekmektedir.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('İptal'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SignupScreen(),
+                                ),
+                              );
+                            },
+                            child: const Text('Kayıt Ol'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const LoginScreen(),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                            ),
+                            child: const Text('Giriş Yap'),
+                          ),
+                        ],
+                      ),
+                    );
+                    return;
+                  }
+
                   await favoriteProvider.toggleFavorite(widget.product);
 
                   if (context.mounted) {
                     CustomSnackBar.success(
                       context,
-                      isFavorite ? 'Favorilerden çıkarıldı' : 'Favorilere eklendi!',
+                      isFavorite
+                          ? 'Favorilerden çıkarıldı'
+                          : 'Favorilere eklendi!',
                     );
                   }
                 },
@@ -241,10 +293,57 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   AnimatedButton(
                     width: double.infinity,
                     height: 56,
-                    backgroundColor: isInCart 
-                        ? AppColors.textSecondary 
-                        : AppColors.primary,
+                    backgroundColor:
+                        isInCart ? AppColors.textSecondary : AppColors.primary,
                     onPressed: () async {
+                      final authProvider = context.read<AuthProvider>();
+                      if (!authProvider.isLoggedIn) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Giriş Yapmanız Gerekiyor'),
+                            content: const Text(
+                                'Sepete ürün ekleyebilmek için giriş yapmanız veya kayıt olmanız gerekmektedir.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('İptal'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SignupScreen(),
+                                    ),
+                                  );
+                                },
+                                child: const Text('Kayıt Ol'),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const LoginScreen(),
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primary,
+                                  foregroundColor: Colors.white,
+                                ),
+                                child: const Text('Giriş Yap'),
+                              ),
+                            ],
+                          ),
+                        );
+                        return;
+                      }
+
                       try {
                         if (isInCart) {
                           await cartProvider.removeFromCart(widget.product.id);
@@ -266,7 +365,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 child: SuccessAnimation(
                                   onComplete: () {
                                     Navigator.pop(context);
-                                    CustomSnackBar.success(context, 'Sepete eklendi!');
+                                    CustomSnackBar.success(
+                                        context, 'Sepete eklendi!');
                                   },
                                 ),
                               ),
@@ -283,7 +383,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          isInCart ? Icons.shopping_cart : Icons.add_shopping_cart,
+                          isInCart
+                              ? Icons.shopping_cart
+                              : Icons.add_shopping_cart,
                         ),
                         const SizedBox(width: 8),
                         Text(

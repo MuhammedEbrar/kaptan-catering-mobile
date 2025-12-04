@@ -20,9 +20,9 @@ import 'core/utils/global_keys.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await setupDependencies();
-  
+
   runApp(const KaptanCateringApp());
 }
 

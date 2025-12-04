@@ -127,7 +127,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
                       children: [
                         Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.location_on,
                               color: AppColors.primary,
                               size: 20,
@@ -313,11 +313,10 @@ class _AddressesScreenState extends State<AddressesScreen> {
                   return;
                 }
 
-                
                 final navigator = Navigator.of(context);
                 final scaffold = ScaffoldMessenger.of(context);
 
-                navigator.pop(); 
+                navigator.pop();
 
                 showDialog(
                   context: context,
@@ -326,30 +325,26 @@ class _AddressesScreenState extends State<AddressesScreen> {
                     child: CircularProgressIndicator(),
                   ),
                 );
-                
+
                 final provider = context.read<AddressProvider>();
                 final success = await provider.createAddress(
-                      title: titleController.text,
-                      address: addressController.text,
-                      phone: phoneController.text,
-                      isDefault: isDefault,
-                    );
+                  title: titleController.text,
+                  address: addressController.text,
+                  phone: phoneController.text,
+                  isDefault: isDefault,
+                );
 
-                
                 navigator.pop();
 
-                
-                  scaffold.showSnackBar(
-
-                    SnackBar(
-                      content: Text(
-                        success ? 'Adres eklendi' : 'Adres eklenemedi',
-                      ),
-                      backgroundColor: success ? Colors.green : Colors.red,
+                scaffold.showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      success ? 'Adres eklendi' : 'Adres eklenemedi',
                     ),
-                  );
-                },
-              
+                    backgroundColor: success ? Colors.green : Colors.red,
+                  ),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
@@ -439,10 +434,9 @@ class _AddressesScreenState extends State<AddressesScreen> {
                   return;
                 }
 
-
                 final navigator = Navigator.of(context);
                 final scaffold = ScaffoldMessenger.of(context);
-                
+
                 navigator.pop();
 
                 showDialog(
@@ -454,25 +448,24 @@ class _AddressesScreenState extends State<AddressesScreen> {
                 );
                 final provider = context.read<AddressProvider>();
                 final success = await provider.updateAddress(
-                      addressId: address.id!,
-                      title: titleController.text,
-                      address: addressController.text,
-                      phone: phoneController.text,
-                      isDefault: isDefault,
-                    );
+                  addressId: address.id!,
+                  title: titleController.text,
+                  address: addressController.text,
+                  phone: phoneController.text,
+                  isDefault: isDefault,
+                );
 
                 navigator.pop();
 
-                  scaffold.showSnackBar(
-
-                    SnackBar(
-                      content: Text(
-                        success ? 'Adres güncellendi' : 'Adres güncellenemedi',
-                      ),
-                      backgroundColor: success ? Colors.green : Colors.red,
+                scaffold.showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      success ? 'Adres güncellendi' : 'Adres güncellenemedi',
                     ),
-                  );
-                },
+                    backgroundColor: success ? Colors.green : Colors.red,
+                  ),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
@@ -508,7 +501,9 @@ class _AddressesScreenState extends State<AddressesScreen> {
                 ),
               );
 
-              final success = await context.read<AddressProvider>().deleteAddress(addressId);
+              final success = await context
+                  .read<AddressProvider>()
+                  .deleteAddress(addressId);
 
               if (context.mounted) {
                 Navigator.pop(context);

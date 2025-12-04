@@ -22,24 +22,24 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final TextEditingController _orderNoteController = TextEditingController();
   AddressModel? _selectedAddress; // 👈 EKLE
 
-@override
-void initState() {
-  super.initState();
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    final addressProvider = context.read<AddressProvider>();
-    addressProvider.loadAddresses().then((_) {
-      if (addressProvider.addresses.isNotEmpty) {
-        final defaultAddr = addressProvider.addresses.firstWhere(
-          (addr) => addr.isDefault,
-          orElse: () => addressProvider.addresses.first,
-        );
-        setState(() {
-          _selectedAddress = defaultAddr;
-        });
-      }
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final addressProvider = context.read<AddressProvider>();
+      addressProvider.loadAddresses().then((_) {
+        if (addressProvider.addresses.isNotEmpty) {
+          final defaultAddr = addressProvider.addresses.firstWhere(
+            (addr) => addr.isDefault,
+            orElse: () => addressProvider.addresses.first,
+          );
+          setState(() {
+            _selectedAddress = defaultAddr;
+          });
+        }
+      });
     });
-  });
-}
+  }
 
   @override
   void dispose() {
@@ -84,7 +84,8 @@ void initState() {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 12),
                   ),
                   child: Text(
                     _currentStep == 2 ? 'Siparişi Onayla' : 'İleri',
@@ -174,7 +175,8 @@ void initState() {
                             // Adresler sayfasından dönünce yenile
                             addressProvider.loadAddresses().then((_) {
                               if (addressProvider.addresses.isNotEmpty) {
-                                final defaultAddr = addressProvider.addresses.firstWhere(
+                                final defaultAddr =
+                                    addressProvider.addresses.firstWhere(
                                   (addr) => addr.isDefault,
                                   orElse: () => addressProvider.addresses.first,
                                 );
@@ -328,7 +330,7 @@ void initState() {
             },
             title: const Text('Kredi/Banka Kartı'),
             subtitle: const Text('İyzico güvenli ödeme'),
-            secondary: Icon(Icons.credit_card, color: AppColors.primary),
+            secondary: const Icon(Icons.credit_card, color: AppColors.primary),
             activeColor: AppColors.primary,
           ),
         ),
@@ -343,7 +345,7 @@ void initState() {
             },
             title: const Text('Kapıda Ödeme'),
             subtitle: const Text('Teslimat sırasında nakit veya POS ile'),
-            secondary: Icon(Icons.money, color: AppColors.primary),
+            secondary: const Icon(Icons.money, color: AppColors.primary),
             activeColor: AppColors.primary,
           ),
         ),
@@ -352,7 +354,8 @@ void initState() {
   }
 
   Widget _buildSummaryStep(CartProvider cartProvider) {
-    final paymentMethod = _selectedPaymentIndex == 0 ? 'Kredi/Banka Kartı' : 'Kapıda Ödeme';
+    final paymentMethod =
+        _selectedPaymentIndex == 0 ? 'Kredi/Banka Kartı' : 'Kapıda Ödeme';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,7 +365,7 @@ void initState() {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         const SizedBox(height: 16),
-        
+
         // Ürünler
         Card(
           child: Padding(
@@ -376,22 +379,22 @@ void initState() {
                 ),
                 const SizedBox(height: 8),
                 ...cartProvider.items.map((item) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Text(
-                    '${item.product.stokAdi} x${item.quantity}',
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                )),
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Text(
+                        '${item.product.stokAdi} x${item.quantity}',
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    )),
               ],
             ),
           ),
         ),
-        
+
         // Teslimat Adresi
         if (_selectedAddress != null) ...[
           Card(
             child: ListTile(
-              leading: Icon(Icons.location_on, color: AppColors.primary),
+              leading: const Icon(Icons.location_on, color: AppColors.primary),
               title: Text(
                 _selectedAddress!.title,
                 style: const TextStyle(fontWeight: FontWeight.bold),
@@ -408,7 +411,7 @@ void initState() {
             ),
           ),
         ],
-        
+
         // Ödeme Yöntemi
         Card(
           child: ListTile(
@@ -431,12 +434,12 @@ void initState() {
             ),
           ),
         ),
-        
+
         // Sipariş Notu
         if (_orderNoteController.text.isNotEmpty) ...[
           Card(
             child: ListTile(
-              leading: Icon(Icons.note, color: AppColors.primary),
+              leading: const Icon(Icons.note, color: AppColors.primary),
               title: const Text(
                 'Sipariş Notu',
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -445,7 +448,7 @@ void initState() {
             ),
           ),
         ],
-        
+
         // Tutar Özeti
         Card(
           child: Padding(
@@ -456,14 +459,15 @@ void initState() {
                 _buildPriceRow('KDV', cartProvider.getKdvAmount()),
                 _buildPriceRow('Kargo', cartProvider.getShippingCost()),
                 const Divider(height: 24),
-                _buildPriceRow('Toplam', cartProvider.getFinalTotal(), isBold: true),
+                _buildPriceRow('Toplam', cartProvider.getFinalTotal(),
+                    isBold: true),
               ],
             ),
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Kullanım Şartları
         CheckboxListTile(
           value: _termsAccepted,
@@ -587,9 +591,12 @@ void initState() {
       cartItems: cartProvider.items,
       totalAmount: cartProvider.getFinalTotal(),
       paymentMethod: _selectedPaymentIndex == 0 ? 'iyzico' : 'cash_on_delivery',
-      deliveryAddress: '${_selectedAddress!.title}\n${_selectedAddress!.address}', // 👈 SEÇİLİ ADRES
+      deliveryAddress:
+          '${_selectedAddress!.title}\n${_selectedAddress!.address}', // 👈 SEÇİLİ ADRES
       deliveryPhone: _selectedAddress!.phone, // 👈 ADRES TELEFONU
-      orderNote: _orderNoteController.text.isNotEmpty ? _orderNoteController.text : null,
+      orderNote: _orderNoteController.text.isNotEmpty
+          ? _orderNoteController.text
+          : null,
     );
 
     if (mounted) {
@@ -613,7 +620,8 @@ void initState() {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(orderProvider.errorMessage ?? 'Sipariş oluşturulamadı'),
+            content:
+                Text(orderProvider.errorMessage ?? 'Sipariş oluşturulamadı'),
             backgroundColor: AppColors.error,
             duration: const Duration(seconds: 3),
           ),
@@ -626,7 +634,7 @@ void initState() {
 // OrderSuccessScreen aynı kalacak...
 class OrderSuccessScreen extends StatelessWidget {
   final String orderId;
-  
+
   const OrderSuccessScreen({super.key, required this.orderId});
 
   @override
@@ -680,7 +688,8 @@ class OrderSuccessScreen extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                 ),
                 child: const Text(
                   'Ana Sayfaya Dön',

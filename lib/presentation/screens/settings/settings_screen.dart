@@ -1,19 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
 import '../../../core/constants/app_colors.dart';
 
-class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
-
-  @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
-  bool _orderNotifications = true;
-  bool _campaignNotifications = true;
-  bool _productNotifications = false;
-  String _selectedLanguage = 'Türkçe';
-  String _selectedTheme = 'Açık';
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,427 +14,225 @@ class _SettingsScreenState extends State<SettingsScreen> {
         backgroundColor: AppColors.primary,
       ),
       body: ListView(
+        padding: const EdgeInsets.all(16),
         children: [
-          // Bildirim Ayarları
-          _buildSectionHeader('Bildirim Ayarları'),
-          SwitchListTile(
-            title: const Text('Sipariş Bildirimleri'),
-            subtitle: const Text('Sipariş durumu değişikliklerinde bildirim al'),
-            value: _orderNotifications,
-            onChanged: (value) {
-              setState(() {
-                _orderNotifications = value;
-              });
-            },
-            activeColor: AppColors.primary,
+          _buildSettingsItem(
+            context,
+            icon: Icons.lock,
+            title: 'Şifre Değiştir',
+            onTap: () => _showChangePasswordDialog(context),
           ),
-          SwitchListTile(
-            title: const Text('Kampanya Bildirimleri'),
-            subtitle: const Text('Kampanya ve fırsatlardan haberdar ol'),
-            value: _campaignNotifications,
-            onChanged: (value) {
-              setState(() {
-                _campaignNotifications = value;
-              });
-            },
-            activeColor: AppColors.primary,
+          _buildSettingsItem(
+            context,
+            icon: Icons.security,
+            title: 'Kişisel Verilerin Korunması',
+            onTap: () => _showKVKKDialog(context),
           ),
-          SwitchListTile(
-            title: const Text('Ürün Bildirimleri'),
-            subtitle: const Text('Yeni ürünler ve stok güncellemeleri'),
-            value: _productNotifications,
-            onChanged: (value) {
-              setState(() {
-                _productNotifications = value;
-              });
-            },
-            activeColor: AppColors.primary,
-          ),
-
-          const Divider(height: 32),
-
-          // Uygulama Ayarları
-          _buildSectionHeader('Uygulama Ayarları'),
-          ListTile(
-            leading: const Icon(Icons.language),
-            title: const Text('Dil'),
-            subtitle: Text(_selectedLanguage),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              _showLanguageDialog();
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.dark_mode),
-            title: const Text('Tema'),
-            subtitle: Text(_selectedTheme),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              _showThemeDialog();
-            },
-          ),
-
-          const Divider(height: 32),
-
-          // Bilgi
-          _buildSectionHeader('Bilgi'),
-          ListTile(
-            leading: const Icon(Icons.info),
-            title: const Text('Hakkımızda'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const AboutScreen()),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.privacy_tip),
-            title: const Text('Gizlilik Politikası'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Gizlilik politikası yakında!')),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.description),
-            title: const Text('Kullanım Şartları'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Kullanım şartları yakında!')),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.contact_support),
-            title: const Text('İletişim'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const ContactScreen()),
-              );
-            },
-          ),
-
-          const Divider(height: 32),
-
-          // Uygulama Bilgisi
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: const Text('Versiyon'),
-            subtitle: const Text('1.0.0'),
+          _buildSettingsItem(
+            context,
+            icon: Icons.info,
+            title: 'Uygulama Hakkında',
+            onTap: () => _showAboutDialog(context),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-          color: Colors.grey[600],
+  Widget _buildSettingsItem(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: AppColors.primary),
         ),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        onTap: onTap,
       ),
     );
   }
 
-  void _showLanguageDialog() {
+  void _showChangePasswordDialog(BuildContext context) {
+    final oldPasswordController = TextEditingController();
+    final newPasswordController = TextEditingController();
+    final confirmPasswordController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Dil Seçin'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RadioListTile<String>(
-              title: const Text('Türkçe'),
-              value: 'Türkçe',
-              groupValue: _selectedLanguage,
-              onChanged: (value) {
-                setState(() {
-                  _selectedLanguage = value!;
-                });
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Dil değiştirildi: Türkçe')),
-                );
-              },
-              activeColor: AppColors.primary,
-            ),
-            RadioListTile<String>(
-              title: const Text('English'),
-              value: 'English',
-              groupValue: _selectedLanguage,
-              onChanged: (value) {
-                setState(() {
-                  _selectedLanguage = value!;
-                });
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Language changed: English')),
-                );
-              },
-              activeColor: AppColors.primary,
-            ),
-          ],
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
         ),
-      ),
-    );
-  }
-
-  void _showThemeDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Tema Seçin'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RadioListTile<String>(
-              title: const Text('Açık'),
-              value: 'Açık',
-              groupValue: _selectedTheme,
-              onChanged: (value) {
-                setState(() {
-                  _selectedTheme = value!;
-                });
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Tema değiştirildi: Açık')),
-                );
-              },
-              activeColor: AppColors.primary,
-            ),
-            RadioListTile<String>(
-              title: const Text('Koyu'),
-              value: 'Koyu',
-              groupValue: _selectedTheme,
-              onChanged: (value) {
-                setState(() {
-                  _selectedTheme = value!;
-                });
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Tema değiştirildi: Koyu')),
-                );
-              },
-              activeColor: AppColors.primary,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Hakkımızda Sayfası
-class AboutScreen extends StatelessWidget {
-  const AboutScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Hakkımızda'),
-        backgroundColor: AppColors.primary,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.restaurant_menu,
-              size: 100,
-              color: AppColors.primary,
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'Kaptan Catering',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'B2B Catering Çözümleri',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 32),
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
-                      'Misyonumuz',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 12),
-                    Text(
-                      'Kaptan Catering olarak, işletmelere kaliteli ve güvenilir catering hizmetleri sunarak, müşterilerimizin iş süreçlerini kolaylaştırmayı hedefliyoruz.',
-                      style: TextStyle(height: 1.5),
-                    ),
-                  ],
+        title: const Text('Şifre Değiştir'),
+        content: SingleChildScrollView(
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: oldPasswordController,
+                  decoration: const InputDecoration(labelText: 'Mevcut Şifre'),
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Mevcut şifre gerekli';
+                    }
+                    return null;
+                  },
                 ),
-              ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: newPasswordController,
+                  decoration: const InputDecoration(labelText: 'Yeni Şifre'),
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Yeni şifre gerekli';
+                    }
+                    if (value.length < 6) {
+                      return 'Şifre en az 6 karakter olmalı';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: confirmPasswordController,
+                  decoration:
+                      const InputDecoration(labelText: 'Yeni Şifre (Tekrar)'),
+                  obscureText: true,
+                  validator: (value) {
+                    if (value != newPasswordController.text) {
+                      return 'Şifreler eşleşmiyor';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('İptal'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (formKey.currentState!.validate()) {
+                final authProvider = context.read<AuthProvider>();
+                final navigator = Navigator.of(context); // Ana context'i kaydet
+
+                // Dialog'u kapat
+                Navigator.pop(dialogContext);
+
+                final success = await authProvider.changePassword(
+                  oldPassword: oldPasswordController.text,
+                  newPassword: newPasswordController.text,
+                );
+
+                if (success) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Şifreniz başarıyla değiştirildi'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content:
+                          Text(authProvider.errorMessage ?? 'Bir hata oluştu'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              }
+            },
+            child: const Text('Değiştir'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showKVKKDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Kişisel Verilerin Korunması'),
+        content: const SingleChildScrollView(
+          child: Text(
+            'Kaptan Catering olarak kişisel verilerinizin güvenliğine önem veriyoruz. '
+            'Verileriniz 6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında işlenmektedir.\n\n'
+            'Detaylı bilgi için web sitemizi ziyaret edebilirsiniz.',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Kapat'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAboutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Uygulama Hakkında'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/images/logo.png', // Logo varsa
+              height: 80,
+              errorBuilder: (context, error, stackTrace) => const Icon(
+                  Icons.restaurant_menu,
+                  size: 80,
+                  color: AppColors.primary),
             ),
             const SizedBox(height: 16),
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
-                      'Vizyonumuz',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 12),
-                    Text(
-                      'Türkiye\'nin önde gelen B2B catering platformu olmak ve işletmelere en iyi hizmeti sunmak.',
-                      style: TextStyle(height: 1.5),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// İletişim Sayfası
-class ContactScreen extends StatelessWidget {
-  const ContactScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('İletişim'),
-        backgroundColor: AppColors.primary,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            const Icon(
-              Icons.contact_support,
-              size: 100,
-              color: AppColors.primary,
-            ),
-            const SizedBox(height: 24),
             const Text(
-              'Bizimle İletişime Geçin',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              'Kaptan Catering',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 32),
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: ListTile(
-                leading: const Icon(Icons.phone, color: AppColors.primary),
-                title: const Text('Telefon'),
-                subtitle: const Text('0332 123 45 67'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.call),
-                  color: AppColors.primary,
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Arama özelliği yakında!')),
-                    );
-                  },
-                ),
-              ),
-            ),
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: ListTile(
-                leading: const Icon(Icons.email, color: AppColors.primary),
-                title: const Text('E-posta'),
-                subtitle: const Text('info@kaptancatering.com'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.send),
-                  color: AppColors.primary,
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Email gönderme yakında!')),
-                    );
-                  },
-                ),
-              ),
-            ),
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const ListTile(
-                leading: Icon(Icons.location_on, color: AppColors.primary),
-                title: Text('Adres'),
-                subtitle: Text('Mevlana Mah. Adliye Cad. No:15/A\nKaratay/Konya'),
-                isThreeLine: true,
-              ),
-            ),
-            const SizedBox(height: 24),
+            const Text('Versiyon 1.0.0'),
+            const SizedBox(height: 16),
             const Text(
-              'Çalışma Saatleri',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            const Text(
-              'Pazartesi - Cuma: 08:00 - 18:00\nCumartesi: 09:00 - 14:00\nPazar: Kapalı',
+              'Lezzetli yemekler, hızlı teslimat ve kaliteli hizmet için buradayız.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey,
-                height: 1.5,
-              ),
             ),
           ],
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Kapat'),
+          ),
+        ],
       ),
     );
   }

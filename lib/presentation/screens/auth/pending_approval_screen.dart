@@ -220,15 +220,15 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen>
                                     color: AppColors.primary.withOpacity(0.3),
                                   ),
                                 ),
-                                child: Row(
+                                child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(
+                                    Icon(
                                       Icons.email_outlined,
                                       color: AppColors.primary,
                                       size: 20,
                                     ),
-                                    const SizedBox(width: 12),
+                                    SizedBox(width: 12),
                                     Text(
                                       'info@kaptancatering.com',
                                       style: TextStyle(
@@ -259,15 +259,15 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen>
                                     color: AppColors.primary.withOpacity(0.3),
                                   ),
                                 ),
-                                child: Row(
+                                child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(
+                                    Icon(
                                       Icons.phone_outlined,
                                       color: AppColors.primary,
                                       size: 20,
                                     ),
-                                    const SizedBox(width: 12),
+                                    SizedBox(width: 12),
                                     Text(
                                       '0212 123 45 67',
                                       style: TextStyle(

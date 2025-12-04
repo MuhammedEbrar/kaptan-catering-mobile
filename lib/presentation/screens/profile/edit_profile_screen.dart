@@ -4,7 +4,7 @@ import 'dart:io';
 import '../../../core/constants/app_colors.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({Key? key}) : super(key: key);
+  const EditProfileScreen({super.key});
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -16,7 +16,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _phoneController = TextEditingController(text: '0332 123 45 67');
   final _emailController = TextEditingController(text: 'test@firma.com');
   final _companyController = TextEditingController(text: 'Test Şirketi');
-  
+
   File? _selectedImage;
   final ImagePicker _imagePicker = ImagePicker();
 
@@ -42,7 +42,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         setState(() {
           _selectedImage = File(pickedFile.path);
         });
-        
+
         if (mounted) {
           Navigator.pop(context); // Dialog'u kapat
           ScaffoldMessenger.of(context).showSnackBar(
@@ -81,7 +81,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               onTap: () => _pickImage(ImageSource.camera),
             ),
             ListTile(
-              leading: const Icon(Icons.photo_library, color: AppColors.primary),
+              leading:
+                  const Icon(Icons.photo_library, color: AppColors.primary),
               title: const Text('Galeri'),
               onTap: () => _pickImage(ImageSource.gallery),
             ),
@@ -129,8 +130,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   CircleAvatar(
                     radius: 60,
                     backgroundColor: AppColors.primary,
-                    backgroundImage: _selectedImage != null 
-                        ? FileImage(_selectedImage!) 
+                    backgroundImage: _selectedImage != null
+                        ? FileImage(_selectedImage!)
                         : null,
                     child: _selectedImage == null
                         ? const Icon(
@@ -161,9 +162,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Ad Soyad
               TextFormField(
                 controller: _nameController,
@@ -175,7 +176,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                    borderSide:
+                        const BorderSide(color: AppColors.primary, width: 2),
                   ),
                 ),
                 validator: (value) {
@@ -185,9 +187,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   return null;
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Email (Read-only)
               TextFormField(
                 controller: _emailController,
@@ -202,9 +204,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
                 enabled: false,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Telefon
               TextFormField(
                 controller: _phoneController,
@@ -216,7 +218,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                    borderSide:
+                        const BorderSide(color: AppColors.primary, width: 2),
                   ),
                 ),
                 keyboardType: TextInputType.phone,
@@ -227,9 +230,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   return null;
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Firma Adı (Read-only)
               TextFormField(
                 controller: _companyController,
@@ -244,9 +247,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
                 enabled: false,
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Kaydet Butonu
               SizedBox(
                 width: double.infinity,
@@ -269,9 +272,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // İptal Butonu
               SizedBox(
                 width: double.infinity,

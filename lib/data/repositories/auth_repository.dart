@@ -98,6 +98,43 @@ class AuthRepository {
     }
   }
 
+  // Update Profile
+  Future<UserModel> updateProfile({
+    required String name,
+    required String phone,
+  }) async {
+    try {
+      final user = await _authDataSource.updateProfile(
+        name: name,
+        phone: phone,
+      );
+
+      await _storage.write(
+        key: ApiConstants.userKey,
+        value: user.toJsonString(),
+      );
+
+      return user;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Change Password
+  Future<void> changePassword({
+    required String oldPassword,
+    required String newPassword,
+  }) async {
+    try {
+      await _authDataSource.changePassword(
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<bool> isLoggedIn() async {
     final token = await _storage.read(key: ApiConstants.tokenKey);
     return token != null;

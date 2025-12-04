@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({Key? key}) : super(key: key);
+  const EditProfileScreen({super.key});
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -60,10 +60,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               // Profil Fotoğrafı
               Stack(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 60,
                     backgroundColor: AppColors.primary,
-                    child: const Icon(
+                    child: Icon(
                       Icons.person,
                       size: 60,
                       color: Colors.white,
@@ -97,9 +97,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     title: const Text('Kamera'),
                                     onTap: () {
                                       Navigator.pop(context);
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         const SnackBar(
-                                          content: Text('Kamera özelliği yakında!'),
+                                          content:
+                                              Text('Kamera özelliği yakında!'),
                                         ),
                                       );
                                     },
@@ -109,9 +111,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     title: const Text('Galeri'),
                                     onTap: () {
                                       Navigator.pop(context);
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         const SnackBar(
-                                          content: Text('Galeri özelliği yakında!'),
+                                          content:
+                                              Text('Galeri özelliği yakında!'),
                                         ),
                                       );
                                     },
@@ -126,9 +130,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Ad Soyad
               TextFormField(
                 controller: _nameController,
@@ -140,7 +144,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                    borderSide:
+                        const BorderSide(color: AppColors.primary, width: 2),
                   ),
                 ),
                 validator: (value) {
@@ -150,9 +155,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   return null;
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Email (Read-only)
               TextFormField(
                 controller: _emailController,
@@ -167,9 +172,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
                 enabled: false,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Telefon
               TextFormField(
                 controller: _phoneController,
@@ -181,7 +186,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                    borderSide:
+                        const BorderSide(color: AppColors.primary, width: 2),
                   ),
                 ),
                 keyboardType: TextInputType.phone,
@@ -192,9 +198,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   return null;
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Firma Adı (Read-only)
               TextFormField(
                 controller: _companyController,
@@ -209,9 +215,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
                 enabled: false,
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Kaydet Butonu
               SizedBox(
                 width: double.infinity,
@@ -234,9 +240,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // İptal Butonu
               SizedBox(
                 width: double.infinity,

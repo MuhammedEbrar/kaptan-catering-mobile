@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -28,7 +28,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildSectionHeader('Bildirim Ayarları'),
           SwitchListTile(
             title: const Text('Sipariş Bildirimleri'),
-            subtitle: const Text('Sipariş durumu değişikliklerinde bildirim al'),
+            subtitle:
+                const Text('Sipariş durumu değişikliklerinde bildirim al'),
             value: _orderNotifications,
             onChanged: (value) {
               setState(() {
@@ -133,10 +134,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const Divider(height: 32),
 
           // Uygulama Bilgisi
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: const Text('Versiyon'),
-            subtitle: const Text('1.0.0'),
+          const ListTile(
+            leading: Icon(Icons.info_outline),
+            title: Text('Versiyon'),
+            subtitle: Text('1.0.0'),
           ),
         ],
       ),
@@ -248,7 +249,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
 // Hakkımızda Sayfası
 class AboutScreen extends StatelessWidget {
-  const AboutScreen({Key? key}) : super(key: key);
+  const AboutScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -289,11 +290,11 @@ class AboutScreen extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
+              child: const Padding(
+                padding: EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(
                       'Misyonumuz',
                       style: TextStyle(
@@ -316,11 +317,11 @@ class AboutScreen extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
+              child: const Padding(
+                padding: EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(
                       'Vizyonumuz',
                       style: TextStyle(
@@ -346,7 +347,7 @@ class AboutScreen extends StatelessWidget {
 
 // İletişim Sayfası
 class ContactScreen extends StatelessWidget {
-  const ContactScreen({Key? key}) : super(key: key);
+  const ContactScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -421,7 +422,8 @@ class ContactScreen extends StatelessWidget {
               child: const ListTile(
                 leading: Icon(Icons.location_on, color: AppColors.primary),
                 title: Text('Adres'),
-                subtitle: Text('Mevlana Mah. Adliye Cad. No:15/A\nKaratay/Konya'),
+                subtitle:
+                    Text('Mevlana Mah. Adliye Cad. No:15/A\nKaratay/Konya'),
                 isThreeLine: true,
               ),
             ),

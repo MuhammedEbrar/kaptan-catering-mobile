@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MenuBottomSheet extends StatelessWidget {
-  const MenuBottomSheet({Key? key}) : super(key: key);
+  const MenuBottomSheet({super.key});
 
   static void show(BuildContext context) {
     showModalBottomSheet(
@@ -29,9 +29,9 @@ class MenuBottomSheet extends StatelessWidget {
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           const Text(
             'Menü',
             style: TextStyle(
@@ -39,9 +39,9 @@ class MenuBottomSheet extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           ListTile(
             leading: const Icon(Icons.info, color: Colors.red),
             title: const Text('Hakkımızda'),
@@ -54,7 +54,7 @@ class MenuBottomSheet extends StatelessWidget {
               );
             },
           ),
-          
+
           ListTile(
             leading: const Icon(Icons.contact_support, color: Colors.red),
             title: const Text('İletişim'),
@@ -67,7 +67,7 @@ class MenuBottomSheet extends StatelessWidget {
               );
             },
           ),
-          
+
           const SizedBox(height: 20),
         ],
       ),
