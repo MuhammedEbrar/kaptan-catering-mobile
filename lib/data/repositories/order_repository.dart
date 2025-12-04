@@ -11,7 +11,7 @@ class OrderRepository {
     required String userId,
     required List<Map<String, dynamic>> items,
     required double totalAmount,
-    required String paymentMethod,
+    // required String paymentMethod, // Removed
     required String deliveryAddress,
     String? deliveryPhone,
     String? orderNote,
@@ -34,7 +34,7 @@ class OrderRepository {
         'userId': userId,
         'items': cleanedItems,
         'totalAmount': totalAmount,
-        'paymentMethod': paymentMethod,
+        // 'paymentMethod': paymentMethod, // Removed
         'deliveryAddress': deliveryAddress,
         if (deliveryPhone != null) 'deliveryPhone': deliveryPhone,
         if (orderNote != null) 'orderNote': orderNote,

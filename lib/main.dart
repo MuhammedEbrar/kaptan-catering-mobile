@@ -15,6 +15,8 @@ import 'presentation/providers/order_provider.dart';
 import 'presentation/providers/address_provider.dart';
 import 'presentation/providers/favorite_provider.dart';
 import 'presentation/screens/splash/splash_screen.dart';
+import 'presentation/screens/auth/login_screen.dart';
+import 'core/utils/global_keys.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -119,14 +121,18 @@ class KaptanCateringApp extends StatelessWidget {
               vertical: 16,
             ),
           ),
-          cardTheme: CardTheme(
+          cardTheme: const CardThemeData(
             elevation: 2,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.all(Radius.circular(12)),
             ),
             color: Colors.white,
           ),
         ),
+        navigatorKey: navigatorKey,
+        routes: {
+          '/login': (context) => const LoginScreen(),
+        },
         home: const SplashScreen(),
       ),
     );

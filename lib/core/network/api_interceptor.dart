@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../constants/api_constants.dart';
+import '../utils/global_keys.dart';
 
 class ApiInterceptor extends Interceptor {
   final _storage = const FlutterSecureStorage();
@@ -46,7 +47,8 @@ class ApiInterceptor extends Interceptor {
     // 401 Unauthorized - Token geçersiz
     if (err.response?.statusCode == 401) {
       print('🔴 Token geçersiz, kullanıcı çıkış yapmalı');
-      // TODO: Kullanıcıyı login ekranına yönlendir
+      _storage.delete(key: ApiConstants.tokenKey);
+      navigatorKey.currentState?.pushNamedAndRemoveUntil('/login', (route) => false);
     }
 
     handler.next(err);

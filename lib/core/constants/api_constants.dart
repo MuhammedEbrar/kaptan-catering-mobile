@@ -6,6 +6,9 @@ class ApiConstants {
   // Şu an hangisini kullanacağız
   static const String baseUrl = baseUrlProduction; // TODO: Local'de test ederken değiştir
   
+  // Mock Mode Flag
+  static const bool isMockMode = true;
+  
   // Auth Endpoints
   static const String login = '/auth/login';
   static const String signup = '/auth/signup';

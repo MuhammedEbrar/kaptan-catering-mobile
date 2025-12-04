@@ -28,7 +28,7 @@ class OrderProvider extends ChangeNotifier {
     required String userId,
     required List<CartItem> cartItems,
     required double totalAmount,
-    required String paymentMethod,
+    // required String paymentMethod, // Removed
     required String deliveryAddress,
     String? deliveryPhone,
     String? orderNote,
@@ -55,7 +55,7 @@ class OrderProvider extends ChangeNotifier {
         userId: userId,
         items: items,
         totalAmount: totalAmount,
-        paymentMethod: paymentMethod,
+        // paymentMethod: paymentMethod, // Removed
         deliveryAddress: deliveryAddress,
         deliveryPhone: deliveryPhone,
         orderNote: orderNote,

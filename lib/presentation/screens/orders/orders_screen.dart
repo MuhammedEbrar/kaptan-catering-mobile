@@ -300,7 +300,7 @@ class OrderDetailScreen extends StatelessWidget {
                 _buildInfoRow('Sipariş No', '#${order.id}'),
                 _buildInfoRow('Tarih', _formatDate(order.createdAt)),
                 _buildInfoRow('Ürün Sayısı', '${order.totalItemCount} ürün'),
-                _buildInfoRow('Ödeme', order.getPaymentMethodDisplayName()),
+                // _buildInfoRow('Ödeme', order.getPaymentMethodDisplayName()), // Removed
               ],
             ),
             const SizedBox(height: 16),
@@ -378,7 +378,7 @@ class OrderDetailScreen extends StatelessWidget {
               const SizedBox(height: 16),
             ],
             _buildInfoCard(
-              'Ödeme Özeti',
+              'Tutar Özeti',
               [
                 _buildInfoRow('Toplam Tutar', '₺${order.totalAmount.toStringAsFixed(2)}'),
                 const Divider(height: 24),

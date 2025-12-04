@@ -6,7 +6,7 @@ class OrderModel {
   final List<OrderItem> items;
   final double totalAmount;
   final String status;
-  final String paymentMethod;
+  // final String paymentMethod; // Removed
   final String deliveryAddress;
   final String? deliveryPhone;
   final String? orderNote;
@@ -19,7 +19,7 @@ class OrderModel {
     required this.items,
     required this.totalAmount,
     required this.status,
-    required this.paymentMethod,
+    // required this.paymentMethod, // Removed
     required this.deliveryAddress,
     this.deliveryPhone,
     this.orderNote,
@@ -37,7 +37,7 @@ class OrderModel {
           .toList() ?? [],
       totalAmount: (json['totalAmount'] ?? json['total_amount'] ?? 0).toDouble(),
       status: json['status'] ?? 'pending',
-      paymentMethod: json['paymentMethod'] ?? json['payment_method'] ?? '',
+      // paymentMethod: json['paymentMethod'] ?? json['payment_method'] ?? '', // Removed
       deliveryAddress: json['deliveryAddress'] ?? json['delivery_address'] ?? '',
       deliveryPhone: json['deliveryPhone'] ?? json['delivery_phone'],
       orderNote: json['orderNote'] ?? json['order_note'],
@@ -61,7 +61,7 @@ class OrderModel {
       'items': items.map((item) => item.toJson()).toList(),
       'totalAmount': totalAmount,
       'status': status,
-      'paymentMethod': paymentMethod,
+      // 'paymentMethod': paymentMethod, // Removed
       'deliveryAddress': deliveryAddress,
       if (deliveryPhone != null) 'deliveryPhone': deliveryPhone,
       if (orderNote != null) 'orderNote': orderNote,
@@ -106,11 +106,12 @@ class OrderModel {
     }
   }
 
-  // Ödeme yöntemleri
-  static const String paymentIyzico = 'iyzico';
-  static const String paymentCashOnDelivery = 'cash_on_delivery';
+  // Ödeme yöntemleri - REMOVED
+  // static const String paymentIyzico = 'iyzico';
+  // static const String paymentCashOnDelivery = 'cash_on_delivery';
 
-  // Ödeme yöntemi görünen adı
+  // Ödeme yöntemi görünen adı - REMOVED
+  /*
   String getPaymentMethodDisplayName() {
     switch (paymentMethod) {
       case 'iyzico':
@@ -121,6 +122,7 @@ class OrderModel {
         return paymentMethod;
     }
   }
+  */
 
   // Toplam ürün sayısı
   int get totalItemCount => items.fold(0, (sum, item) => sum + item.quantity);
@@ -132,7 +134,7 @@ class OrderModel {
     List<OrderItem>? items,
     double? totalAmount,
     String? status,
-    String? paymentMethod,
+    // String? paymentMethod, // Removed
     String? deliveryAddress,
     String? deliveryPhone,
     String? orderNote,
@@ -145,7 +147,7 @@ class OrderModel {
       items: items ?? this.items,
       totalAmount: totalAmount ?? this.totalAmount,
       status: status ?? this.status,
-      paymentMethod: paymentMethod ?? this.paymentMethod,
+      // paymentMethod: paymentMethod ?? this.paymentMethod, // Removed
       deliveryAddress: deliveryAddress ?? this.deliveryAddress,
       deliveryPhone: deliveryPhone ?? this.deliveryPhone,
       orderNote: orderNote ?? this.orderNote,

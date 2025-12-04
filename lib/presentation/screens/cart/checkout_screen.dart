@@ -4,9 +4,9 @@ import '../../../core/constants/app_colors.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/order_provider.dart';
 import '../../providers/auth_provider.dart';
-import '../../providers/address_provider.dart'; // 👈 EKLE
-import '../../../data/models/address_model.dart'; // 👈 EKLE
-import '../addresses/addresses_screen.dart'; // 👈 EKLE
+import '../../providers/address_provider.dart'; 
+import '../../../data/models/address_model.dart'; 
+import '../addresses/addresses_screen.dart'; 
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -17,10 +17,9 @@ class CheckoutScreen extends StatefulWidget {
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
   int _currentStep = 0;
-  int _selectedPaymentIndex = 0;
   bool _termsAccepted = false;
   final TextEditingController _orderNoteController = TextEditingController();
-  AddressModel? _selectedAddress; // 👈 EKLE
+  AddressModel? _selectedAddress; 
 
 @override
 void initState() {
@@ -59,7 +58,7 @@ void initState() {
       body: Stepper(
         currentStep: _currentStep,
         onStepContinue: () {
-          if (_currentStep < 2) {
+          if (_currentStep < 1) {
             setState(() {
               _currentStep++;
             });
@@ -87,7 +86,7 @@ void initState() {
                     padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                   ),
                   child: Text(
-                    _currentStep == 2 ? 'Siparişi Onayla' : 'İleri',
+                    _currentStep == 1 ? 'Siparişi Onayla' : 'İleri',
                   ),
                 ),
                 if (_currentStep > 0) ...[
@@ -108,16 +107,11 @@ void initState() {
             isActive: _currentStep >= 0,
             state: _currentStep > 0 ? StepState.complete : StepState.indexed,
           ),
-          Step(
-            title: const Text('Ödeme Yöntemi'),
-            content: _buildPaymentStep(),
-            isActive: _currentStep >= 1,
-            state: _currentStep > 1 ? StepState.complete : StepState.indexed,
-          ),
+
           Step(
             title: const Text('Sipariş Özeti'),
             content: _buildSummaryStep(cartProvider),
-            isActive: _currentStep >= 2,
+            isActive: _currentStep >= 1,
           ),
         ],
       ),
@@ -308,51 +302,9 @@ void initState() {
     );
   }
 
-  Widget _buildPaymentStep() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Ödeme yönteminizi seçin',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        const SizedBox(height: 16),
-        Card(
-          child: RadioListTile<int>(
-            value: 0,
-            groupValue: _selectedPaymentIndex,
-            onChanged: (value) {
-              setState(() {
-                _selectedPaymentIndex = value!;
-              });
-            },
-            title: const Text('Kredi/Banka Kartı'),
-            subtitle: const Text('İyzico güvenli ödeme'),
-            secondary: Icon(Icons.credit_card, color: AppColors.primary),
-            activeColor: AppColors.primary,
-          ),
-        ),
-        Card(
-          child: RadioListTile<int>(
-            value: 1,
-            groupValue: _selectedPaymentIndex,
-            onChanged: (value) {
-              setState(() {
-                _selectedPaymentIndex = value!;
-              });
-            },
-            title: const Text('Kapıda Ödeme'),
-            subtitle: const Text('Teslimat sırasında nakit veya POS ile'),
-            secondary: Icon(Icons.money, color: AppColors.primary),
-            activeColor: AppColors.primary,
-          ),
-        ),
-      ],
-    );
-  }
+
 
   Widget _buildSummaryStep(CartProvider cartProvider) {
-    final paymentMethod = _selectedPaymentIndex == 0 ? 'Kredi/Banka Kartı' : 'Kapıda Ödeme';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -409,29 +361,7 @@ void initState() {
           ),
         ],
         
-        // Ödeme Yöntemi
-        Card(
-          child: ListTile(
-            leading: Icon(
-              _selectedPaymentIndex == 0 ? Icons.credit_card : Icons.money,
-              color: AppColors.primary,
-            ),
-            title: const Text(
-              'Ödeme Yöntemi',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text(paymentMethod),
-            trailing: TextButton(
-              onPressed: () {
-                setState(() {
-                  _currentStep = 1;
-                });
-              },
-              child: const Text('Değiştir'),
-            ),
-          ),
-        ),
-        
+
         // Sipariş Notu
         if (_orderNoteController.text.isNotEmpty) ...[
           Card(
@@ -586,7 +516,7 @@ void initState() {
       userId: authProvider.user!.id.toString(),
       cartItems: cartProvider.items,
       totalAmount: cartProvider.getFinalTotal(),
-      paymentMethod: _selectedPaymentIndex == 0 ? 'iyzico' : 'cash_on_delivery',
+
       deliveryAddress: '${_selectedAddress!.title}\n${_selectedAddress!.address}', // 👈 SEÇİLİ ADRES
       deliveryPhone: _selectedAddress!.phone, // 👈 ADRES TELEFONU
       orderNote: _orderNoteController.text.isNotEmpty ? _orderNoteController.text : null,
@@ -668,7 +598,7 @@ class OrderSuccessScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               const Text(
-                'Siparişiniz hazırlanıyor',
+                'Siparişiniz alındı. Detaylar e-posta adresinize gönderilecektir.',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.grey),
               ),

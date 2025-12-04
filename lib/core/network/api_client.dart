@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import '../constants/api_constants.dart';
 import 'api_interceptor.dart';
+import 'mock_interceptor.dart';
 
 class ApiClient {
   late final Dio _dio;
@@ -17,6 +18,11 @@ class ApiClient {
 
     // Interceptor ekle (token, logging vb.)
     _dio.interceptors.add(ApiInterceptor());
+
+    // Mock Mode Check
+    if (ApiConstants.isMockMode) {
+      _dio.interceptors.add(MockInterceptor());
+    }
 
     // Debug modu - request/response loglama
     _dio.interceptors.add(
