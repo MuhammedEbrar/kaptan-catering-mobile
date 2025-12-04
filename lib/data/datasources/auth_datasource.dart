@@ -75,13 +75,51 @@ class AuthDataSource {
     }
   }
 
+  // Update Profile
+  Future<UserModel> updateProfile({
+    required String name,
+    required String phone,
+  }) async {
+    try {
+      final response = await _apiClient.put(
+        ApiConstants.updateProfile,
+        data: {
+          'name': name,
+          'phone': phone,
+        },
+      );
+
+      return UserModel.fromJson(response.data['user']);
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  // Change Password
+  Future<void> changePassword({
+    required String oldPassword,
+    required String newPassword,
+  }) async {
+    try {
+      await _apiClient.post(
+        ApiConstants.changePassword,
+        data: {
+          'old_password': oldPassword,
+          'new_password': newPassword,
+        },
+      );
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   // Error Handler
   String _handleError(DioException error) {
     if (error.response != null) {
       // Backend'den gelen hata mesajı
-      final message = error.response?.data['message'] ?? 
-                      error.response?.data['error'] ?? 
-                      'Bir hata oluştu';
+      final message = error.response?.data['message'] ??
+          error.response?.data['error'] ??
+          'Bir hata oluştu';
       return message;
     } else if (error.type == DioExceptionType.connectionTimeout ||
         error.type == DioExceptionType.receiveTimeout) {

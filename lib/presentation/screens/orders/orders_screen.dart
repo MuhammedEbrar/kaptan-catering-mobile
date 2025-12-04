@@ -246,8 +246,18 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   String _formatDate(DateTime date) {
     final months = [
-      'Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz',
-      'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'
+      'Oca',
+      'Şub',
+      'Mar',
+      'Nis',
+      'May',
+      'Haz',
+      'Tem',
+      'Ağu',
+      'Eyl',
+      'Eki',
+      'Kas',
+      'Ara'
     ];
     return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
@@ -300,7 +310,6 @@ class OrderDetailScreen extends StatelessWidget {
                 _buildInfoRow('Sipariş No', '#${order.id}'),
                 _buildInfoRow('Tarih', _formatDate(order.createdAt)),
                 _buildInfoRow('Ürün Sayısı', '${order.totalItemCount} ürün'),
-                // _buildInfoRow('Ödeme', order.getPaymentMethodDisplayName()), // Removed
               ],
             ),
             const SizedBox(height: 16),
@@ -308,40 +317,40 @@ class OrderDetailScreen extends StatelessWidget {
               'Sipariş Detayları',
               [
                 ...order.items.map((item) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              item.productName,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                              ),
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.productName,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '${item.quantity} ${item.unit} x ₺${item.price.toStringAsFixed(2)}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${item.quantity} ${item.unit} x ₺${item.price.toStringAsFixed(2)}',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey[600],
-                              ),
+                          ),
+                          Text(
+                            '₺${item.totalPrice.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      Text(
-                        '₺${item.totalPrice.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
+                    )),
               ],
             ),
             const SizedBox(height: 16),
@@ -380,7 +389,8 @@ class OrderDetailScreen extends StatelessWidget {
             _buildInfoCard(
               'Tutar Özeti',
               [
-                _buildInfoRow('Toplam Tutar', '₺${order.totalAmount.toStringAsFixed(2)}'),
+                _buildInfoRow(
+                    'Toplam Tutar', '₺${order.totalAmount.toStringAsFixed(2)}'),
                 const Divider(height: 24),
                 _buildInfoRow(
                   'Genel Toplam',
@@ -395,7 +405,9 @@ class OrderDetailScreen extends StatelessWidget {
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: () {
-                    _showCancelDialog(context, order.id!);
+                    if (order.id != null) {
+                      _showCancelDialog(context, order.id!);
+                    }
                   },
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -494,8 +506,18 @@ class OrderDetailScreen extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     final months = [
-      'Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz',
-      'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'
+      'Oca',
+      'Şub',
+      'Mar',
+      'Nis',
+      'May',
+      'Haz',
+      'Tem',
+      'Ağu',
+      'Eyl',
+      'Eki',
+      'Kas',
+      'Ara'
     ];
     return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
@@ -516,7 +538,7 @@ class OrderDetailScreen extends StatelessWidget {
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
-              
+
               showDialog(
                 context: context,
                 barrierDismissible: false,
@@ -524,13 +546,14 @@ class OrderDetailScreen extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 ),
               );
-              
-              final success = await context.read<OrderProvider>().cancelOrder(orderId);
-              
+
+              final success =
+                  await context.read<OrderProvider>().cancelOrder(orderId);
+
               if (context.mounted) {
                 Navigator.pop(context);
               }
-              
+
               if (context.mounted) {
                 if (success) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -544,8 +567,8 @@ class OrderDetailScreen extends StatelessWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
-                        context.read<OrderProvider>().errorMessage ?? 
-                        'Sipariş iptal edilemedi',
+                        context.read<OrderProvider>().errorMessage ??
+                            'Sipariş iptal edilemedi',
                       ),
                       backgroundColor: Colors.red,
                     ),

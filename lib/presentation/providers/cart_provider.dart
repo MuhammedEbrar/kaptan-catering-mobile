@@ -25,28 +25,32 @@ class CartProvider extends ChangeNotifier {
   int get totalItemCount => _items.fold(0, (sum, item) => sum + item.quantity);
   bool get isEmpty => _items.isEmpty;
   bool get isNotEmpty => _items.isNotEmpty;
+  double get totalAmount => getFinalTotal();
 
   // Sepete ürün ekle
   Future<void> addToCart(ProductModel product, {int quantity = 1}) async {
     // Minimum sipariş miktarı kontrolü
-    if (product.minSiparisMiktari != null && quantity < product.minSiparisMiktari!) {
+    if (product.minSiparisMiktari != null &&
+        quantity < product.minSiparisMiktari!) {
       throw 'Minimum sipariş miktarı: ${product.minSiparisMiktari} ${product.birim}';
     }
 
     // Ürün zaten sepette var mı?
-    final existingIndex = _items.indexWhere((item) => item.product.id == product.id);
+    final existingIndex =
+        _items.indexWhere((item) => item.product.id == product.id);
 
     if (existingIndex >= 0) {
       // Varsa miktarı artır
       _items[existingIndex].quantity += quantity;
-      print('🛒 Sepetteki ürün miktarı artırıldı: ${product.stokAdi} (${_items[existingIndex].quantity})');
+      print(
+          '🛒 Sepetteki ürün miktarı artırıldı: ${product.stokAdi} (${_items[existingIndex].quantity})');
     } else {
       // Yoksa yeni ekle
       _items.add(CartItem(
         product: product,
         quantity: quantity,
       ));
-      print('🛒 Sepete ürün eklendi: ${product.stokAdi} (${quantity})');
+      print('🛒 Sepete ürün eklendi: ${product.stokAdi} ($quantity)');
     }
 
     await _saveCartToStorage();
@@ -55,11 +59,12 @@ class CartProvider extends ChangeNotifier {
 
   // Sepetten ürün çıkar
   Future<void> removeFromCart(String productId) async {
-    final removedItem = _items.firstWhere((item) => item.product.id == productId);
+    final removedItem =
+        _items.firstWhere((item) => item.product.id == productId);
     _items.removeWhere((item) => item.product.id == productId);
-    
+
     print('🗑️ Sepetten ürün çıkarıldı: ${removedItem.product.stokAdi}');
-    
+
     await _saveCartToStorage();
     notifyListeners();
   }
@@ -67,13 +72,13 @@ class CartProvider extends ChangeNotifier {
   // Ürün miktarını güncelle
   Future<void> updateQuantity(String productId, int newQuantity) async {
     final index = _items.indexWhere((item) => item.product.id == productId);
-    
+
     if (index < 0) return;
 
     final item = _items[index];
 
     // Minimum miktar kontrolü
-    if (item.product.minSiparisMiktari != null && 
+    if (item.product.minSiparisMiktari != null &&
         newQuantity < item.product.minSiparisMiktari!) {
       throw 'Minimum sipariş miktarı: ${item.product.minSiparisMiktari} ${item.product.birim}';
     }
@@ -85,8 +90,9 @@ class CartProvider extends ChangeNotifier {
     }
 
     _items[index].quantity = newQuantity;
-    print('🔄 Ürün miktarı güncellendi: ${item.product.stokAdi} (${newQuantity})');
-    
+    print(
+        '🔄 Ürün miktarı güncellendi: ${item.product.stokAdi} ($newQuantity)');
+
     await _saveCartToStorage();
     notifyListeners();
   }
@@ -113,7 +119,8 @@ class CartProvider extends ChangeNotifier {
 
   // Ara toplam (KDV hariç)
   double getSubtotal() {
-    return _items.fold(0.0, (sum, item) => sum + item.product.getFiyatKdvHaric() * item.quantity);
+    return _items.fold(0.0,
+        (sum, item) => sum + item.product.getFiyatKdvHaric() * item.quantity);
   }
 
   // KDV tutarı
@@ -150,16 +157,18 @@ class CartProvider extends ChangeNotifier {
   int getQuantityInCart(String productId) {
     final item = _items.firstWhere(
       (item) => item.product.id == productId,
-      orElse: () => CartItem(product: ProductModel(
-        id: '',
-        categoryId: 0,
-        stokKodu: '',
-        stokAdi: '',
-        kategori: '',
-        birim: '',
-        fiyat: 0,
-        stokMiktari: 0,
-      ), quantity: 0),
+      orElse: () => CartItem(
+          product: ProductModel(
+            id: '',
+            categoryId: 0,
+            stokKodu: '',
+            stokAdi: '',
+            kategori: '',
+            birim: '',
+            fiyat: 0,
+            stokMiktari: 0,
+          ),
+          quantity: 0),
     );
     return item.quantity;
   }
@@ -191,7 +200,7 @@ class CartProvider extends ChangeNotifier {
 
       final List<dynamic> cartJson = json.decode(jsonString);
       _items = cartJson.map((json) => CartItem.fromJson(json)).toList();
-      
+
       print('📦 Sepet yüklendi (${_items.length} ürün)');
     } catch (e) {
       print('❌ Sepet yükleme hatası: $e');
@@ -219,7 +228,8 @@ class CartProvider extends ChangeNotifier {
 
       // Minimum miktar kontrolü
       if (!item.isValidQuantity()) {
-        errors.add('${item.product.stokAdi} için minimum ${item.product.minSiparisMiktari} ${item.product.birim} gerekli');
+        errors.add(
+            '${item.product.stokAdi} için minimum ${item.product.minSiparisMiktari} ${item.product.birim} gerekli');
       }
     }
 

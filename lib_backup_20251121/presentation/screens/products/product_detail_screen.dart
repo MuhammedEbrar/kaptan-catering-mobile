@@ -13,10 +13,10 @@ class ProductDetailScreen extends StatefulWidget {
   final String heroTag;
 
   const ProductDetailScreen({
-    Key? key,
+    super.key,
     required this.product,
     required this.heroTag,
-  }) : super(key: key);
+  });
 
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();
@@ -53,7 +53,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   if (context.mounted) {
                     CustomSnackBar.success(
                       context,
-                      isFavorite ? 'Favorilerden çıkarıldı' : 'Favorilere eklendi!',
+                      isFavorite
+                          ? 'Favorilerden çıkarıldı'
+                          : 'Favorilere eklendi!',
                     );
                   }
                 },
@@ -226,9 +228,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   AnimatedButton(
                     width: double.infinity,
                     height: 56,
-                    backgroundColor: isInCart 
-                        ? AppColors.textSecondary 
-                        : AppColors.primary,
+                    backgroundColor:
+                        isInCart ? AppColors.textSecondary : AppColors.primary,
                     onPressed: () async {
                       try {
                         if (isInCart) {
@@ -251,7 +252,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 child: SuccessAnimation(
                                   onComplete: () {
                                     Navigator.pop(context);
-                                    CustomSnackBar.success(context, 'Sepete eklendi!');
+                                    CustomSnackBar.success(
+                                        context, 'Sepete eklendi!');
                                   },
                                 ),
                               ),
@@ -268,7 +270,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          isInCart ? Icons.shopping_cart : Icons.add_shopping_cart,
+                          isInCart
+                              ? Icons.shopping_cart
+                              : Icons.add_shopping_cart,
                         ),
                         const SizedBox(width: 8),
                         Text(

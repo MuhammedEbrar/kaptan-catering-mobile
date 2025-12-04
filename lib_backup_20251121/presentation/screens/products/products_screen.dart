@@ -45,7 +45,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
         _scrollController.position.maxScrollExtent * 0.8) {
       if (productProvider.isLoadingMore || !productProvider.hasMore) return;
       if (productProvider.searchQuery.isNotEmpty ||
-          productProvider.selectedCategory != null) return;
+          productProvider.selectedCategory != null) {
+        return;
+      }
 
       productProvider.loadMoreProducts();
     }
@@ -211,7 +213,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
             child: productProvider.isLoading
                 ? GridView.builder(
                     padding: const EdgeInsets.all(16),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       childAspectRatio: 0.75,
                       crossAxisSpacing: 12,
@@ -228,8 +231,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              productProvider.isOffline 
-                                  ? Icons.wifi_off 
+                              productProvider.isOffline
+                                  ? Icons.wifi_off
                                   : Icons.search_off,
                               size: 64,
                               color: Colors.grey[400],
@@ -256,7 +259,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                               const SizedBox(height: 16),
                               ElevatedButton.icon(
                                 onPressed: () async {
-                                  await productProvider.checkConnectivityAndRefresh();
+                                  await productProvider
+                                      .checkConnectivityAndRefresh();
                                 },
                                 icon: const Icon(Icons.refresh),
                                 label: const Text('Yeniden Dene'),
@@ -331,7 +335,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                         child: Container(
                                           decoration: BoxDecoration(
                                             color: Colors.grey[200],
-                                            borderRadius: const BorderRadius.only(
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               topLeft: Radius.circular(12),
                                               topRight: Radius.circular(12),
                                             ),
@@ -390,13 +395,14 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                                         const SnackBar(
                                                           content: Text(
                                                               'Sepetten çıkarıldı'),
-                                                          duration:
-                                                              Duration(seconds: 1),
+                                                          duration: Duration(
+                                                              seconds: 1),
                                                         ),
                                                       );
                                                     }
                                                   } else {
-                                                    await cartProvider.addToCart(
+                                                    await cartProvider
+                                                        .addToCart(
                                                       product,
                                                       quantity: 1,
                                                     );
@@ -407,8 +413,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                                         const SnackBar(
                                                           content: Text(
                                                               'Sepete eklendi'),
-                                                          duration:
-                                                              Duration(seconds: 1),
+                                                          duration: Duration(
+                                                              seconds: 1),
                                                           backgroundColor:
                                                               AppColors.success,
                                                         ),
@@ -417,11 +423,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                                   }
                                                 } catch (e) {
                                                   if (context.mounted) {
-                                                    ScaffoldMessenger.of(context)
+                                                    ScaffoldMessenger.of(
+                                                            context)
                                                         .showSnackBar(
                                                       SnackBar(
-                                                        content: Text(
-                                                            e.toString()),
+                                                        content:
+                                                            Text(e.toString()),
                                                         backgroundColor:
                                                             AppColors.error,
                                                       ),
@@ -439,8 +446,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                                 isInCart
                                                     ? 'Sepette'
                                                     : 'Sepete Ekle',
-                                                style:
-                                                    const TextStyle(fontSize: 12),
+                                                style: const TextStyle(
+                                                    fontSize: 12),
                                               ),
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor: isInCart
@@ -494,10 +501,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildInfoRow('Durum', cacheInfo['isOnline'] ? '🟢 Online' : '🔴 Offline'),
+            _buildInfoRow(
+                'Durum', cacheInfo['isOnline'] ? '🟢 Online' : '🔴 Offline'),
             _buildInfoRow('Bağlantı', cacheInfo['connectionType']),
-            _buildInfoRow('Önbellekte Ürün', '${cacheInfo['cachedProductCount']}'),
-            _buildInfoRow('Önbellek Geçerli', cacheInfo['isCacheValid'] ? 'Evet' : 'Hayır'),
+            _buildInfoRow(
+                'Önbellekte Ürün', '${cacheInfo['cachedProductCount']}'),
+            _buildInfoRow('Önbellek Geçerli',
+                cacheInfo['isCacheValid'] ? 'Evet' : 'Hayır'),
             if (cacheInfo['cacheAge'] != null)
               _buildInfoRow('Önbellek Yaşı', '${cacheInfo['cacheAge']} saat'),
           ],

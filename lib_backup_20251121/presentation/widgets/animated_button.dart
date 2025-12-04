@@ -12,7 +12,7 @@ class AnimatedButton extends StatefulWidget {
   final bool enabled;
 
   const AnimatedButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     required this.child,
     this.backgroundColor,
@@ -22,7 +22,7 @@ class AnimatedButton extends StatefulWidget {
     this.padding,
     this.borderRadius,
     this.enabled = true,
-  }) : super(key: key);
+  });
 
   @override
   State<AnimatedButton> createState() => _AnimatedButtonState();
@@ -72,10 +72,11 @@ class _AnimatedButtonState extends State<AnimatedButton>
           style: ElevatedButton.styleFrom(
             backgroundColor: widget.backgroundColor ?? Colors.red,
             foregroundColor: widget.foregroundColor ?? Colors.white,
-            padding: widget.padding ?? const EdgeInsets.symmetric(
-              horizontal: 24,
-              vertical: 12,
-            ),
+            padding: widget.padding ??
+                const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
             shape: RoundedRectangleBorder(
               borderRadius: widget.borderRadius ?? BorderRadius.circular(12),
             ),

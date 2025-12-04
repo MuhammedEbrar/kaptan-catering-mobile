@@ -4,9 +4,9 @@ class SuccessAnimation extends StatefulWidget {
   final VoidCallback? onComplete;
 
   const SuccessAnimation({
-    Key? key,
+    super.key,
     this.onComplete,
-  }) : super(key: key);
+  });
 
   @override
   State<SuccessAnimation> createState() => _SuccessAnimationState();

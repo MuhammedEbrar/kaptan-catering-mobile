@@ -11,7 +11,6 @@ class OrderRepository {
     required String userId,
     required List<Map<String, dynamic>> items,
     required double totalAmount,
-    // required String paymentMethod, // Removed
     required String deliveryAddress,
     String? deliveryPhone,
     String? orderNote,
@@ -34,7 +33,6 @@ class OrderRepository {
         'userId': userId,
         'items': cleanedItems,
         'totalAmount': totalAmount,
-        // 'paymentMethod': paymentMethod, // Removed
         'deliveryAddress': deliveryAddress,
         if (deliveryPhone != null) 'deliveryPhone': deliveryPhone,
         if (orderNote != null) 'orderNote': orderNote,
@@ -108,7 +106,7 @@ class OrderRepository {
             order.status == OrderModel.statusPreparing ||
             order.status == OrderModel.statusShipped;
       }).toList();
-      
+
       print('✅ ${activeOrders.length} aktif sipariş');
       return activeOrders;
     } catch (e) {
@@ -124,7 +122,7 @@ class OrderRepository {
       final completedOrders = allOrders.where((order) {
         return order.status == OrderModel.statusDelivered;
       }).toList();
-      
+
       print('✅ ${completedOrders.length} tamamlanan sipariş');
       return completedOrders;
     } catch (e) {
@@ -140,7 +138,7 @@ class OrderRepository {
       final cancelledOrders = allOrders.where((order) {
         return order.status == OrderModel.statusCancelled;
       }).toList();
-      
+
       print('✅ ${cancelledOrders.length} iptal edilmiş sipariş');
       return cancelledOrders;
     } catch (e) {

@@ -11,13 +11,13 @@ class EmptyStateWidget extends StatelessWidget {
   final VoidCallback? onButtonPressed;
 
   const EmptyStateWidget({
-    Key? key,
+    super.key,
     required this.icon,
     required this.title,
     required this.subtitle,
     this.buttonText,
     this.onButtonPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

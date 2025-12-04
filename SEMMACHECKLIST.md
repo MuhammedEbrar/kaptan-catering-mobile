@@ -78,102 +78,102 @@
 ## 🔄 YENİ REVİZYON - MÜŞTERİ TİPİ & ADMIN ONAY SİSTEMİ
 
 ### ✅ PHASE 12: Kayıt Ekranı Güncelleme
-- [] **Müşteri Tipi Dropdown Tasarımı**
-  - [] Dropdown container border & radius
-  - [] Emoji + isim birlikte gösterimi (🏫 Okul, 🍽️ Restoran, 🏨 Otel)
-  - [] Hover/Focus states
-  - [] Placeholder text ("İşletme türünü seçin")
-- [] **Form Layout Düzenleme**
-  - [] Müşteri tipi alanı en üste konumlandırma
-  - [] Zorunlu alan yıldızı (*) ekle
-  - [] Label typography düzenleme
-  - [] Spacing ayarları (16-24px arası)
-- [] **Validation Feedback**
-  - [] Seçim yapılmadıysa hata mesajı (SnackBar)
-  - [] Snackbar tasarımı (kırmızı background)
-  - [] Error state gösterimi
+- [x] **Müşteri Tipi Dropdown Tasarımı**
+  - [x] Dropdown container border & radius
+  - [x] Emoji + isim birlikte gösterimi (🏫 Okul, 🍽️ Restoran, 🏨 Otel)
+  - [x] Hover/Focus states
+  - [x] Placeholder text ("İşletme türünü seçin")
+- [x] **Form Layout Düzenleme**
+  - [x] Müşteri tipi alanı en üste konumlandırma
+  - [x] Zorunlu alan yıldızı (*) ekle
+  - [x] Label typography düzenleme
+  - [x] Spacing ayarları (16-24px arası)
+- [x] **Validation Feedback**
+  - [x] Seçim yapılmadıysa hata mesajı (SnackBar)
+  - [x] Snackbar tasarımı (kırmızı background)
+  - [x] Error state gösterimi
 
 ---
 
 ## ⏳ PHASE 13: Admin Onay Sistemi UI (PLANLANAN)
 
 ### 13.1 Onay Bekleyen Kullanıcı Ekranı
-- [ ] `lib/presentation/screens/auth/pending_approval_screen.dart` oluştur
-- [ ] AppBar ("Hesap Durumu")
-- [ ] Center layout:
-  - [ ] Bilgilendirme kartı tasarımı
-    - [ ] Card widget (rounded, shadow)
-    - [ ] Icon gösterimi (Icons.pending_actions, turuncu, büyük 80px)
-    - [ ] "Hesabınız Onay Bekliyor" başlık (bold, 24px)
-    - [ ] Açıklama text (16px, gri):
-      - [ ] "Yöneticilerimiz başvurunuzu inceliyor"
-      - [ ] "Onaylandığında email ile bilgilendirileceksiniz"
-    - [ ] Divider
-    - [ ] İletişim bilgisi section:
-      - [ ] "Sorularınız için:" text (bold)
-      - [ ] Email: info@kaptancatering.com (tıklanabilir)
-      - [ ] Telefon: 0212 XXX XX XX (tıklanabilir)
-    - [ ] Spacing: 24px between sections
-- [ ] Alt kısım:
-  - [ ] "Çıkış Yap" butonu (OutlinedButton, kırmızı border)
-  - [ ] onPressed → Logout & Login sayfasına dön
-- [ ] Background color: `AppColors.backgroundLight`
-- [ ] Animasyon: Fade in + Slide from bottom
+- [x] `lib/presentation/screens/auth/pending_approval_screen.dart` oluştur
+- [x] AppBar ("Hesap Durumu")
+- [x] Center layout:
+  - [x] Bilgilendirme kartı tasarımı
+    - [x] Card widget (rounded, shadow)
+    - [x] Icon gösterimi (Icons.pending_actions, turuncu, büyük 80px)
+    - [x] "Hesabınız Onay Bekliyor" başlık (bold, 24px)
+    - [x] Açıklama text (16px, gri):
+      - [x] "Yöneticilerimiz başvurunuzu inceliyor"
+      - [x] "Onaylandığında email ile bilgilendirileceksiniz"
+    - [x] Divider
+    - [x] İletişim bilgisi section:
+      - [x] "Sorularınız için:" text (bold)
+      - [x] Email: info@kaptancatering.com (tıklanabilir)
+      - [x] Telefon: 0212 XXX XX XX (tıklanabilir)
+    - [x] Spacing: 24px between sections
+- [x] Alt kısım:
+  - [x] "Çıkış Yap" butonu (OutlinedButton, kırmızı border)
+  - [x] onPressed → Logout & Login sayfasına dön
+- [x] Background color: `AppColors.backgroundLight`
+- [x] Animasyon: Fade in + Slide from bottom
 
 ### 13.2 Profil Ekranında Durum Badge'i
-- [ ] Profile screen'de kullanıcı bilgileri card'ına badge ekle
-- [ ] Badge widget oluştur: `lib/presentation/widgets/status_badge.dart`
-- [ ] Badge tasarımı:
-  - [ ] Container (rounded 20px, padding: 8x16)
-  - [ ] Row layout: Icon + Text
-  - [ ] 3 durum:
-    - [ ] **Aktif** (yeşil):
-      - [ ] Background: `Color(0xFF28A745).withOpacity(0.1)`
-      - [ ] Border: `Color(0xFF28A745)`
-      - [ ] Icon: Icons.check_circle (yeşil)
-      - [ ] Text: "Aktif Hesap" (yeşil, bold)
-    - [ ] **Onay Bekliyor** (turuncu):
-      - [ ] Background: `Color(0xFFFFC107).withOpacity(0.1)`
-      - [ ] Border: `Color(0xFFFFC107)`
-      - [ ] Icon: Icons.pending (turuncu)
-      - [ ] Text: "Onay Bekliyor" (turuncu, bold)
-    - [ ] **Deaktif** (kırmızı):
-      - [ ] Background: `Color(0xFFDC3545).withOpacity(0.1)`
-      - [ ] Border: `Color(0xFFDC3545)`
-      - [ ] Icon: Icons.block (kırmızı)
-      - [ ] Text: "Hesap Askıda" (kırmızı, bold)
-- [ ] Müşteri tipi gösterimi:
-  - [ ] Container (rounded, gri background)
-  - [ ] Row: Emoji (24px) + DisplayName (16px)
-  - [ ] Örnek: "🍽️ Restoran", "🏫 Okul", "🏨 Otel"
-  - [ ] Profil card'ının altına ekle
+- [x] Profile screen'de kullanıcı bilgileri card'ına badge ekle
+- [x] Badge widget oluştur: `lib/presentation/widgets/status_badge.dart`
+- [x] Badge tasarımı:
+  - [x] Container (rounded 20px, padding: 8x16)
+  - [x] Row layout: Icon + Text
+  - [x] 3 durum:
+    - [x] **Aktif** (yeşil):
+      - [x] Background: `Color(0xFF28A745).withOpacity(0.1)`
+      - [x] Border: `Color(0xFF28A745)`
+      - [x] Icon: Icons.check_circle (yeşil)
+      - [x] Text: "Aktif Hesap" (yeşil, bold)
+    - [x] **Onay Bekliyor** (turuncu):
+      - [x] Background: `Color(0xFFFFC107).withOpacity(0.1)`
+      - [x] Border: `Color(0xFFFFC107)`
+      - [x] Icon: Icons.pending (turuncu)
+      - [x] Text: "Onay Bekliyor" (turuncu, bold)
+    - [x] **Deaktif** (kırmızı):
+      - [x] Background: `Color(0xFFDC3545).withOpacity(0.1)`
+      - [x] Border: `Color(0xFFDC3545)`
+      - [x] Icon: Icons.block (kırmızı)
+      - [x] Text: "Hesap Askıda" (kırmızı, bold)
+- [x] Müşteri tipi gösterimi:
+  - [x] Container (rounded, gri background)
+  - [x] Row: Emoji (24px) + DisplayName (16px)
+  - [x] Örnek: "🍽️ Restoran", "🏫 Okul", "🏨 Otel"
+  - [x] Profil card'ının altına ekle
 
 ### 13.3 Login Sonrası Onay Kontrolü (Backend ile birlikte)
-- [ ] Login başarılı sonrası `isActive` kontrolü ekle
-- [ ] Eğer `isActive == false`:
-  - [ ] Pending approval screen'e yönlendir
-  - [ ] Main screen'e girişi engelle
-- [ ] Eğer `isActive == true`:
-  - [ ] Normal akış (Main screen'e git)
+- [x] Login başarılı sonrası `isActive` kontrolü ekle
+- [x] Eğer `isActive == false`:
+  - [x] Pending approval screen'e yönlendir
+  - [x] Main screen'e girişi engelle
+- [x] Eğer `isActive == true`:
+  - [x] Normal akış (Main screen'e git)
 
 ---
 
 ## ⏳ PHASE 14: İyileştirmeler (PLANLANAN)
 
 ### 14.1 Dark Mode Desteği
-- [ ] ThemeData oluştur (light & dark)
-- [ ] `lib/core/constants/app_theme.dart` dosyası
-- [ ] Light theme:
-  - [ ] Primary: AppColors.primary
-  - [ ] Background: Colors.white
-  - [ ] Surface: Colors.white
-- [ ] Dark theme:
-  - [ ] Primary: AppColors.primary
-  - [ ] Background: Color(0xFF121212)
-  - [ ] Surface: Color(0xFF1E1E1E)
-- [ ] Settings'te theme seçimi (Switch)
-- [ ] SharedPreferences ile kaydet
-- [ ] App başlangıcında yükle
+- [x] ThemeData oluştur (light & dark)
+- [x] `lib/core/constants/app_theme.dart` dosyası
+- [x] Light theme:
+  - [x] Primary: AppColors.primary
+  - [x] Background: Colors.white
+  - [x] Surface: Colors.white
+- [x] Dark theme:
+  - [x] Primary: AppColors.primary
+  - [x] Background: Color(0xFF121212)
+  - [x] Surface: Color(0xFF1E1E1E)
+- [x] Settings'te theme seçimi (Switch)
+- [x] SharedPreferences ile kaydet
+- [x] App başlangıcında yükle
 
 ### 14.2 Animasyon Optimizasyonları
 - [ ] AnimationController'ları dispose et

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/status_badge.dart';
 import '../auth/login_screen.dart';
 import '../addresses/addresses_screen.dart';
 import '../orders/orders_screen.dart';
+import '../settings/settings_screen.dart';
+import '../favorites/favorites_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -147,6 +150,20 @@ class ProfileScreen extends StatelessWidget {
               ),
               _buildMenuCard(
                 context,
+                icon: Icons.favorite,
+                title: 'Favorilerim',
+                subtitle: 'Beğendiğiniz ürünleri görüntüleyin',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const FavoritesScreen(),
+                    ),
+                  );
+                },
+              ),
+              _buildMenuCard(
+                context,
                 icon: Icons.location_on,
                 title: 'Adreslerim',
                 subtitle: 'Teslimat adreslerinizi yönetin',
@@ -174,10 +191,10 @@ class ProfileScreen extends StatelessWidget {
                 title: 'Ayarlar',
                 subtitle: 'Uygulama ayarlarınızı yönetin',
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Ayarlar sayfası yakında eklenecek'),
-                      duration: Duration(seconds: 2),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const SettingsScreen(),
                     ),
                   );
                 },
@@ -270,12 +287,25 @@ class ProfileScreen extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
-        title: const Text(
-          'Hesap Bilgileri',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Hesap Bilgileri',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _showEditProfileDialog(context, user);
+              },
+              icon: const Icon(Icons.edit, color: AppColors.primary),
+              tooltip: 'Düzenle',
+            ),
+          ],
         ),
         content: SingleChildScrollView(
           child: Column(
@@ -291,9 +321,8 @@ class ProfileScreen extends StatelessWidget {
                 _buildInfoRow('Vergi No', user.taxNumber!),
               if (user.taxOffice != null)
                 _buildInfoRow('Vergi Dairesi', user.taxOffice!),
-              if (user.address != null)
-                _buildInfoRow('Adres', user.address!),
-              
+              if (user.address != null) _buildInfoRow('Adres', user.address!),
+
               // Hesap Durumu
               const Divider(height: 24),
               const Text(
@@ -308,7 +337,7 @@ class ProfileScreen extends StatelessWidget {
               StatusBadge(
                 status: _getAccountStatus(user.isActive),
               ),
-              
+
               // Müşteri Tipi
               if (user.customerType != null) ...[
                 const SizedBox(height: 16),
@@ -339,6 +368,149 @@ class ProfileScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showEditProfileDialog(BuildContext context, user) {
+    final nameController = TextEditingController(text: user.name);
+    final phoneController = TextEditingController(text: user.phone);
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: const Text('Profili Düzenle'),
+        content: SingleChildScrollView(
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Fotoğraf Düzenleme (Mock)
+                GestureDetector(
+                  onTap: () async {
+                    final ImagePicker picker = ImagePicker();
+                    final XFile? image =
+                        await picker.pickImage(source: ImageSource.gallery);
+                    if (image != null) {
+                      // TODO: Fotoğraf yükleme işlemi
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Fotoğraf seçildi (Demo)')),
+                      );
+                    }
+                  },
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundColor: AppColors.primary,
+                        child: Text(
+                          user.name[0].toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 32,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            size: 20,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                TextFormField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Ad Soyad',
+                    prefixIcon: Icon(Icons.person),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Ad Soyad boş olamaz';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: phoneController,
+                  decoration: const InputDecoration(
+                    labelText: 'Telefon',
+                    prefixIcon: Icon(Icons.phone),
+                  ),
+                  keyboardType: TextInputType.phone,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Telefon boş olamaz';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('İptal'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (formKey.currentState!.validate()) {
+                final authProvider = context.read<AuthProvider>();
+                final navigator = Navigator.of(context);
+
+                // Dialog'u kapat
+                Navigator.pop(dialogContext);
+
+                final success = await authProvider.updateProfile(
+                  name: nameController.text,
+                  phone: phoneController.text,
+                );
+
+                if (success) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Profil başarıyla güncellendi'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content:
+                          Text(authProvider.errorMessage ?? 'Bir hata oluştu'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              }
+            },
+            child: const Text('Kaydet'),
           ),
         ],
       ),

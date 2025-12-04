@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/auth_provider.dart';
-import '../../widgets/custom_text_field.dart';
-import '../../widgets/custom_button.dart';
 import 'signup_screen.dart';
 import '../main_screen.dart';
 
@@ -167,7 +165,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: double.infinity,
                         height: 56,
                         child: ElevatedButton(
-                          onPressed: authProvider.isLoading ? null : _handleLogin,
+                          onPressed:
+                              authProvider.isLoading ? null : _handleLogin,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             shape: RoundedRectangleBorder(
@@ -175,7 +174,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           child: authProvider.isLoading
-                              ? const CircularProgressIndicator(color: Colors.white)
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white)
                               : const Text(
                                   'Giriş Yap',
                                   style: TextStyle(

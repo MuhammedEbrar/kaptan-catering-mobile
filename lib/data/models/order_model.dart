@@ -6,7 +6,6 @@ class OrderModel {
   final List<OrderItem> items;
   final double totalAmount;
   final String status;
-  // final String paymentMethod; // Removed
   final String deliveryAddress;
   final String? deliveryPhone;
   final String? orderNote;
@@ -19,7 +18,6 @@ class OrderModel {
     required this.items,
     required this.totalAmount,
     required this.status,
-    // required this.paymentMethod, // Removed
     required this.deliveryAddress,
     this.deliveryPhone,
     this.orderNote,
@@ -33,12 +31,14 @@ class OrderModel {
       id: json['id']?.toString(),
       userId: json['userId']?.toString() ?? json['user_id']?.toString() ?? '',
       items: (json['items'] as List<dynamic>?)
-          ?.map((item) => OrderItem.fromJson(item))
-          .toList() ?? [],
-      totalAmount: (json['totalAmount'] ?? json['total_amount'] ?? 0).toDouble(),
+              ?.map((item) => OrderItem.fromJson(item))
+              .toList() ??
+          [],
+      totalAmount:
+          (json['totalAmount'] ?? json['total_amount'] ?? 0).toDouble(),
       status: json['status'] ?? 'pending',
-      // paymentMethod: json['paymentMethod'] ?? json['payment_method'] ?? '', // Removed
-      deliveryAddress: json['deliveryAddress'] ?? json['delivery_address'] ?? '',
+      deliveryAddress:
+          json['deliveryAddress'] ?? json['delivery_address'] ?? '',
       deliveryPhone: json['deliveryPhone'] ?? json['delivery_phone'],
       orderNote: json['orderNote'] ?? json['order_note'],
       createdAt: json['createdAt'] != null
@@ -61,7 +61,6 @@ class OrderModel {
       'items': items.map((item) => item.toJson()).toList(),
       'totalAmount': totalAmount,
       'status': status,
-      // 'paymentMethod': paymentMethod, // Removed
       'deliveryAddress': deliveryAddress,
       if (deliveryPhone != null) 'deliveryPhone': deliveryPhone,
       if (orderNote != null) 'orderNote': orderNote,
@@ -134,7 +133,6 @@ class OrderModel {
     List<OrderItem>? items,
     double? totalAmount,
     String? status,
-    // String? paymentMethod, // Removed
     String? deliveryAddress,
     String? deliveryPhone,
     String? orderNote,
@@ -147,7 +145,6 @@ class OrderModel {
       items: items ?? this.items,
       totalAmount: totalAmount ?? this.totalAmount,
       status: status ?? this.status,
-      // paymentMethod: paymentMethod ?? this.paymentMethod, // Removed
       deliveryAddress: deliveryAddress ?? this.deliveryAddress,
       deliveryPhone: deliveryPhone ?? this.deliveryPhone,
       orderNote: orderNote ?? this.orderNote,
@@ -179,7 +176,8 @@ class OrderItem {
 
   factory OrderItem.fromJson(Map<String, dynamic> json) {
     return OrderItem(
-      productId: json['productId']?.toString() ?? json['product_id']?.toString() ?? '',
+      productId:
+          json['productId']?.toString() ?? json['product_id']?.toString() ?? '',
       productName: json['productName'] ?? json['product_name'] ?? '',
       productCode: json['productCode'] ?? json['product_code'] ?? '',
       quantity: json['quantity'] ?? 1,

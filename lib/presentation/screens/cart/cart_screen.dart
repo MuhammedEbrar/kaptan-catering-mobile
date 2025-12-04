@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/cart_provider.dart';
-import '../../providers/order_provider.dart';
-import '../../providers/auth_provider.dart';
 import '../main_screen.dart';
-import 'checkout_screen.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/order_provider.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -127,9 +126,11 @@ class _CartScreenState extends State<CartScreen> {
                                   Row(
                                     children: [
                                       IconButton(
-                                        icon: const Icon(Icons.remove_circle_outline),
+                                        icon: const Icon(
+                                            Icons.remove_circle_outline),
                                         onPressed: () {
-                                          cartProvider.decrementQuantity(item.product.id);
+                                          cartProvider.decrementQuantity(
+                                              item.product.id);
                                         },
                                         color: AppColors.primary,
                                       ),
@@ -139,8 +140,10 @@ class _CartScreenState extends State<CartScreen> {
                                           vertical: 4,
                                         ),
                                         decoration: BoxDecoration(
-                                          border: Border.all(color: Colors.grey[300]!),
-                                          borderRadius: BorderRadius.circular(4),
+                                          border: Border.all(
+                                              color: Colors.grey[300]!),
+                                          borderRadius:
+                                              BorderRadius.circular(4),
                                         ),
                                         child: Text(
                                           '${item.quantity} ${item.product.birim}',
@@ -150,9 +153,11 @@ class _CartScreenState extends State<CartScreen> {
                                         ),
                                       ),
                                       IconButton(
-                                        icon: const Icon(Icons.add_circle_outline),
+                                        icon: const Icon(
+                                            Icons.add_circle_outline),
                                         onPressed: () {
-                                          cartProvider.incrementQuantity(item.product.id);
+                                          cartProvider.incrementQuantity(
+                                              item.product.id);
                                         },
                                         color: AppColors.primary,
                                       ),
@@ -212,12 +217,7 @@ class _CartScreenState extends State<CartScreen> {
                       height: 50,
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const CheckoutScreen(),
-                            ),
-                          );
+                          _showCreateOrderDialog(context, cartProvider);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
@@ -287,6 +287,146 @@ class _CartScreenState extends State<CartScreen> {
             ],
           );
         },
+      ),
+    );
+  }
+
+  void _showCreateOrderDialog(BuildContext context, CartProvider cartProvider) {
+    final addressController = TextEditingController();
+    final noteController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    // Kullanıcı bilgilerini al (adres için varsayılan değer)
+    final user = context.read<AuthProvider>().user;
+    if (user != null) {
+      addressController.text = user.address ?? '';
+    }
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Siparişi Onayla'),
+        content: SingleChildScrollView(
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Toplam Tutar: ₺${cartProvider.totalAmount.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: AppColors.primary,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: addressController,
+                  decoration: const InputDecoration(
+                    labelText: 'Teslimat Adresi',
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLines: 2,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Adres gerekli';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: noteController,
+                  decoration: const InputDecoration(
+                    labelText: 'Sipariş Notu (Opsiyonel)',
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLines: 2,
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('İptal'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (formKey.currentState!.validate()) {
+                final orderProvider = context.read<OrderProvider>();
+                final navigator = Navigator.of(context); // Ana context'i kaydet
+
+                // Dialog'u kapat
+                Navigator.pop(dialogContext);
+
+                // Yükleniyor göster
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (_) => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+
+                // Sipariş verilerini hazırla
+                final items = cartProvider.items.map((item) {
+                  return {
+                    'productId': item.product.id,
+                    'productName': item.product.stokAdi,
+                    'productCode': item.product.stokKodu,
+                    'quantity': item.quantity,
+                    'unit': item.product.birim,
+                  };
+                }).toList();
+
+                final success = await orderProvider.createOrder(
+                  userId: user?.id.toString() ?? '',
+                  items: items,
+                  totalAmount: cartProvider.totalAmount,
+                  deliveryAddress: addressController.text,
+                  deliveryPhone: user?.phone,
+                  orderNote: noteController.text.isNotEmpty
+                      ? noteController.text
+                      : null,
+                );
+
+                // Yükleniyor dialogunu kapat
+                if (navigator.canPop()) {
+                  navigator.pop();
+                }
+
+                if (success) {
+                  cartProvider.clearCart();
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Siparişiniz başarıyla oluşturuldu! 🚀'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                    // Siparişlerim sayfasına yönlendir veya ana sayfaya dön
+                    mainScreenKey.currentState
+                        ?.changeTab(2); // Siparişlerim tab'i (varsayım)
+                  }
+                } else {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                            orderProvider.errorMessage ?? 'Bir hata oluştu'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              }
+            },
+            child: const Text('Onayla'),
+          ),
+        ],
       ),
     );
   }

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/cart_provider.dart';
-import '../../providers/order_provider.dart';
-import '../../providers/auth_provider.dart';
 import '../main_screen.dart';
 import 'checkout_screen.dart';
 
@@ -127,9 +125,11 @@ class _CartScreenState extends State<CartScreen> {
                                   Row(
                                     children: [
                                       IconButton(
-                                        icon: const Icon(Icons.remove_circle_outline),
+                                        icon: const Icon(
+                                            Icons.remove_circle_outline),
                                         onPressed: () {
-                                          cartProvider.decrementQuantity(item.product.id);
+                                          cartProvider.decrementQuantity(
+                                              item.product.id);
                                         },
                                         color: AppColors.primary,
                                       ),
@@ -139,8 +139,10 @@ class _CartScreenState extends State<CartScreen> {
                                           vertical: 4,
                                         ),
                                         decoration: BoxDecoration(
-                                          border: Border.all(color: Colors.grey[300]!),
-                                          borderRadius: BorderRadius.circular(4),
+                                          border: Border.all(
+                                              color: Colors.grey[300]!),
+                                          borderRadius:
+                                              BorderRadius.circular(4),
                                         ),
                                         child: Text(
                                           '${item.quantity} ${item.product.birim}',
@@ -150,9 +152,11 @@ class _CartScreenState extends State<CartScreen> {
                                         ),
                                       ),
                                       IconButton(
-                                        icon: const Icon(Icons.add_circle_outline),
+                                        icon: const Icon(
+                                            Icons.add_circle_outline),
                                         onPressed: () {
-                                          cartProvider.incrementQuantity(item.product.id);
+                                          cartProvider.incrementQuantity(
+                                              item.product.id);
                                         },
                                         color: AppColors.primary,
                                       ),
