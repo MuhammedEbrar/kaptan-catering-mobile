@@ -4,6 +4,9 @@ import '../../../core/constants/app_colors.dart';
 import '../../providers/favorite_provider.dart';
 import '../../providers/cart_provider.dart';
 import '../../widgets/product_card.dart';
+import '../../providers/auth_provider.dart';
+import '../auth/login_screen.dart';
+import '../auth/signup_screen.dart';
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
@@ -85,6 +88,53 @@ class FavoritesScreen extends StatelessWidget {
                   // İleride ProductDetailScreen eklenebilir
                 },
                 onAddToCart: () {
+                  final authProvider = context.read<AuthProvider>();
+                  if (!authProvider.isLoggedIn) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Giriş Yapmanız Gerekiyor'),
+                        content: const Text(
+                            'Sepete ürün ekleyebilmek için giriş yapmanız veya kayıt olmanız gerekmektedir.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('İptal'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SignupScreen(),
+                                ),
+                              );
+                            },
+                            child: const Text('Kayıt Ol'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const LoginScreen(),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                            ),
+                            child: const Text('Giriş Yap'),
+                          ),
+                        ],
+                      ),
+                    );
+                    return;
+                  }
+
                   context.read<CartProvider>().addToCart(product);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

@@ -6,30 +6,88 @@ import 'home/home_screen.dart';
 import 'products/products_screen.dart';
 import 'cart/cart_screen.dart';
 import 'profile/profile_screen.dart';
+import '../providers/auth_provider.dart';
+import 'auth/login_screen.dart';
+import 'auth/signup_screen.dart';
 
 // 👇 GLOBAL KEY İLE ERİŞİM
-final mainScreenKey = GlobalKey<_MainScreenState>();
+final mainScreenKey = GlobalKey<MainScreenState>();
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<MainScreen> createState() => MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateMixin {
+class MainScreenState extends State<MainScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    _tabController.addListener(() {
+      setState(() {});
+    });
   }
 
   // 👇 PUBLIC METOD
   void changeTab(int index) {
     if (!mounted) return;
+
+    // Sepet (2) veya Profil (3) için giriş kontrolü
+    if (index == 2 || index == 3) {
+      final authProvider = context.read<AuthProvider>();
+      if (!authProvider.isLoggedIn) {
+        _showLoginRequiredDialog();
+        return;
+      }
+    }
+
     _tabController.animateTo(index);
+  }
+
+  void _showLoginRequiredDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Giriş Yapmanız Gerekiyor'),
+        content: const Text(
+            'Bu özelliği kullanabilmek için giriş yapmanız veya kayıt olmanız gerekmektedir.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('İptal'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SignupScreen()),
+              );
+            },
+            child: const Text('Kayıt Ol'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Giriş Yap'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override

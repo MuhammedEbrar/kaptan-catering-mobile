@@ -1,590 +1,505 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:image_picker/image_picker.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/auth_provider.dart';
-import '../../widgets/status_badge.dart';
 import '../auth/login_screen.dart';
-import '../addresses/addresses_screen.dart';
+import '../auth/signup_screen.dart';
 import '../orders/orders_screen.dart';
-import '../settings/settings_screen.dart';
+import 'edit_profile_screen.dart';
 import '../favorites/favorites_screen.dart';
+import '../settings/settings_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    final user = authProvider.user;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profilim'),
-        backgroundColor: AppColors.primary,
-      ),
-      body: Consumer<AuthProvider>(
-        builder: (context, authProvider, child) {
-          final user = authProvider.user;
-
-          if (user == null) {
-            return const Center(child: Text('Kullanıcı bilgisi yok'));
-          }
-
-          return ListView(
-            padding: const EdgeInsets.all(16),
+      backgroundColor: Colors.grey[50],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
             children: [
-              // Kullanıcı Bilgileri Card
-              Card(
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+              // Modern Header (Ana Sayfa ile Birebir Aynı)
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius:
+                      BorderRadius.vertical(bottom: Radius.circular(24)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
                 ),
-                child: Padding(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Logo
+                    Image.asset(
+                      'assets/images/kaptan_logo_new.png',
+                      height: 40,
+                      fit: BoxFit.contain,
+                    ),
+                    // Giriş/Kayıt Butonları
+                    Consumer<AuthProvider>(
+                      builder: (context, authProvider, child) {
+                        if (authProvider.isLoggedIn) {
+                          return const SizedBox.shrink();
+                        }
+                        return Row(
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const LoginScreen(),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                'Giriş Yap',
+                                style: TextStyle(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const SignupScreen(),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                foregroundColor: Colors.white,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                              child: const Text('Kayıt Ol'),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              // Profil Başlığı (Header Altında)
+              const Padding(
+                padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Profilim',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Profil Kartı veya Misafir Görünümü
+              if (user != null) ...[
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
                   padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
                   child: Column(
                     children: [
-                      // Profil Resmi
-                      CircleAvatar(
-                        radius: 40,
-                        backgroundColor: AppColors.primary,
-                        child: Text(
-                          user.name[0].toUpperCase(),
-                          style: const TextStyle(
-                            fontSize: 32,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                      Stack(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppColors.primary.withOpacity(0.2),
+                                width: 4,
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              radius: 50,
+                              backgroundColor:
+                                  AppColors.primary.withOpacity(0.1),
+                              child: Text(
+                                user.name.isNotEmpty
+                                    ? user.name[0].toUpperCase()
+                                    : '?',
+                                style: const TextStyle(
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: const BoxDecoration(
+                                color: AppColors.primary,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.edit,
+                                size: 20,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 16),
-
-                      // Ad Soyad
                       Text(
                         user.name,
                         style: const TextStyle(
-                          fontSize: 20,
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
+                          color: Colors.black87,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 4),
-
-                      // Email
                       Text(
                         user.email,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ] else ...[
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      const Icon(
+                        Icons.account_circle_outlined,
+                        size: 80,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Misafir Kullanıcı',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Tüm özelliklerden yararlanmak için giriş yapın',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[600],
                         ),
-                        textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 16),
-
-                      // Status Badge
-                      StatusBadge(
-                        status: _getAccountStatus(user.isActive),
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Müşteri Tipi Badge
-                      if (user.customerType != null)
-                        CustomerTypeBadge(
-                          emoji: user.customerType!.emoji,
-                          displayName: user.customerType!.displayName,
-                        ),
-
-                      // Firma Adı (Eğer varsa)
-                      if (user.companyName != null) ...[
-                        const SizedBox(height: 12),
-                        Container(
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                              builder: (context) => const LoginScreen(),
+                            ),
+                            (route) => false,
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
+                            horizontal: 32,
+                            vertical: 16,
                           ),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(20),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.business,
-                                size: 14,
-                                color: AppColors.primary,
+                        ),
+                        child: const Text(
+                          'Giriş Yap',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+
+              const SizedBox(height: 24),
+
+              // Menü Seçenekleri
+              if (user != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    children: [
+                      _buildMenuSection([
+                        _buildMenuItem(
+                          icon: Icons.person_outline,
+                          title: 'Profil Bilgileri',
+                          subtitle: 'Ad, soyad, telefon ve adres bilgileri',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const EditProfileScreen(),
                               ),
-                              const SizedBox(width: 6),
-                              Flexible(
-                                child: Text(
-                                  user.companyName!,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.primary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
+                            );
+                          },
+                        ),
+                        _buildDivider(),
+                        _buildMenuItem(
+                          icon: Icons.shopping_bag_outlined,
+                          title: 'Siparişlerim',
+                          subtitle: 'Geçmiş siparişlerinizi görüntüleyin',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const OrdersScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildDivider(),
+                        _buildMenuItem(
+                          icon: Icons.favorite_border,
+                          title: 'Favorilerim',
+                          subtitle: 'Beğendiğiniz ürünler',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const FavoritesScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ]),
+                      const SizedBox(height: 24),
+                      _buildMenuSection([
+                        _buildMenuItem(
+                          icon: Icons.settings_outlined,
+                          title: 'Ayarlar',
+                          subtitle: 'Uygulama ayarları',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SettingsScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildDivider(),
+                        _buildMenuItem(
+                          icon: Icons.help_outline,
+                          title: 'Yardım ve Destek',
+                          subtitle: 'Sıkça sorulan sorular ve iletişim',
+                          onTap: () {
+                            // Yardım sayfasına git
+                          },
+                        ),
+                      ]),
+                      const SizedBox(height: 24),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _showLogoutDialog(context, authProvider);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red[50],
+                            foregroundColor: Colors.red,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.logout),
+                              SizedBox(width: 8),
+                              Text(
+                                'Çıkış Yap',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      ],
+                      ),
+                      const SizedBox(height: 32),
                     ],
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-
-              // Menü Seçenekleri
-              _buildMenuCard(
-                context,
-                icon: Icons.shopping_bag,
-                title: 'Siparişlerim',
-                subtitle: 'Geçmiş siparişlerinizi görüntüleyin',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const OrdersScreen(),
-                    ),
-                  );
-                },
-              ),
-              _buildMenuCard(
-                context,
-                icon: Icons.favorite,
-                title: 'Favorilerim',
-                subtitle: 'Beğendiğiniz ürünleri görüntüleyin',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const FavoritesScreen(),
-                    ),
-                  );
-                },
-              ),
-              _buildMenuCard(
-                context,
-                icon: Icons.location_on,
-                title: 'Adreslerim',
-                subtitle: 'Teslimat adreslerinizi yönetin',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const AddressesScreen(),
-                    ),
-                  );
-                },
-              ),
-              _buildMenuCard(
-                context,
-                icon: Icons.person,
-                title: 'Hesap Bilgilerim',
-                subtitle: 'Kişisel bilgilerinizi görüntüleyin',
-                onTap: () {
-                  _showAccountInfo(context, user);
-                },
-              ),
-              _buildMenuCard(
-                context,
-                icon: Icons.settings,
-                title: 'Ayarlar',
-                subtitle: 'Uygulama ayarlarınızı yönetin',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const SettingsScreen(),
-                    ),
-                  );
-                },
-              ),
-              _buildMenuCard(
-                context,
-                icon: Icons.logout,
-                title: 'Çıkış Yap',
-                subtitle: 'Hesabınızdan çıkış yapın',
-                onTap: () {
-                  _showLogoutDialog(context);
-                },
-                isDestructive: true,
-              ),
             ],
-          );
-        },
+          ),
+        ),
       ),
     );
   }
 
-  // Helper: Hesap durumu belirleme
-  AccountStatus _getAccountStatus(bool isActive) {
-    // Backend'den isActive bilgisi gelecek
-    // Şimdilik aktif olarak göster
-    return isActive ? AccountStatus.active : AccountStatus.pending;
+  Widget _buildMenuSection(List<Widget> children) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(children: children),
+    );
   }
 
-  Widget _buildMenuCard(
-    BuildContext context, {
+  Widget _buildMenuItem({
     required IconData icon,
     required String title,
     required String subtitle,
     required VoidCallback onTap,
-    bool isDestructive = false,
   }) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      leading: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.primary.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(icon, color: AppColors.primary),
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
         ),
-        leading: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: isDestructive
-                ? Colors.red.withOpacity(0.1)
-                : AppColors.primary.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(
-            icon,
-            color: isDestructive ? Colors.red : AppColors.primary,
-            size: 24,
-          ),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: isDestructive ? Colors.red : Colors.black,
-          ),
-        ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Text(
-            subtitle,
-            style: TextStyle(
-              fontSize: 13,
-              color: Colors.grey[600],
-            ),
-          ),
-        ),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: onTap,
       ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(
+          color: Colors.grey[600],
+          fontSize: 13,
+        ),
+      ),
+      trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+      onTap: onTap,
     );
   }
 
-  void _showAccountInfo(BuildContext context, user) {
+  Widget _buildDivider() {
+    return Divider(
+      height: 1,
+      thickness: 1,
+      color: Colors.grey[100],
+      indent: 80,
+      endIndent: 24,
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context, AuthProvider authProvider) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
         ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Hesap Bilgileri',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-            IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-                _showEditProfileDialog(context, user);
-              },
-              icon: const Icon(Icons.edit, color: AppColors.primary),
-              tooltip: 'Düzenle',
-            ),
-          ],
+        title: const Text(
+          'Çıkış Yap',
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildInfoRow('Ad Soyad', user.name),
-              _buildInfoRow('E-posta', user.email),
-              if (user.companyName != null)
-                _buildInfoRow('Firma', user.companyName!),
-              if (user.phone != null) _buildInfoRow('Telefon', user.phone!),
-              if (user.taxNumber != null)
-                _buildInfoRow('Vergi No', user.taxNumber!),
-              if (user.taxOffice != null)
-                _buildInfoRow('Vergi Dairesi', user.taxOffice!),
-              if (user.address != null) _buildInfoRow('Adres', user.address!),
-
-              // Hesap Durumu
-              const Divider(height: 24),
-              const Text(
-                'Hesap Durumu',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 8),
-              StatusBadge(
-                status: _getAccountStatus(user.isActive),
-              ),
-
-              // Müşteri Tipi
-              if (user.customerType != null) ...[
-                const SizedBox(height: 16),
-                const Text(
-                  'İşletme Türü',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                CustomerTypeBadge(
-                  emoji: user.customerType!.emoji,
-                  displayName: user.customerType!.displayName,
-                ),
-              ],
-            ],
-          ),
-        ),
+        content: const Text('Çıkış yapmak istediğinizden emin misiniz?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Kapat',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showEditProfileDialog(BuildContext context, user) {
-    final nameController = TextEditingController(text: user.name);
-    final phoneController = TextEditingController(text: user.phone);
-    final formKey = GlobalKey<FormState>();
-
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: const Text('Profili Düzenle'),
-        content: SingleChildScrollView(
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Fotoğraf Düzenleme (Mock)
-                GestureDetector(
-                  onTap: () async {
-                    final ImagePicker picker = ImagePicker();
-                    final XFile? image =
-                        await picker.pickImage(source: ImageSource.gallery);
-                    if (image != null) {
-                      // TODO: Fotoğraf yükleme işlemi
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Fotoğraf seçildi (Demo)')),
-                      );
-                    }
-                  },
-                  child: Stack(
-                    children: [
-                      CircleAvatar(
-                        radius: 40,
-                        backgroundColor: AppColors.primary,
-                        child: Text(
-                          user.name[0].toUpperCase(),
-                          style: const TextStyle(
-                            fontSize: 32,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.camera_alt,
-                            size: 20,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                TextFormField(
-                  controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Ad Soyad',
-                    prefixIcon: Icon(Icons.person),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Ad Soyad boş olamaz';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: phoneController,
-                  decoration: const InputDecoration(
-                    labelText: 'Telefon',
-                    prefixIcon: Icon(Icons.phone),
-                  ),
-                  keyboardType: TextInputType.phone,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Telefon boş olamaz';
-                    }
-                    return null;
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('İptal'),
           ),
           ElevatedButton(
-            onPressed: () async {
-              if (formKey.currentState!.validate()) {
-                final authProvider = context.read<AuthProvider>();
-                final navigator = Navigator.of(context);
-
-                // Dialog'u kapat
-                Navigator.pop(dialogContext);
-
-                final success = await authProvider.updateProfile(
-                  name: nameController.text,
-                  phone: phoneController.text,
-                );
-
-                if (success) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Profil başarıyla güncellendi'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content:
-                          Text(authProvider.errorMessage ?? 'Bir hata oluştu'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              }
-            },
-            child: const Text('Kaydet'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: const Text('Çıkış Yap'),
-        content: const Text('Çıkış yapmak istediğinize emin misiniz?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('İptal'),
-          ),
-          TextButton(
-            onPressed: () async {
-              // Context'leri kaydet
-              final navigator = Navigator.of(context);
-              final authProvider = context.read<AuthProvider>();
-
-              // Dialog'u kapat
-              Navigator.pop(dialogContext);
-
-              // Logout yap
-              await authProvider.logout();
-
-              // Login ekranına git
-              navigator.pushAndRemoveUntil(
+            onPressed: () {
+              Navigator.pop(context);
+              authProvider.logout();
+              Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
-                  builder: (_) => const LoginScreen(),
+                  builder: (context) => const LoginScreen(),
                 ),
                 (route) => false,
               );
             },
-            child: const Text(
-              'Çıkış Yap',
-              style: TextStyle(
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
+            child: const Text('Çıkış Yap'),
           ),
         ],
       ),

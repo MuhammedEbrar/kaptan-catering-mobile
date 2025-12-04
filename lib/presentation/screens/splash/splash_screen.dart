@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/auth_provider.dart';
-import '../auth/login_screen.dart';
+
 import '../main_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -21,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
-    
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
@@ -61,40 +61,24 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Auth durumunu kontrol et
     final authProvider = context.read<AuthProvider>();
-    
+
     // Token kontrolü yap
     await authProvider.checkLoginStatus();
 
     if (!mounted) return;
 
-    // Yönlendirme
-    if (authProvider.isLoggedIn && authProvider.user != null) {
-      // Kullanıcı giriş yapmış
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              MainScreen(key: mainScreenKey),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-          transitionDuration: const Duration(milliseconds: 500),
-        ),
-      );
-    } else {
-      // Kullanıcı giriş yapmamış
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              const LoginScreen(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-          transitionDuration: const Duration(milliseconds: 500),
-        ),
-      );
-    }
+    // Yönlendirme - Herkes MainScreen'e
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            MainScreen(key: mainScreenKey),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+    );
   }
 
   @override
@@ -123,11 +107,11 @@ class _SplashScreenState extends State<SplashScreen>
                 children: [
                   // Logo
                   Container(
-                    width: 150,
+                    width: 300,
                     height: 150,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      shape: BoxShape.circle,
+                      borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.2),
@@ -137,50 +121,16 @@ class _SplashScreenState extends State<SplashScreen>
                       ],
                     ),
                     padding: const EdgeInsets.all(20),
-                    child: ClipOval(
-                      child: Image.asset(
-                        'assets/images/logo.png',
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          // Logo yoksa icon göster
-                          return const Icon(
-                            Icons.restaurant_menu,
-                            size: 80,
-                            color: AppColors.primary,
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-
-                  // Başlık
-                  const Text(
-                    'Kaptan Catering',
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      letterSpacing: 1.2,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black26,
-                          offset: Offset(2, 2),
-                          blurRadius: 4,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Alt Başlık
-                  const Text(
-                    'B2B Catering Çözümleri',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white70,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 0.5,
+                    child: Image.asset(
+                      'assets/images/kaptan_logo_new.png',
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(
+                          Icons.restaurant_menu,
+                          size: 80,
+                          color: AppColors.primary,
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(height: 60),

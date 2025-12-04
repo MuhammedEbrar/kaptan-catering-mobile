@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
-import '../main_screen.dart';
+
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
+import '../auth/login_screen.dart';
+import '../auth/signup_screen.dart';
+import '../../widgets/home_slider.dart';
+import '../../widgets/home_footer.dart';
+
+import '../../widgets/home_categories.dart';
+import '../../widgets/featured_products.dart';
+import '../../widgets/info_section.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -8,204 +18,123 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      backgroundColor: Colors.grey[50],
+      body: SafeArea(
         child: Column(
           children: [
-            // Hero Section
+            // Modern Header
             Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: const BoxDecoration(
-                color: AppColors.primary,
+                color: Colors.white,
+                borderRadius:
+                    BorderRadius.vertical(bottom: Radius.circular(24)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
+                  ),
+                ],
               ),
-              child: Column(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Kaptan Food Service',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.center,
+                  // Logo
+                  Image.asset(
+                    'assets/images/kaptan_logo_new.png',
+                    height: 40,
+                    fit: BoxFit.contain,
                   ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Profesyonel gıda toptancılığı. Restoranınız için kaliteli ürünler, hızlı teslimat, rekabetçi fiyatlar.',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white,
-                      height: 1.5,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 24),
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    alignment: WrapAlignment.center,
-                    children: [
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          // 👇 GLOBAL KEY İLE TAB DEĞİŞTİR
-                          mainScreenKey.currentState?.changeTab(1);
-                        },
-                        icon: const Icon(Icons.arrow_forward, size: 20),
-                        label: const Text(
-                          'Ürünleri İncele',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: AppColors.primary,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 14,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                      OutlinedButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Hakkımızda sayfası yakında eklenecek'),
+                  // Giriş/Kayıt Butonları
+                  Consumer<AuthProvider>(
+                    builder: (context, authProvider, child) {
+                      // Giriş yapılmış olsa bile butonları göster (Kullanıcı isteği)
+                      /* if (authProvider.isLoggedIn) {
+                        return const SizedBox.shrink();
+                      } */
+
+                      // Eğer giriş yapılmışsa ve kullanıcı butonları görmek istemiyorsa burayı açabiliriz
+                      // Şimdilik her zaman gösteriliyor.
+
+                      return Row(
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const LoginScreen(),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              'Giriş Yap',
+                              style: TextStyle(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          );
-                        },
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          side: const BorderSide(color: Colors.white, width: 2),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 14,
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                          const SizedBox(width: 8),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SignupScreen(),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            child: const Text('Kayıt Ol'),
                           ),
-                        ),
-                        child: const Text(
-                          'Hakkımızda',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),
             ),
 
-            // Özellikler
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                children: [
-                  const Text(
-                    'Neden Kaptan Food Service?',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '25 yılı aşkın tecrübemizle, restoranların güvenilir iş ortağıyız.',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 32),
-                  _buildFeatureCard(
-                    icon: Icons.inventory_2,
-                    title: 'Geniş Ürün Yelpazesi',
-                    description: 'Döner, köfte, şarküteri, baharat ve tüm mutfak ihtiyaçlarınız.',
-                  ),
-                  const SizedBox(height: 16),
-                  _buildFeatureCard(
-                    icon: Icons.local_shipping,
-                    title: 'Hızlı Teslimat',
-                    description: 'İstanbul genelinde 24 saat içinde teslimat imkanı.',
-                  ),
-                  const SizedBox(height: 16),
-                  _buildFeatureCard(
-                    icon: Icons.verified_user,
-                    title: 'Kalite Garantisi',
-                    description: 'Tüm ürünlerimiz sertifikalı ve taze ürün garantisi ile.',
-                  ),
-                  const SizedBox(height: 16),
-                  _buildFeatureCard(
-                    icon: Icons.access_time,
-                    title: '7/24 Sipariş',
-                    description: 'Online sipariş sistemi ile her an sipariş verebilirsiniz.',
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+            // İçerik
+            const Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: 24),
+                    // Slider
+                    HomeSlider(),
 
-  Widget _buildFeatureCard({
-    required IconData icon,
-    required String title,
-    required String description,
-  }) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                size: 28,
-                color: AppColors.primary,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    description,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                      height: 1.4,
-                    ),
-                  ),
-                ],
+                    SizedBox(height: 24),
+
+                    // Kategoriler
+                    HomeCategories(),
+
+                    SizedBox(height: 24),
+
+                    // Öne Çıkanlar
+                    FeaturedProducts(),
+
+                    SizedBox(height: 24),
+
+                    // Bilgi Bölümü
+                    InfoSection(),
+
+                    SizedBox(height: 32),
+
+                    // Footer
+                    HomeFooter(),
+                  ],
+                ),
               ),
             ),
           ],
